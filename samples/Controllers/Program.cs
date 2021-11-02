@@ -39,10 +39,10 @@ namespace Controllers
             SwitchToRun(start);
 
             //Uncomment ONLY one of the following lines to control the corresponding scene in FACTORY I/O
-            Controller controller = new FromAToB();
+            //Controller controller = new FromAToB();
             //Controller controller = new FromAToBSetReset();
             //Controller controller = new FillingTank();
-            //Controller controller = new QueueOfItems();
+            Controller controller = new QueueOfItems();
             //Controller controller = new Assembler();
             //Controller controller = new AssemblerAnalog();
             //Controller controller = new AutomatedWarehouse();

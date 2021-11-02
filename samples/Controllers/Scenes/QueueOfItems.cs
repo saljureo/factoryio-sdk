@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------
 
 using EngineIO;
+using System;
 
 namespace Controllers
 {
@@ -50,7 +51,10 @@ namespace Controllers
                 unloading = false;
 
                 if (counter == 3)
+                {
                     watchState = State.State1;
+                    Console.WriteLine("watchState is: " + watchState);
+                }
             }
             else if (watchState == State.State1)
             {
