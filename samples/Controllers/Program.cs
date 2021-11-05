@@ -42,7 +42,7 @@ namespace Controllers
             //Controller controller = new FromAToB();
             //Controller controller = new FromAToBSetReset();
             //Controller controller = new FillingTank();
-            Controller controller = new QueueOfItems();
+            //Controller controller = new QueueOfItems();
             //Controller controller = new Assembler();
             //Controller controller = new AssemblerAnalog();
             //Controller controller = new AutomatedWarehouse();
@@ -60,6 +60,7 @@ namespace Controllers
             //Controller controller = new SortingHeightBasic();
             //Controller controller = new SortingWeight();
             //Controller controller = new SortingStation();
+            Controller controller = new myScene();
 
             Console.WriteLine(string.Format("Running controller: {0}", controller.GetType().Name));
             Console.WriteLine("Press Escape to shutdown...");
