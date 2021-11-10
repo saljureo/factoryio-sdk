@@ -16,9 +16,11 @@ namespace Controllers
         MemoryBit gripperFailButton = MemoryMap.Instance.GetBit("Stop Button 0", MemoryType.Input);
         MemoryBit gripperRepair = MemoryMap.Instance.GetBit("Reset Button 0", MemoryType.Input);
         MemoryBit sensorGripperConveyor = MemoryMap.Instance.GetBit("Diffuse Sensor 0", MemoryType.Input);//Diffuse Sensor 0
-        MemoryBit sensorGripperConveyor2 = MemoryMap.Instance.GetBit("Diffuse Sensor 1", MemoryType.Input);//Diffuse Sensor 0
-        MemoryBit sensorGripperConveyorExit = MemoryMap.Instance.GetBit("Diffuse Sensor 2", MemoryType.Input);//Diffuse Sensor 0
-        MemoryBit sensorGripperConveyorStart = MemoryMap.Instance.GetBit("Diffuse Sensor 3", MemoryType.Input);//Diffuse Sensor 0
+        MemoryBit sensorGripperConveyor2 = MemoryMap.Instance.GetBit("Diffuse Sensor 1", MemoryType.Input);//Diffuse Sensor 1
+        MemoryBit sensorGripperConveyorExit = MemoryMap.Instance.GetBit("Diffuse Sensor 2", MemoryType.Input);//Diffuse Sensor where boxes are about to reach exit ramp
+        MemoryBit sensorGripperConveyorStart = MemoryMap.Instance.GetBit("Diffuse Sensor 3", MemoryType.Input);//Diffuse Sensor where boxes are released from gripper
+        MemoryBit sensorEmitter = MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input);//Diffuse Sensor where boxes are emitted
+        MemoryBit sensorMcEntrance = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);//Diffuse Sensor where boxes are entering MC
         MemoryBit mcStartButton = MemoryMap.Instance.GetBit("Start Button 1", MemoryType.Input); //MC start button
         MemoryBit mcFailButton = MemoryMap.Instance.GetBit("Stop Button 1", MemoryType.Input); //MC fail button
         MemoryBit emitterStartButton = MemoryMap.Instance.GetBit("Start Button 2", MemoryType.Input); //Emitter start button
@@ -33,7 +35,8 @@ namespace Controllers
         MemoryBit gripperAlarmSiren = MemoryMap.Instance.GetBit("Alarm Siren 0", MemoryType.Output);
         MemoryBit grab = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Grab)", MemoryType.Output);
         MemoryBit conveyorGripper = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 1", MemoryType.Output);//Sensor conveyor
-        MemoryBit conveyorGripper2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);//Sensor conveyor
+        MemoryBit conveyorGripper2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);//Sensor conveyor 2
+        MemoryBit conveyorEmitter = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 0", MemoryType.Output);//Sensor emitter
         MemoryBit emitterMc = MemoryMap.Instance.GetBit("Emitter 0 (Emit) mc", MemoryType.Output);//Machine Center start
         MemoryBit mcFail = MemoryMap.Instance.GetBit("Machining Center 0 (Stop)", MemoryType.Output);//Machine Center start
         MemoryBit emitter = MemoryMap.Instance.GetBit("Emitter 0 (Emit)", MemoryType.Output);//Emitter
@@ -45,7 +48,10 @@ namespace Controllers
         GripperStatus gripperStatus = GripperStatus.IDLE;
         GripperStep gripperStep = GripperStep.INITIAL;
 
+        McStatus mcStatus = McStatus.IDLE;
+
         FTRIG ftAtExit = new FTRIG();
+        FTRIG ftAtMcEntrance = new FTRIG();
 
         public myScene()// %%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%
         {
@@ -85,7 +91,7 @@ namespace Controllers
         {
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GRIPPER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            // Gripper button pressed
+            // Gripper buttons pressed - state changes
             if (gripperStartButton.Value == true && gripperStep == GripperStep.INITIAL && gripperStatus != GripperStatus.DOWN) //Button pressed, gripper started working.
             {
                 Console.WriteLine("Green button pressed");
@@ -260,6 +266,7 @@ namespace Controllers
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SENSOR CONVEYORS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
             ftAtExit.CLK(sensorGripperConveyorExit.Value);
+            ftAtMcEntrance.CLK(sensorMcEntrance.Value);
 
             if (sensorGripperConveyorStart.Value == true)
             {
@@ -279,10 +286,19 @@ namespace Controllers
                 conveyorGripper2.Value = false;
             }
 
+            if (sensorEmitter.Value == true)
+            {
+                conveyorEmitter.Value = true;
+            }
+            else if (ftAtMcEntrance.Q == true)
+            {
+                conveyorEmitter.Value = false;
+            }
+
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SENSOR CONVEYORS ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if (mcStartButton.Value == true)//Machine center start button
+            if (mcStartButton.Value == true && mcStatus == McStatus.IDLE)//Machine center start button
             {
                 emitterMc.Value = true;
             }
@@ -321,7 +337,7 @@ namespace Controllers
         WORKING,
         DOWN
     }
-    public enum MCStatus
+    public enum McStatus
     {
         IDLE,
         WORKING,
