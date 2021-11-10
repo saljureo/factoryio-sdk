@@ -307,36 +307,36 @@ namespace Controllers
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if (mcStartButton.Value == true && mcStatus == McStatus.IDLE)//Machine center start button
             {
-                emitterMc.Value = true;
                 mcStatus = McStatus.WORKING;
             }
 
             if (mcFailButton.Value == false)//false is pressed
             {
-                mcFail.Value = true;
-                mcRedLight.Value = true;
-                mcAlarmSiren.Value = true;
                 mcStatus = McStatus.DOWN;
             }            
 
-            if (mcRepairButton.Value == true)
+            if (mcRepairButton.Value == true && mcStatus == McStatus.DOWN)
             {
-                mcFail.Value = false;
-                mcRedLight.Value = false;
-                mcAlarmSiren.Value = false;
                 mcStatus = McStatus.IDLE;
             }
 
+            //Machine center states - idle, working, down
             if (mcStatus == McStatus.IDLE)
             {
+                emitterMc.Value = false;
                 mcFail.Value = false;
                 mcRedLight.Value = false;
                 mcYellowLight.Value = false;
                 mcGreenLight.Value = true;
                 mcAlarmSiren.Value = false;
+                if (mcBusy.Value == true)
+                {
+                    mcStatus = McStatus.WORKING;
+                }
             }
             else if (mcStatus == McStatus.WORKING)
             {
+                emitterMc.Value = true;
                 mcFail.Value = false;
                 mcRedLight.Value = false;
                 mcYellowLight.Value = false;                
@@ -354,6 +354,32 @@ namespace Controllers
                     timeWorkingMc = 0;
                 }
                 timeWorkingMc++;
+                if (mcBusy.Value == false)
+                {
+                    mcStatus = McStatus.IDLE;
+                }
+            }
+            else if (mcStatus == McStatus.DOWN)
+            {
+                mcFail.Value = true;
+                mcAlarmSiren.Value = true;
+                if (timeDownMc < 30)
+                {
+                    mcGreenLight.Value = true;                    
+                    mcYellowLight.Value = true;
+                    mcRedLight.Value = true;
+                }
+                else if (timeDownMc < 60)
+                {
+                    mcGreenLight.Value = false;                    
+                    mcYellowLight.Value = false;
+                    mcRedLight.Value = false;
+                }
+                else if (timeDownMc == 60)
+                {
+                    timeDownMc = 0;
+                }
+                timeDownMc++;
             }
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
