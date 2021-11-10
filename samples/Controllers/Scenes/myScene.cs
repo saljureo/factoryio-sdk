@@ -24,6 +24,7 @@ namespace Controllers
         MemoryBit mcStartButton = MemoryMap.Instance.GetBit("Start Button 1", MemoryType.Input); //MC start button
         MemoryBit mcFailButton = MemoryMap.Instance.GetBit("Stop Button 1", MemoryType.Input); //MC fail button
         MemoryBit mcRepairButton = MemoryMap.Instance.GetBit("Reset Button 1", MemoryType.Input); //MC repair button
+        MemoryBit mcBusy = MemoryMap.Instance.GetBit("Machining Center 0 (Is Busy)", MemoryType.Input);//Machine Center busy
         MemoryBit emitterStartButton = MemoryMap.Instance.GetBit("Start Button 2", MemoryType.Input); //Emitter start button
 
         MemoryFloat posX = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Position (V)", MemoryType.Input);
@@ -33,7 +34,9 @@ namespace Controllers
         MemoryBit gripperRedLight = MemoryMap.Instance.GetBit("Stack Light 0 (Red)", MemoryType.Output);
         MemoryBit mcRedLight = MemoryMap.Instance.GetBit("Stack Light 1 (Red)", MemoryType.Output);
         MemoryBit gripperGreenLight = MemoryMap.Instance.GetBit("Stack Light 0 (Green)", MemoryType.Output);
+        MemoryBit mcGreenLight = MemoryMap.Instance.GetBit("Stack Light 1 (Green)", MemoryType.Output);
         MemoryBit gripperYellowLight = MemoryMap.Instance.GetBit("Stack Light 0 (Yellow)", MemoryType.Output);
+        MemoryBit mcYellowLight = MemoryMap.Instance.GetBit("Stack Light 1 (Yellow)", MemoryType.Output);
         MemoryBit gripperAlarmSiren = MemoryMap.Instance.GetBit("Alarm Siren 0", MemoryType.Output);
         MemoryBit mcAlarmSiren = MemoryMap.Instance.GetBit("Alarm Siren 1", MemoryType.Output);
         MemoryBit grab = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Grab)", MemoryType.Output);
@@ -41,12 +44,12 @@ namespace Controllers
         MemoryBit conveyorGripper2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);//Sensor conveyor 2
         MemoryBit conveyorEmitter = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 0", MemoryType.Output);//Sensor emitter
         MemoryBit emitterMc = MemoryMap.Instance.GetBit("Emitter 0 (Emit) mc", MemoryType.Output);//Machine Center start
-        MemoryBit mcFail = MemoryMap.Instance.GetBit("Machining Center 0 (Stop)", MemoryType.Output);//Machine Center start
+        MemoryBit mcFail = MemoryMap.Instance.GetBit("Machining Center 0 (Stop)", MemoryType.Output);//Machine Center start        
         MemoryBit emitter = MemoryMap.Instance.GetBit("Emitter 0 (Emit)", MemoryType.Output);//Emitter
         MemoryFloat setX = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Set Point (V)", MemoryType.Output);
         MemoryFloat setZ = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 Z Set Point (V)", MemoryType.Output);
 
-        int timeVibration, timeWorking, timeDown;
+        int timeVibrationGripper, timeWorkingGripper, timeDownGripper, timeWorkingMc, timeDownMc;
 
         GripperStatus gripperStatus = GripperStatus.IDLE;
         GripperStep gripperStep = GripperStep.INITIAL;
@@ -86,9 +89,9 @@ namespace Controllers
             mcFailButton.Value = true;//True is unpressed
             mcRedLight.Value = false;
 
-            timeVibration = 0;
-            timeWorking = 0;
-            timeDown = 0;
+            timeVibrationGripper = 0;
+            timeWorkingGripper = 0;
+            timeDownGripper = 0;
         } // %%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%
@@ -132,25 +135,25 @@ namespace Controllers
             }
             else if (gripperStatus == GripperStatus.WORKING)// %% IF GRIPPER IS WORKING %%%%
             {
-                if (timeWorking < 50)
+                if (timeWorkingGripper < 50)
                 {
                     gripperGreenLight.Value = true;
                     gripperYellowLight.Value = false;
                     gripperRedLight.Value = false;
                     gripperAlarmSiren.Value = false;
                 }
-                else if (timeWorking < 100)
+                else if (timeWorkingGripper < 100)
                 {
                     gripperGreenLight.Value = false;
                     gripperYellowLight.Value = false;
                     gripperRedLight.Value = false;
                     gripperAlarmSiren.Value = false;
                 }
-                else if (timeWorking == 100)
+                else if (timeWorkingGripper == 100)
                 {
-                    timeWorking = 0;
+                    timeWorkingGripper = 0;
                 }
-                timeWorking++;
+                timeWorkingGripper++;
                 
                 if (gripperStep == GripperStep.INITIAL) //Gripper going to initial position.
                 {
@@ -226,43 +229,43 @@ namespace Controllers
             }
             else if (gripperStatus == GripperStatus.DOWN) // %%%%%%%%%%%%%%%%% GRIPPER IS DOWN %%%%%%%%%%%%%%%%
             {
-                if (timeDown < 30) // %%%%%%%%%%%%%%%%% DOWN LIGHTS AND ALARM START %%%%%%%%%%%%%%%%
+                if (timeDownGripper < 30) // %%%%%%%%%%%%%%%%% DOWN LIGHTS AND ALARM START %%%%%%%%%%%%%%%%
                 {
                     gripperGreenLight.Value = false;
                     gripperYellowLight.Value = false;
                     gripperRedLight.Value = false;
                     gripperAlarmSiren.Value = true;
                 }
-                else if (timeDown < 60)
+                else if (timeDownGripper < 60)
                 {
                     gripperGreenLight.Value = true;
                     gripperYellowLight.Value = true;
                     gripperRedLight.Value = true;
                     gripperAlarmSiren.Value = true;
                 }
-                else if (timeDown == 60)
+                else if (timeDownGripper == 60)
                 {
-                    timeDown = 0;
+                    timeDownGripper = 0;
                 }
-                timeDown++; // %%%%%%%%%%%%%%%%% DOWN LIGHTS AND ALARM END %%%%%%%%%%%%%%%%
+                timeDownGripper++; // %%%%%%%%%%%%%%%%% DOWN LIGHTS AND ALARM END %%%%%%%%%%%%%%%%
 
                 if (gripperStep == GripperStep.DOWN_VIBRATING) // %%%%%%%%%%%%%%%%% DOWN VIBRATION STARTS %%%%%%%%%%%%%%%%
                 {
-                    if (timeVibration == 1)
+                    if (timeVibrationGripper == 1)
                     {
                         setX.Value = 10.0f;
                         setZ.Value = 10.0f;                        
                     }
-                    else if (timeVibration == 6)
+                    else if (timeVibrationGripper == 6)
                     {
                         setX.Value = 0.0f;
                         setZ.Value = 0.0f;
                     }
-                    else if (timeVibration == 10)
+                    else if (timeVibrationGripper == 10)
                     {
-                        timeVibration = 0;
+                        timeVibrationGripper = 0;
                     }
-                    timeVibration++;
+                    timeVibrationGripper++;
                 }// %%%%%%%%%%%%%%%%% DOWN VIBRATION ENDS %%%%%%%%%%%%%%%%
             }
 
@@ -305,10 +308,7 @@ namespace Controllers
             if (mcStartButton.Value == true && mcStatus == McStatus.IDLE)//Machine center start button
             {
                 emitterMc.Value = true;
-            }
-            else
-            {
-                emitterMc.Value = false;
+                mcStatus = McStatus.WORKING;
             }
 
             if (mcFailButton.Value == false)//false is pressed
@@ -316,6 +316,7 @@ namespace Controllers
                 mcFail.Value = true;
                 mcRedLight.Value = true;
                 mcAlarmSiren.Value = true;
+                mcStatus = McStatus.DOWN;
             }            
 
             if (mcRepairButton.Value == true)
@@ -323,6 +324,36 @@ namespace Controllers
                 mcFail.Value = false;
                 mcRedLight.Value = false;
                 mcAlarmSiren.Value = false;
+                mcStatus = McStatus.IDLE;
+            }
+
+            if (mcStatus == McStatus.IDLE)
+            {
+                mcFail.Value = false;
+                mcRedLight.Value = false;
+                mcYellowLight.Value = false;
+                mcGreenLight.Value = true;
+                mcAlarmSiren.Value = false;
+            }
+            else if (mcStatus == McStatus.WORKING)
+            {
+                mcFail.Value = false;
+                mcRedLight.Value = false;
+                mcYellowLight.Value = false;                
+                mcAlarmSiren.Value = false;
+                if (timeWorkingMc < 50)
+                {
+                    mcGreenLight.Value = true;
+                }
+                else if (timeWorkingMc < 100)
+                {
+                    mcGreenLight.Value = false;
+                }
+                else if (timeWorkingMc == 100)
+                {
+                    timeWorkingMc = 0;
+                }
+                timeWorkingMc++;
             }
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
