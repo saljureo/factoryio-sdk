@@ -14,7 +14,7 @@ namespace Controllers
     {
         MemoryBit gripperStartButton = MemoryMap.Instance.GetBit("Start Button 0", MemoryType.Input);
         MemoryBit gripperFailButton = MemoryMap.Instance.GetBit("Stop Button 0", MemoryType.Input);
-        MemoryBit gripperRepair = MemoryMap.Instance.GetBit("Reset Button 0", MemoryType.Input);
+        MemoryBit gripperRepairButton = MemoryMap.Instance.GetBit("Reset Button 0", MemoryType.Input);
         MemoryBit sensorGripperConveyor = MemoryMap.Instance.GetBit("Diffuse Sensor 0", MemoryType.Input);//Diffuse Sensor 0
         MemoryBit sensorGripperConveyor2 = MemoryMap.Instance.GetBit("Diffuse Sensor 1", MemoryType.Input);//Diffuse Sensor 1
         MemoryBit sensorGripperConveyorExit = MemoryMap.Instance.GetBit("Diffuse Sensor 2", MemoryType.Input);//Diffuse Sensor where boxes are about to reach exit ramp
@@ -23,6 +23,7 @@ namespace Controllers
         MemoryBit sensorMcEntrance = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);//Diffuse Sensor where boxes are entering MC
         MemoryBit mcStartButton = MemoryMap.Instance.GetBit("Start Button 1", MemoryType.Input); //MC start button
         MemoryBit mcFailButton = MemoryMap.Instance.GetBit("Stop Button 1", MemoryType.Input); //MC fail button
+        MemoryBit mcRepairButton = MemoryMap.Instance.GetBit("Reset Button 1", MemoryType.Input); //MC repair button
         MemoryBit emitterStartButton = MemoryMap.Instance.GetBit("Start Button 2", MemoryType.Input); //Emitter start button
 
         MemoryFloat posX = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Position (V)", MemoryType.Input);
@@ -30,9 +31,11 @@ namespace Controllers
         
 
         MemoryBit gripperRedLight = MemoryMap.Instance.GetBit("Stack Light 0 (Red)", MemoryType.Output);
+        MemoryBit mcRedLight = MemoryMap.Instance.GetBit("Stack Light 1 (Red)", MemoryType.Output);
         MemoryBit gripperGreenLight = MemoryMap.Instance.GetBit("Stack Light 0 (Green)", MemoryType.Output);
         MemoryBit gripperYellowLight = MemoryMap.Instance.GetBit("Stack Light 0 (Yellow)", MemoryType.Output);
         MemoryBit gripperAlarmSiren = MemoryMap.Instance.GetBit("Alarm Siren 0", MemoryType.Output);
+        MemoryBit mcAlarmSiren = MemoryMap.Instance.GetBit("Alarm Siren 1", MemoryType.Output);
         MemoryBit grab = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Grab)", MemoryType.Output);
         MemoryBit conveyorGripper = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 1", MemoryType.Output);//Sensor conveyor
         MemoryBit conveyorGripper2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);//Sensor conveyor 2
@@ -64,7 +67,7 @@ namespace Controllers
             //Gripper buttons
             gripperStartButton.Value = false;
             gripperFailButton.Value = true;//unpressed is true
-            gripperRepair.Value = false;
+            gripperRepairButton.Value = false;
             
             //Gripper lights
             gripperRedLight.Value = false;
@@ -81,6 +84,7 @@ namespace Controllers
             //Machine Center
             emitterMc.Value = false;
             mcFailButton.Value = true;//True is unpressed
+            mcRedLight.Value = false;
 
             timeVibration = 0;
             timeWorking = 0;
@@ -106,9 +110,9 @@ namespace Controllers
                 gripperStep = GripperStep.DOWN_VIBRATING;
             }
 
-            if (gripperRepair.Value == true && gripperStatus == GripperStatus.DOWN)//REPAIR Button pressed, gripper repaired.
+            if (gripperRepairButton.Value == true && gripperStatus == GripperStatus.DOWN)//REPAIR Button pressed, gripper repaired.
             {                
-                Console.WriteLine("GripperRepair value is: " + gripperRepair.Value);
+                Console.WriteLine("GripperRepair value is: " + gripperRepairButton.Value);
                 setZ.Value = 0.0f;
                 setX.Value = 0.0f;
                 gripperStatus = GripperStatus.IDLE;
@@ -310,10 +314,15 @@ namespace Controllers
             if (mcFailButton.Value == false)//false is pressed
             {
                 mcFail.Value = true;
-            }
-            else
+                mcRedLight.Value = true;
+                mcAlarmSiren.Value = true;
+            }            
+
+            if (mcRepairButton.Value == true)
             {
                 mcFail.Value = false;
+                mcRedLight.Value = false;
+                mcAlarmSiren.Value = false;
             }
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
