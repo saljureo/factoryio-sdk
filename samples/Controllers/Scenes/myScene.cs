@@ -275,7 +275,7 @@ namespace Controllers
             ftAtExit.CLK(sensorGripperConveyorExit.Value);
             ftAtMcEntrance.CLK(sensorMcEntrance.Value);
 
-            if (sensorGripperConveyorStart.Value == true)
+            if (sensorGripperConveyorStart.Value == true && sensorGripperConveyor.Value == false)
             {
                 conveyorGripper.Value = true;
             }
