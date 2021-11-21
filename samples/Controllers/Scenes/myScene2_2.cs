@@ -131,7 +131,7 @@ namespace Controllers
             ////mc0 buttons
             mc0StartButton.Value = false;
             //mc0FailButton.Value = true;//unpressed is true
-            //mc0RepairButton.Value = false;
+            mc0RepairButton.Value = false;
 
             ////mc0 lights
             //mc0RedLight.Value = false;
@@ -151,8 +151,8 @@ namespace Controllers
 
             ////mc1 buttons            
             //mc1FailButton.Value = true;//True is unpressed
-            //mc1StartButton.Value = false;
-            //mc1RepairButton.Value = false;
+            mc1StartButton.Value = false;
+            mc1RepairButton.Value = false;
 
             ////mc1 lights
             //mc1RedLight.Value = false; 
