@@ -60,7 +60,9 @@ namespace Controllers
             //Controller controller = new SortingHeightBasic();
             //Controller controller = new SortingWeight();
             //Controller controller = new SortingStation();
-            Controller controller = new myScene();
+            //Controller controller = new myScene();
+            //Controller controller = new myScene2();
+            Controller controller = new myScene2_2();
 
             Console.WriteLine(string.Format("Running controller: {0}", controller.GetType().Name));
             Console.WriteLine("Press Escape to shutdown...");
