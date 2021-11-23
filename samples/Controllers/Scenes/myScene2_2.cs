@@ -68,6 +68,7 @@ namespace Controllers
         //Emitter
         MemoryBit emitterStartButton; //Emitter start button
         MemoryBit emitter;//Emitter
+        MemoryBit emitterStopblade;
 
         GripperArm gripperMc0;
 
@@ -76,17 +77,17 @@ namespace Controllers
         ControlHub controlHub;
 
         //conveyor belts
-        MemoryBit conveyorMc1Entrance;//Conveyor mc1 entrance
-        MemoryBit conveyorMc0BadPiece;//Conveyor mc0 bad piece
-        MemoryBit conveyorFinishedPiece;//Conveyor finished piece
-        MemoryBit conveyorMc1BadPiece;//Conveyor mc1 bad piece
-        MemoryBit conveyorEmitter;//Conveyor emitter
-        MemoryBit conveyorBuffer;//Conveyor buffer
+        MemoryBit conveyorMc1Entrance;
+        MemoryBit conveyorMc0Entrance;
+        MemoryBit conveyorMc0BadPiece;
+        MemoryBit conveyorFinishedPiece;
+        MemoryBit conveyorMc1BadPiece;
+        MemoryBit conveyorEmitter;
+        MemoryBit conveyorBuffer;
 
         //Buffer
         MemoryBit bufferStopblade;//Buffer stopblade
 
-        bool pieceReadyAtMc0;
         bool mc0Failed;
         bool mc1Failed;
 
@@ -100,15 +101,19 @@ namespace Controllers
 
         LoadingMc1Step loadingMc1Step = LoadingMc1Step.IDLE;
 
-        FTRIG ftAtEntranceMc0 = new FTRIG();
-        FTRIG ftAtExitMc0 = new FTRIG();
-        FTRIG ftAtExitMc1 = new FTRIG();
-        FTRIG ftAtBufferEnd = new FTRIG();
-        FTRIG ftAtBadPieceExitMc0 = new FTRIG();
-        FTRIG ftAtBadPieceExitMc1 = new FTRIG();
-        FTRIG ftAtFinishedPieceExit = new FTRIG();
-        FTRIG ftAtBufferStart = new FTRIG();
-        FTRIG ftAtMc1LoadingConveyorStart = new FTRIG();
+        Mc0PieceReady mc0PieceReady;
+        Mc0PieceReadySteps mc0PieceReadySteps;
+
+        FTRIG ftAtEntranceMc0;
+        FTRIG ftAtExitMc0;
+        FTRIG ftAtExitMc1;
+        FTRIG ftAtBufferEnd;
+        FTRIG ftAtBadPieceExitMc0;
+        FTRIG ftAtBadPieceExitMc1;
+        FTRIG ftAtFinishedPieceExit;
+        FTRIG ftAtBufferStart;
+        FTRIG ftAtMc1LoadingConveyorStart;
+        FTRIG ftAtEmitter;
 
         public myScene2_2()// %%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%
         {
@@ -173,6 +178,7 @@ namespace Controllers
             //Emitter
             emitterStartButton = MemoryMap.Instance.GetBit("Start Button 2", MemoryType.Input); //Emitter start button
             emitter = MemoryMap.Instance.GetBit("Emitter 0 (Emit)", MemoryType.Output);//Emitter
+            emitterStopblade = MemoryMap.Instance.GetBit("Stop Blade 1", MemoryType.Output);
 
             gripperMc0 = new GripperArm(
                 MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Position (V)", MemoryType.Input),
@@ -194,10 +200,11 @@ namespace Controllers
 
             //conveyor belts
             conveyorMc1Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);//Conveyor mc1 entrance
+            conveyorMc0Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output);//Conveyor mc1 entrance
             conveyorMc0BadPiece = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 1", MemoryType.Output);//Conveyor mc0 bad piece
             conveyorFinishedPiece = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 2", MemoryType.Output);//Conveyor finished piece
             conveyorMc1BadPiece = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output);//Conveyor mc1 bad piece
-            conveyorEmitter = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 0", MemoryType.Output);//Conveyor emitter
+            conveyorEmitter = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output);//Conveyor emitter
             conveyorBuffer = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 1", MemoryType.Output);//Conveyor buffer
 
             //Buffer
@@ -213,15 +220,19 @@ namespace Controllers
 
             LoadingMc1Step loadingMc1Step = LoadingMc1Step.IDLE;
 
-            FTRIG ftAtEntranceMc0 = new FTRIG();
-            FTRIG ftAtExitMc0 = new FTRIG();
-            FTRIG ftAtExitMc1 = new FTRIG();
-            FTRIG ftAtBufferEnd = new FTRIG();
-            FTRIG ftAtBadPieceExitMc0 = new FTRIG();
-            FTRIG ftAtBadPieceExitMc1 = new FTRIG();
-            FTRIG ftAtFinishedPieceExit = new FTRIG();
-            FTRIG ftAtBufferStart = new FTRIG();
-            FTRIG ftAtMc1LoadingConveyorStart = new FTRIG();
+            mc0PieceReady = Mc0PieceReady.NOT_READY;
+            mc0PieceReadySteps = Mc0PieceReadySteps.SWITCHING_CONVEYORS;
+
+            ftAtEntranceMc0 = new FTRIG();
+            ftAtExitMc0 = new FTRIG();
+            ftAtExitMc1 = new FTRIG();
+            ftAtBufferEnd = new FTRIG();
+            ftAtBadPieceExitMc0 = new FTRIG();
+            ftAtBadPieceExitMc1 = new FTRIG();
+            ftAtFinishedPieceExit = new FTRIG();
+            ftAtBufferStart = new FTRIG();
+            ftAtMc1LoadingConveyorStart = new FTRIG();
+            ftAtEmitter = new FTRIG();
 
             //%% EXPERIMENT END 
 
@@ -239,12 +250,12 @@ namespace Controllers
             //mc0GreenLight.Value = true;
 
             //mc0 others
-            pieceReadyAtMc0 = false;
             mc0PositionerClamp.Value = false;
             mc0PositionerRise.Value = true;
 
             ////Emitter
             emitter.Value = true;
+            emitterStopblade.Value = false;
 
             //mc1
             mc1Failed = false;
@@ -265,6 +276,8 @@ namespace Controllers
             Console.WriteLine("State mc0Status: " + mc0Status);
             Console.WriteLine("State mc1Status: " + mc1Status);
             Console.WriteLine("State bufferStatus: " + bufferStatus);
+            Console.WriteLine("State mc0PieceReady: " + mc0PieceReady);
+            Console.WriteLine("State mc0PieceReadySteps: " + mc0PieceReadySteps);
 
             controlHub = new ControlHub(
             mc0StartButton,
@@ -293,22 +306,11 @@ namespace Controllers
             ftAtBadPieceExitMc1.CLK(sensorBadPieceFilterConveyorEndMc1.Value);
             ftAtFinishedPieceExit.CLK(sensorFinishedPartExit.Value);
             ftAtMc1LoadingConveyorStart.CLK(sensorMc1LoadingConveyorStart.Value);
+            ftAtEmitter.CLK(sensorEmitter.Value);
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING TRIGGERS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONVEYORS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-            //Emitter conveyor
-            if (sensorEmitter.Value == true && sensorEntranceMc0.Value == false)
-            {
-                conveyorEmitter.Value = true;
-            }
-            else if (ftAtEntranceMc0.Q == true)
-            {
-                conveyorEmitter.Value = false;
-                pieceReadyAtMc0 = true;
-                Console.WriteLine("pieceReadyAtMc0 = " + pieceReadyAtMc0);
-            }
 
             //Buffer conveyor
             if (sensorExitMc0.Value == true)
@@ -380,15 +382,69 @@ namespace Controllers
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BUFFER ENDS   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+
+
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             // %%%%%%%%%%%%% MC0 STARTS %%%%%%%%%%%%%%%%%%%
 
-            
+            //%%%%%%%%%%%%%%%%%%% PREPARING MC0 PIECE STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            if (mc0PieceReady == Mc0PieceReady.NOT_READY)
+            {
+                if (mc0PieceReadySteps == Mc0PieceReadySteps.SWITCHING_CONVEYORS)
+                {
+                    emitterStopblade.Value = false;//Drops stopblade
+                    conveyorEmitter.Value = true;//Turns on both conveyors
+                    conveyorMc0Entrance.Value = true;//Turns on both conveyors
+                    if (ftAtEmitter.Q == true)//If it exits emitter sensor
+                    {
+                        mc0PieceReadySteps = Mc0PieceReadySteps.REACHING_MC0ENTRANCE;
+                        Console.WriteLine("mc0PieceReadySteps = " + mc0PieceReadySteps);
+                    }
+                }
+                else if (mc0PieceReadySteps == Mc0PieceReadySteps.REACHING_MC0ENTRANCE)
+                {
+                    conveyorEmitter.Value = false;//Turns off emitter conveyor
+                    emitterStopblade.Value = true;//Rises stopblade
+                    if (sensorEntranceMc0.Value == true && (mc0Status == McStatus.IDLE || mc0Open.Value == false))
+                    {
+                        mc0PieceReadySteps = Mc0PieceReadySteps.ENTERINGMC0;
+                    }
+                    else if (sensorEntranceMc0.Value == true && mc0Status == McStatus.WORKING)
+                    {
+                        conveyorMc0Entrance.Value = false;//Turns off mc0 entrance conveyor
+                    }
+                }
+                else if (mc0PieceReadySteps == Mc0PieceReadySteps.ENTERINGMC0)
+                {
+                    conveyorMc0Entrance.Value = true;//Turns on mc0 entrance conveyor
+                    if (ftAtEntranceMc0.Q == true)//If piece exits mc0 entrance sensor
+                    {
+                        conveyorMc0Entrance.Value = false;//Turns off mc0 entrance conveyor
+                        mc0PieceReady = Mc0PieceReady.READY;
+                        Console.WriteLine("mc0PieceReady = " + mc0PieceReady);
+                        mc0PieceReadySteps = Mc0PieceReadySteps.IDLE;
+                        Console.WriteLine("mc0PieceReadySteps = " + mc0PieceReadySteps);
+                    }
+                }
+            }
+            else if (mc0PieceReady == Mc0PieceReady.READY)
+            {
+                if (mc0Start.Value == true)
+                {
+                    mc0PieceReady = Mc0PieceReady.NOT_READY;
+                    Console.WriteLine("mc0PieceReady = " + mc0PieceReady);
+                    mc0PieceReadySteps = Mc0PieceReadySteps.SWITCHING_CONVEYORS;
+                    Console.WriteLine("mc0PieceReadySteps = " + mc0PieceReadySteps);
+                }
+            }
+
+            //%%%%%%%%%%%%%%%%%%% PREPARING MC0 PIECE ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             if (mc0Status == McStatus.IDLE)
             {
-                if (mc0StartButton.Value == true && pieceReadyAtMc0 == true)
+                if (mc0StartButton.Value == true && mc0PieceReady == Mc0PieceReady.READY)
                 {
                     mc0Start.Value = true;
                 }
@@ -397,9 +453,7 @@ namespace Controllers
                 {
                     mc0Status = McStatus.WORKING;
                     Console.WriteLine("State mc0Status: " + mc0Status);
-                    pieceReadyAtMc0 = false;
                     mc0Start.Value = false;
-                    Console.WriteLine("pieceReadyAtMc0 = " + pieceReadyAtMc0);
                 }
             }
             else if (mc0Status == McStatus.WORKING)
@@ -526,16 +580,8 @@ namespace Controllers
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EMITTER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            if (emitterStartButton.Value == true || sensorFinishedPartExit.Value == true || sensorBadPieceFilterConveyorEndMc0.Value == true || sensorBadPieceFilterConveyorEndMc1.Value == true)
-            {
-                emitter.Value = true;
-            }
-            else
-            {
-                emitter.Value = false;
-            }
+            
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EMITTER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -633,6 +679,12 @@ public enum BufferStatus
     FULL,
 }
 
+public enum Mc0PieceReady
+{
+    NOT_READY,
+    READY
+}
+
 public enum McPositionerStatus
 {
     UP,
@@ -648,3 +700,12 @@ public enum LoadingMc1Step
     SEPARATE_OTHER_PIECES,
     RESTORING_BUFFER_ORDER
 }
+
+public enum Mc0PieceReadySteps
+{
+    IDLE,
+    SWITCHING_CONVEYORS,
+    REACHING_MC0ENTRANCE,
+    ENTERINGMC0
+}
+
