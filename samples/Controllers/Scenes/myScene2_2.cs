@@ -108,6 +108,7 @@ namespace Controllers
         EventsMc1 eventsMc1;
 
         private int s0Counter;
+        private int r0Counter;
 
         FTRIG ftAtEntranceMc0;
         FTRIG ftAtExitMc0;
@@ -278,6 +279,7 @@ namespace Controllers
             //mc1GreenLight.Value = true;
 
             s0Counter = 0;
+            r0Counter = 0;
 
             //Buffer
             bufferStopblade.Value = true;//True is rised
@@ -309,12 +311,28 @@ namespace Controllers
                 {
                     eventsMc0 = EventsMc0.s0;
                     Console.WriteLine("s0 (c)");
+                    Console.WriteLine("State mc0Status: WORKING");
                     s0Counter++;
                 }
             }
             else
             {
                 s0Counter = 0;
+            }
+
+            if (mc0RepairButton.Value == true)
+            {
+                if (r0Counter == 0)
+                {
+                    eventsMc0 = EventsMc0.r0;
+                    Console.WriteLine("r0 (c)");
+                    r0Counter++;
+                }
+                
+            }
+            else
+            {
+                r0Counter = 0;
             }
             
 
@@ -461,7 +479,6 @@ namespace Controllers
                 if (mc0Busy.Value == true)
                 {
                     mc0Status = McStatus.WORKING;
-                    Console.WriteLine("State mc0Status: " + mc0Status);
                     mc0Start.Value = false;
                 }
             }
@@ -491,7 +508,7 @@ namespace Controllers
             {
                 mc0AlarmSiren.Value = true;
 
-                if (mc0RepairButton.Value == true)
+                if (eventsMc0 == EventsMc0.r0)
                 {
                     mc0Failed = false;//Next piece will not fail
                     mc0Status = McStatus.IDLE;
