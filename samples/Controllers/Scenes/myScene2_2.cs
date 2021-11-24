@@ -104,6 +104,11 @@ namespace Controllers
         Mc0PieceReady mc0PieceReady;
         Mc0PieceReadySteps mc0PieceReadySteps;
 
+        EventsMc0 eventsMc0;
+        EventsMc1 eventsMc1;
+
+        private int s0Counter;
+
         FTRIG ftAtEntranceMc0;
         FTRIG ftAtExitMc0;
         FTRIG ftAtExitMc1;
@@ -114,10 +119,10 @@ namespace Controllers
         FTRIG ftAtBufferStart;
         FTRIG ftAtMc1LoadingConveyorStart;
         FTRIG ftAtEmitter;
+        
 
         public myScene2_2()// %%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%
-        {
-            
+        {  
             
 
             //%% EXPERIMENT START
@@ -223,6 +228,9 @@ namespace Controllers
             mc0PieceReady = Mc0PieceReady.NOT_READY;
             mc0PieceReadySteps = Mc0PieceReadySteps.IDLE;
 
+            eventsMc0 = EventsMc0.i0;
+            eventsMc1 = EventsMc1.i1;
+
             ftAtEntranceMc0 = new FTRIG();
             ftAtExitMc0 = new FTRIG();
             ftAtExitMc1 = new FTRIG();
@@ -269,14 +277,14 @@ namespace Controllers
             //mc1YellowLight.Value = false;
             //mc1GreenLight.Value = true;
 
+            s0Counter = 0;
+
             //Buffer
             bufferStopblade.Value = true;//True is rised
 
             Console.WriteLine("State mc0Status: " + mc0Status);
             Console.WriteLine("State mc1Status: " + mc1Status);
             Console.WriteLine("State bufferStatus: " + bufferStatus);
-            Console.WriteLine("State mc0PieceReady: " + mc0PieceReady);
-            Console.WriteLine("State mc0PieceReadySteps: " + mc0PieceReadySteps);
 
             controlHub = new ControlHub(
             mc0StartButton,
@@ -293,6 +301,22 @@ namespace Controllers
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%
         {
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            if (mc0StartButton.Value == true)
+            {
+                if (s0Counter == 0)
+                {
+                    eventsMc0 = EventsMc0.s0;
+                    Console.WriteLine("s0 (c)");
+                    s0Counter++;
+                }
+            }
+            
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING TRIGGERS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             // Falling triggers
@@ -360,6 +384,7 @@ namespace Controllers
                 //type here
                 if (sensorExitMc0.Value == true && mc0Failed == false)
                 {
+                    Console.WriteLine("f0 (uc)");
                     bufferStatus = BufferStatus.FULL;
                     Console.WriteLine("State bufferStatus: " + bufferStatus);
                 }
@@ -402,10 +427,10 @@ namespace Controllers
 
             if (mc0Status == McStatus.IDLE)
             {
-                if (mc0StartButton.Value == true && mc0PieceReady == Mc0PieceReady.READY)
+                if (eventsMc0 == EventsMc0.s0 && mc0PieceReady == Mc0PieceReady.READY)
                 {
                     mc0PieceReadySteps = Mc0PieceReadySteps.SWITCHING_CONVEYORS;
-                    
+                    eventsMc0 = EventsMc0.i0;
                 }
                 else if (mc0PieceReadySteps == Mc0PieceReadySteps.SWITCHING_CONVEYORS)
                 {
@@ -414,7 +439,6 @@ namespace Controllers
                     if (ftAtEmitter.Q == true)//If it exits emitter sensor
                     {
                         mc0PieceReadySteps = Mc0PieceReadySteps.REACHING_MC0ENTRANCE;
-                        Console.WriteLine("mc0PieceReadySteps = " + mc0PieceReadySteps);
                     }
                 }
                 else if (mc0PieceReadySteps == Mc0PieceReadySteps.REACHING_MC0ENTRANCE)
@@ -426,9 +450,7 @@ namespace Controllers
                         conveyorMc0Entrance.Value = false;//Turns off mc0 entrance conveyor
                         mc0Start.Value = true;//Starts mc0
                         mc0PieceReadySteps = Mc0PieceReadySteps.IDLE;
-                        Console.WriteLine("mc0PieceReadySteps = " + mc0PieceReadySteps);
                         mc0PieceReady = Mc0PieceReady.NOT_READY;
-                        Console.WriteLine("mc0PieceReady = " + mc0PieceReady);
                     }
                 }
 
@@ -456,6 +478,7 @@ namespace Controllers
                 else if (mc0Busy.Value == false && mc0Failed == true)
                 {
                     mc0Reset.Value = false;
+                    Console.WriteLine("b0 (uc)");
                     mc0Status = McStatus.DOWN;
                     Console.WriteLine("State mc0Status: " + mc0Status);
                 }
@@ -485,8 +508,6 @@ namespace Controllers
                     if (mc1StartButton.Value == true && bufferStatus == BufferStatus.FULL)
                     {
                         loadingMc1Step = Mc1LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
-                        Console.WriteLine("Mc1 green button pressed with part available");
-                        Console.WriteLine("loadingMc1Step = " + loadingMc1Step);
                     }
                 }
                 else if (loadingMc1Step == Mc1LoadingSteps.PIECE_TO_LOADING_CONVEYOR)
@@ -499,7 +520,6 @@ namespace Controllers
                     if (sensorMc1LoadingConveyorStart.Value == true)
                     {
                         loadingMc1Step = Mc1LoadingSteps.SEPARATE_OTHER_PIECES;
-                        Console.WriteLine("loadingMc1Step = " + loadingMc1Step);
                     }
                 }
                 else if (loadingMc1Step == Mc1LoadingSteps.SEPARATE_OTHER_PIECES)
@@ -509,7 +529,6 @@ namespace Controllers
                     if (ftAtMc1LoadingConveyorStart.Q == true)
                     {
                         loadingMc1Step = Mc1LoadingSteps.RESTORING_BUFFER_ORDER;
-                        Console.WriteLine("loadingMc1Step = " + loadingMc1Step);
                     }
                 }
                 else if (loadingMc1Step == Mc1LoadingSteps.RESTORING_BUFFER_ORDER)
@@ -521,7 +540,6 @@ namespace Controllers
                     {
                         conveyorBuffer.Value = false;
                         loadingMc1Step = Mc1LoadingSteps.IDLE;
-                        Console.WriteLine("loadingMc1Step = " + loadingMc1Step);
                     }
                 }
 
@@ -693,6 +711,24 @@ public enum Mc1LoadingSteps
     PIECE_TO_LOADING_CONVEYOR,
     SEPARATE_OTHER_PIECES,
     RESTORING_BUFFER_ORDER
+}
+
+public enum EventsMc0
+{
+    s0,
+    f0,
+    b0,
+    r0,
+    i0
+}
+
+public enum EventsMc1
+{
+    s1,
+    f1,
+    b1,
+    r1,
+    i1
 }
 
 
