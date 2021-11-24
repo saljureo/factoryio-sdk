@@ -316,11 +316,7 @@ namespace Controllers
             {
                 conveyorBuffer.Value = true;
             }
-            else if (bufferStatus == BufferStatus.EMPTY && sensorBufferEnd.Value == true)
-            {
-                conveyorBuffer.Value = false;
-            }
-            else if (bufferStatus == BufferStatus.FULL && sensorBufferSpot2.Value == true)
+            else if (sensorBufferEnd.Value == true)
             {
                 conveyorBuffer.Value = false;
             }
@@ -523,6 +519,7 @@ namespace Controllers
 
                     if (sensorBufferEnd.Value == true)
                     {
+                        conveyorBuffer.Value = false;
                         loadingMc1Step = Mc1LoadingSteps.IDLE;
                         Console.WriteLine("loadingMc1Step = " + loadingMc1Step);
                     }
@@ -564,14 +561,9 @@ namespace Controllers
 
             // %%%%%%%%%%%% MC1 ENDS %%%%%%%%%%%%%%%%%%%%
 
-
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
             
-
-            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EMITTER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BAD PIECES FILTER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             //mc0
