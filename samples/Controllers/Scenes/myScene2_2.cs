@@ -74,7 +74,7 @@ namespace Controllers
 
         GripperArm gripperMc1;
 
-        ControlHub controlHub;
+        SupervisoryControl supervisoryControl;
 
         //conveyor belts
         MemoryBit conveyorMc1Entrance;
@@ -91,8 +91,8 @@ namespace Controllers
         bool mc0Failed;
         bool mc1Failed;
 
-        McStatus mc0Status = McStatus.IDLE;
-        McStatus mc1Status = McStatus.IDLE;
+        McStatus mc0Status;
+        McStatus mc1Status;
 
         McPositionerStatus mc0PositionerStatus = McPositionerStatus.UP;
         McPositionerStatus mc1PositionerStatus = McPositionerStatus.UP;
@@ -109,6 +109,8 @@ namespace Controllers
 
         private int s0Counter;
         private int r0Counter;
+        private int s1Counter;
+        private int r1Counter;
 
         FTRIG ftAtEntranceMc0;
         FTRIG ftAtExitMc0;
@@ -202,8 +204,7 @@ namespace Controllers
                 MemoryMap.Instance.GetBit("Two-Axis Pick & Place 1 (Grab)", MemoryType.Output)
             );
 
-            ControlHub controlHub;
-
+            
             //conveyor belts
             conveyorMc1Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);//Conveyor mc1 entrance
             conveyorMc0Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output);//Conveyor mc1 entrance
@@ -216,8 +217,8 @@ namespace Controllers
             //Buffer
             bufferStopblade = MemoryMap.Instance.GetBit("Stop Blade 0", MemoryType.Output);//Buffer stopblade
 
-            McStatus mc0Status = McStatus.IDLE;
-            McStatus mc1Status = McStatus.IDLE;
+            mc0Status = McStatus.IDLE;
+            mc1Status = McStatus.IDLE;
 
             McPositionerStatus mc0PositionerStatus = McPositionerStatus.UP;
             McPositionerStatus mc1PositionerStatus = McPositionerStatus.UP;
@@ -280,6 +281,8 @@ namespace Controllers
 
             s0Counter = 0;
             r0Counter = 0;
+            s1Counter = 0;
+            r1Counter = 0;
 
             //Buffer
             bufferStopblade.Value = true;//True is rised
@@ -288,23 +291,18 @@ namespace Controllers
             Console.WriteLine("State mc1Status: " + mc1Status);
             Console.WriteLine("State bufferStatus: " + bufferStatus);
 
-            controlHub = new ControlHub(
-            mc0StartButton,
-            mc0FailButton,
-            mc0RepairButton,
-            mc0RedLight,
-            mc0YellowLight,
-            mc0GreenLight,
-            mc0AlarmSiren,
-            gripperMc0
-            );
+            supervisoryControl = new SupervisoryControl();
 
         } // %%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%
         {
+            supervisoryControl.On(mc0Status, mc1Status);
+            Console.WriteLine("Programa principal mc0Status: " + mc0Status);
+            Console.WriteLine("Programa principal mc1Status: " + mc1Status);
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+            //s0
             if (mc0StartButton.Value == true)
             {
                 if (s0Counter == 0)
@@ -320,6 +318,7 @@ namespace Controllers
                 s0Counter = 0;
             }
 
+            //r0
             if (mc0RepairButton.Value == true)
             {
                 if (r0Counter == 0)
@@ -334,7 +333,39 @@ namespace Controllers
             {
                 r0Counter = 0;
             }
-            
+
+            //s1
+            if (mc1StartButton.Value == true)
+            {
+                if (s1Counter == 0)
+                {
+                    eventsMc1 = EventsMc1.s1;
+                    Console.WriteLine("s1 (c)");
+                    Console.WriteLine("State mc1Status: WORKING");
+                    s1Counter++;
+                }
+            }
+            else
+            {
+                s1Counter = 0;
+            }
+
+            //r1
+            if (mc1RepairButton.Value == true)
+            {
+                if (r1Counter == 0)
+                {
+                    eventsMc1 = EventsMc1.r1;
+                    Console.WriteLine("r1 (c)");
+                    r1Counter++;
+                }
+
+            }
+            else
+            {
+                r1Counter = 0;
+            }
+
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -526,7 +557,7 @@ namespace Controllers
                 if (loadingMc1Step == Mc1LoadingSteps.IDLE)
                 {
                     //type here
-                    if (mc1StartButton.Value == true && bufferStatus == BufferStatus.FULL)
+                    if (eventsMc1 == EventsMc1.s1 && bufferStatus == BufferStatus.FULL)
                     {
                         loadingMc1Step = Mc1LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
                     }
@@ -568,19 +599,22 @@ namespace Controllers
                 {
                     mc1Status = McStatus.WORKING;
                     mc1Start.Value = false;
-                    Console.WriteLine("State mc1Status: " + mc1Status);
                 }
             }
             else if (mc1Status == McStatus.WORKING)
             {
                 if (mc1Busy.Value == false && mc1Failed == false)
                 {
+                    eventsMc1 = EventsMc1.f1;
+                    Console.WriteLine("f1 (uc)");
                     mc1Status = McStatus.IDLE;
                     Console.WriteLine("State mc1Status: " + mc1Status);
                     mc1Failed = true; //will fail next time
                 }
                 else if (mc1Busy.Value == false && mc1Failed == true)
                 {
+                    eventsMc1 = EventsMc1.b1;
+                    Console.WriteLine("b1 (uc)");
                     mc1Status = McStatus.DOWN;
                     Console.WriteLine("State mc1Status: " + mc1Status);
                 }
@@ -589,7 +623,7 @@ namespace Controllers
             {
                 mc1AlarmSiren.Value = true;
 
-                if (mc1RepairButton.Value == true)
+                if (eventsMc1 == EventsMc1.r1)
                 {
                     mc1Failed = false;
                     mc1Status = McStatus.IDLE;
