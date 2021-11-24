@@ -312,6 +312,10 @@ namespace Controllers
                     s0Counter++;
                 }
             }
+            else
+            {
+                s0Counter = 0;
+            }
             
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
