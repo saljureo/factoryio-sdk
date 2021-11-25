@@ -232,7 +232,7 @@ namespace Controllers.Scenes
                     previousState = supervisorState;
                 }
             }
-            Console.WriteLine("This should NEVER appear. If it does, there's a state missing in SupervisoryControl.cs");
+            Console.WriteLine("Event not in the active events set");
             return (false);
         }
 

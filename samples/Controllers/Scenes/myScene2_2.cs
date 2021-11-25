@@ -7,6 +7,7 @@
 using Controllers.Scenes;
 using EngineIO;
 using System;
+using System.Diagnostics;
 
 namespace Controllers
 {
@@ -85,6 +86,14 @@ namespace Controllers
 
         //Buffer
         MemoryBit bufferStopblade;//Buffer stopblade
+
+        //Failing time (potenciometer and display)
+        MemoryFloat potentiometerMc1;
+        MemoryFloat potentiometerMc2;
+        MemoryFloat displayMc1;
+        MemoryFloat displayMc2;
+        Stopwatch stopWatch;
+        float tiempo;
 
         bool mc1Failed;
         bool mc2Failed;
@@ -218,6 +227,13 @@ namespace Controllers
             //Buffer
             bufferStopblade = MemoryMap.Instance.GetBit("Stop Blade 0", MemoryType.Output);
 
+            //Failing time (potenciometer and display)
+            potentiometerMc1 = MemoryMap.Instance.GetFloat("Potentiometer 0 (V)", MemoryType.Input);
+            potentiometerMc2 = MemoryMap.Instance.GetFloat("Potentiometer 1 (V)", MemoryType.Input);
+            displayMc1 = MemoryMap.Instance.GetFloat("Digital Display 0", MemoryType.Output);
+            displayMc2 = MemoryMap.Instance.GetFloat("Digital Display 1", MemoryType.Output);
+            stopWatch = new Stopwatch();
+
             mc1Status = McStatus.IDLE;
             mc2Status = McStatus.IDLE;
 
@@ -294,6 +310,10 @@ namespace Controllers
             //Buffer
             bufferStopblade.Value = true;//True is rised
 
+            //Failing time and display
+            //potentiometerMc1.Value = 1.0;//1 is 10 seconds, 10 is 100 seconds
+            //potentiometerMc2.Value = 1.0;
+
             supervisoryControl = new SupervisoryControl();
             supervisoryApproval = true;
 
@@ -301,7 +321,14 @@ namespace Controllers
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%
         {
-            
+            //Failing time and display
+            displayMc1.Value = potentiometerMc1.Value;
+            displayMc2.Value = potentiometerMc2.Value;
+            stopWatch.Start();
+            TimeSpan ts = stopWatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            //tiempo = ts.Seconds + "." + ts.Milliseconds;
+
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             //s1
