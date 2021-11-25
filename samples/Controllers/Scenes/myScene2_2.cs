@@ -13,34 +13,34 @@ namespace Controllers
     public class myScene2_2 : Controller
     {
         //Mc0
-        MemoryBit mc0StartButton;
-        MemoryBit mc0FailButton;
-        MemoryBit mc0RepairButton;
-        MemoryBit mc0Busy;//Machining Center 0 busy
-        MemoryBit mc0Open;//Machining Center 0 opened
-        MemoryInt mc0Progress;//Machining Center 0 opened
-        MemoryBit mc0PositionerClamped;//Mc0 positioner clamped sensor
-        MemoryBit mc0GripperItemDetected;//Mc0 positioner item detected sensor
+        MemoryBit mc1StartButton;
+        MemoryBit mc1FailButton;
+        MemoryBit mc1RepairButton;
+        MemoryBit mc1Busy;
+        MemoryBit mc1Open;
+        MemoryInt mc1Progress;
+        MemoryBit mc1PositionerClamped;//Mc1 positioner clamped sensor
+        MemoryBit mc1GripperItemDetected;//Mc1 positioner item detected sensor
         
-        MemoryBit mc0Start;//Machining Center start
-        MemoryBit mc0Reset;//Machining Center reset (so it leaves piece incomplete)
+        MemoryBit mc1Start;//Machining Center start
+        MemoryBit mc1Reset;//Machining Center reset (so it leaves piece incomplete)
         //MemoryBit mc0Fail;//Machining Center fail
-        MemoryBit mc0RedLight;
-        MemoryBit mc0YellowLight;
-        MemoryBit mc0GreenLight;
-        MemoryBit mc0AlarmSiren;
-        MemoryBit mc0PositionerRise;//mc0 positioner rise
-        MemoryBit mc0PositionerClamp;//mc0 positioner clamp
+        MemoryBit mc1RedLight;
+        MemoryBit mc1YellowLight;
+        MemoryBit mc1GreenLight;
+        MemoryBit mc1AlarmSiren;
+        MemoryBit mc1PositionerRise;
+        MemoryBit mc1PositionerClamp;
         
         //Sensors
-        MemoryBit sensorMc0ConveyorEntrance;//Diffuse Sensor 0 - Emitter
-        MemoryBit sensorEntranceMc0;//Diffuse Sensor 1 - MC0 entrance
-        MemoryBit sensorExitMc0;//Diffuse Sensor 2 - MC0 exit/Buffer conveyor entry/MC0 bad piece filter
+        MemoryBit sensorMc1ConveyorEntrance;//Diffuse Sensor 0 - Emitter
+        MemoryBit sensorEntranceMc1;//Diffuse Sensor 1 - MC0 entrance
+        MemoryBit sensorExitMc1;//Diffuse Sensor 2 - MC0 exit/Buffer conveyor entry/MC0 bad piece filter
         MemoryBit sensorBufferEnd;//Diffuse Sensor 3 - Buffer end
         MemoryBit sensorMc2loadingConveyorStart;//Diffuse Sensor 3_2 - Buffer start
         MemoryBit sensorEntranceMc2;//Diffuse Sensor 5 - MC2 entrance
-        MemoryBit sensorBadPieceFilterConveyorStartMc0;//Diffuse Sensor 6 - MC0 bad piece filter conveyor entrance
-        MemoryBit sensorBadPieceFilterConveyorEndMc0;//Diffuse Sensor 7 - MC0 bad piece filter conveyor exit
+        MemoryBit sensorBadPieceFilterConveyorStartMc1;//Diffuse Sensor 6 - MC0 bad piece filter conveyor entrance
+        MemoryBit sensorBadPieceFilterConveyorEndMc1;//Diffuse Sensor 7 - MC0 bad piece filter conveyor exit
         MemoryBit sensorExitMc2;//Diffuse Sensor 8 - MC2 exit/MC2 bad piece filter
         MemoryBit sensorFinishedPartExit;//Diffuse Sensor 9 - Finished piece exit
         MemoryBit sensorBadPieceFilterConveyorStartMc2;//Diffuse Sensor 10 - MC2 bad piece conveyor entrance
@@ -68,7 +68,7 @@ namespace Controllers
         MemoryBit emitterStartButton; //Emitter start button
         MemoryBit emitter;//Emitter
 
-        GripperArm gripperMc0;
+        GripperArm gripperMc1;
 
         GripperArm gripperMc2;
 
@@ -76,8 +76,8 @@ namespace Controllers
 
         //conveyor belts
         MemoryBit conveyorMc2Entrance;
-        MemoryBit conveyorMc0Entrance;
-        MemoryBit conveyorMc0BadPiece;
+        MemoryBit conveyorMc1Entrance;
+        MemoryBit conveyorMc1BadPiece;
         MemoryBit conveyorFinishedPiece;
         MemoryBit conveyorMc2BadPiece;
         MemoryBit conveyorEmitter;
@@ -86,37 +86,40 @@ namespace Controllers
         //Buffer
         MemoryBit bufferStopblade;//Buffer stopblade
 
-        bool mc0Failed;
+        bool mc1Failed;
         bool mc2Failed;
 
-        McStatus mc0Status;
+        McStatus mc1Status;
         McStatus mc2Status;
 
-        McPositionerStatus mc0PositionerStatus = McPositionerStatus.UP;
+        McPositionerStatus mc1PositionerStatus = McPositionerStatus.UP;
         McPositionerStatus mc2PositionerStatus = McPositionerStatus.UP;
 
         BufferStatus bufferStatus = BufferStatus.EMPTY;
 
         Mc2LoadingSteps loadingMc2Step = Mc2LoadingSteps.IDLE;
 
-        Mc0PieceReady mc0PieceReady;
-        Mc0PieceReadySteps mc0PieceReadySteps;
+        Mc1PieceReady mc1PieceReady;
+        Mc1PieceReadySteps mc1PieceReadySteps;
 
-        EventsMc0 eventsMc0;
+        EventsMc1 eventsMc1;
         EventsMc2 eventsMc2;
 
         BreakdownM2 breakdownM2;
 
-        private int s0Counter;
-        private int r0Counter;
+        Mc1WorkingStage mc1WorkingStage;
+
+        private int s1Counter;
+        private int r1Counter;
         private int s2Counter;
         private int r2Counter;
 
-        FTRIG ftAtEntranceMc0;
-        FTRIG ftAtExitMc0;
+        FTRIG ftAtEntranceMc1;
+        FTRIG ftAtEntranceMc2;
+        FTRIG ftAtExitMc1;
         FTRIG ftAtExitMc2;
         FTRIG ftAtBufferEnd;
-        FTRIG ftAtBadPieceExitMc0;
+        FTRIG ftAtBadPieceExitMc1;
         FTRIG ftAtBadPieceExitMc2;
         FTRIG ftAtFinishedPieceExit;
         FTRIG ftAtBufferStart;
@@ -126,45 +129,43 @@ namespace Controllers
 
         public myScene2_2()// %%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%
         {  
-            
-
             //%% EXPERIMENT START
 
-            //Mc0
-            mc0StartButton = MemoryMap.Instance.GetBit("Start Button 0", MemoryType.Input);
-            mc0FailButton = MemoryMap.Instance.GetBit("Stop Button 0", MemoryType.Input);
-            mc0RepairButton = MemoryMap.Instance.GetBit("Reset Button 0", MemoryType.Input);
-            mc0Busy = MemoryMap.Instance.GetBit("Machining Center 0 (Is Busy)", MemoryType.Input);//Machining Center 0 busy
-            mc0Open = MemoryMap.Instance.GetBit("Machining Center 0 (Opened)", MemoryType.Input);//Machining Center 0 opened
-            mc0Progress = MemoryMap.Instance.GetInt("Machining Center 0 (Progress)", MemoryType.Input);//Machining Center 0 opened
-            mc0PositionerClamped = MemoryMap.Instance.GetBit("Right Positioner 0 (Clamped)", MemoryType.Input);//Mc0 positioner clamped sensor
-            mc0GripperItemDetected = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Item Detected)", MemoryType.Input);//Mc0 positioner item detected sensor
+            //Mc1
+            mc1StartButton = MemoryMap.Instance.GetBit("Start Button 0", MemoryType.Input);
+            mc1FailButton = MemoryMap.Instance.GetBit("Stop Button 0", MemoryType.Input);
+            mc1RepairButton = MemoryMap.Instance.GetBit("Reset Button 0", MemoryType.Input);
+            mc1Busy = MemoryMap.Instance.GetBit("Machining Center 0 (Is Busy)", MemoryType.Input);//Machining Center 0 busy
+            mc1Open = MemoryMap.Instance.GetBit("Machining Center 0 (Opened)", MemoryType.Input);//Machining Center 0 opened
+            mc1Progress = MemoryMap.Instance.GetInt("Machining Center 0 (Progress)", MemoryType.Input);//Machining Center 0 opened
+            mc1PositionerClamped = MemoryMap.Instance.GetBit("Right Positioner 0 (Clamped)", MemoryType.Input);//Mc1 positioner clamped sensor
+            mc1GripperItemDetected = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Item Detected)", MemoryType.Input);//Mc1 positioner item detected sensor
 
-            mc0Start = MemoryMap.Instance.GetBit("Machining Center 0 (Start)", MemoryType.Output);//Machining Center start
-            mc0Reset = MemoryMap.Instance.GetBit("Machining Center 0 (Reset)", MemoryType.Output);//Machining Center reset (so it leaves piece incomplete)
-                                                                                                            //MemoryBit mc0Fail = MemoryMap.Instance.GetBit("Machining Center 0 (Stop)", MemoryType.Output);//Machining Center start
-            mc0RedLight = MemoryMap.Instance.GetBit("Stack Light 0 (Red)", MemoryType.Output);
-            mc0YellowLight = MemoryMap.Instance.GetBit("Stack Light 0 (Yellow)", MemoryType.Output);
-            mc0GreenLight = MemoryMap.Instance.GetBit("Stack Light 0 (Green)", MemoryType.Output);
-            mc0AlarmSiren = MemoryMap.Instance.GetBit("Alarm Siren 0", MemoryType.Output);
-            mc0PositionerRise = MemoryMap.Instance.GetBit("Right Positioner 0 (Raise)", MemoryType.Output);//mc0 positioner rise
-            mc0PositionerClamp = MemoryMap.Instance.GetBit("Right Positioner 0 (Clamp)", MemoryType.Output);//mc0 positioner clamp
+            mc1Start = MemoryMap.Instance.GetBit("Machining Center 0 (Start)", MemoryType.Output);//Machining Center start
+            mc1Reset = MemoryMap.Instance.GetBit("Machining Center 0 (Reset)", MemoryType.Output);//Machining Center reset (so it leaves piece incomplete)
+                                                                                                            //MemoryBit mc1Fail = MemoryMap.Instance.GetBit("Machining Center 0 (Stop)", MemoryType.Output);//Machining Center start
+            mc1RedLight = MemoryMap.Instance.GetBit("Stack Light 0 (Red)", MemoryType.Output);
+            mc1YellowLight = MemoryMap.Instance.GetBit("Stack Light 0 (Yellow)", MemoryType.Output);
+            mc1GreenLight = MemoryMap.Instance.GetBit("Stack Light 0 (Green)", MemoryType.Output);
+            mc1AlarmSiren = MemoryMap.Instance.GetBit("Alarm Siren 0", MemoryType.Output);
+            mc1PositionerRise = MemoryMap.Instance.GetBit("Right Positioner 0 (Raise)", MemoryType.Output);
+            mc1PositionerClamp = MemoryMap.Instance.GetBit("Right Positioner 0 (Clamp)", MemoryType.Output);
 
 
 
             //Sensors
-            sensorMc0ConveyorEntrance = MemoryMap.Instance.GetBit("Diffuse Sensor 0", MemoryType.Input);//Diffuse Sensor 0 - Emitter
-            sensorEntranceMc0 = MemoryMap.Instance.GetBit("Diffuse Sensor 1", MemoryType.Input);//Diffuse Sensor 1 - MC0 entrance
-            sensorExitMc0 = MemoryMap.Instance.GetBit("Diffuse Sensor 2", MemoryType.Input);//Diffuse Sensor 2 - MC0 exit/Buffer conveyor entry/MC0 bad piece filter
+            sensorMc1ConveyorEntrance = MemoryMap.Instance.GetBit("Diffuse Sensor 0", MemoryType.Input);//Diffuse Sensor 0 - Emitter
+            sensorEntranceMc1 = MemoryMap.Instance.GetBit("Diffuse Sensor 1", MemoryType.Input);//Diffuse Sensor 1 - MC1 entrance
+            sensorExitMc1 = MemoryMap.Instance.GetBit("Diffuse Sensor 2", MemoryType.Input);//Diffuse Sensor 2 - MC1 exit/Buffer conveyor entry/MC1 bad piece filter
             sensorBufferEnd = MemoryMap.Instance.GetBit("Diffuse Sensor 3", MemoryType.Input);//Diffuse Sensor 3 - Buffer end
             sensorMc2loadingConveyorStart = MemoryMap.Instance.GetBit("Diffuse Sensor 3_2", MemoryType.Input);//Diffuse Sensor 3_2 - Buffer start
             sensorEntranceMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);//Diffuse Sensor 5 - MC1 entrance
-            sensorBadPieceFilterConveyorStartMc0 = MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input);//Diffuse Sensor 6 - MC0 bad piece filter conveyor entrance
-            sensorBadPieceFilterConveyorEndMc0 = MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input);//Diffuse Sensor 7 - MC0 bad piece filter conveyor exit
+            sensorBadPieceFilterConveyorStartMc1 = MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input);//Diffuse Sensor 6 - MC1 bad piece filter conveyor entrance
+            sensorBadPieceFilterConveyorEndMc1 = MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input);//Diffuse Sensor 7 - MC1 bad piece filter conveyor exit
             sensorExitMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input);//Diffuse Sensor 8 - MC1 exit/MC1 bad piece filter
             sensorFinishedPartExit = MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input);//Diffuse Sensor 9 - Finished piece exit
-            sensorBadPieceFilterConveyorStartMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 10", MemoryType.Input);//Diffuse Sensor 10 - MC1 bad piece conveyor entrance
-            sensorBadPieceFilterConveyorEndMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 11", MemoryType.Input);//Diffuse Sensor 11 - MC1 bad piece conveyor exit
+            sensorBadPieceFilterConveyorStartMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 10", MemoryType.Input);//Diffuse Sensor 10 - MC2 bad piece conveyor entrance
+            sensorBadPieceFilterConveyorEndMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 11", MemoryType.Input);//Diffuse Sensor 11 - MC2 bad piece conveyor exit
             sensorBufferSpot2 = MemoryMap.Instance.GetBit("Diffuse Sensor 11", MemoryType.Input);//Diffuse Sensor 13 - spot 2 on buffer
             sensorEmitter = MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input);//Diffuse Sensor 4 - Sensor emitter
 
@@ -176,7 +177,7 @@ namespace Controllers
             mc2PositionerClamped = MemoryMap.Instance.GetBit("Right Positioner 3 (Clamped)", MemoryType.Input);//Mc2 positioner clamped sensor
             mc2GripperItemDetected = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 1 (Item Detected)", MemoryType.Input);//Mc2 positioner item detected sensor
 
-            mc2Start = MemoryMap.Instance.GetBit("Machining Center 1 (Start)", MemoryType.Output);/
+            mc2Start = MemoryMap.Instance.GetBit("Machining Center 1 (Start)", MemoryType.Output);
             mc2RedLight = MemoryMap.Instance.GetBit("Stack Light 1 (Red)", MemoryType.Output);
             mc2YellowLight = MemoryMap.Instance.GetBit("Stack Light 1 (Yellow)", MemoryType.Output);
             mc2GreenLight = MemoryMap.Instance.GetBit("Stack Light 1 (Green)", MemoryType.Output);
@@ -188,7 +189,7 @@ namespace Controllers
             emitterStartButton = MemoryMap.Instance.GetBit("Start Button 2", MemoryType.Input); //Emitter start button
             emitter = MemoryMap.Instance.GetBit("Emitter 0 (Emit)", MemoryType.Output);//Emitter
 
-            gripperMc0 = new GripperArm(
+            gripperMc1 = new GripperArm(
                 MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Position (V)", MemoryType.Input),
                 MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 Z Position (V)", MemoryType.Input),
                 MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Set Point (V)", MemoryType.Output),
@@ -203,12 +204,11 @@ namespace Controllers
                 MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 1 Z Set Point (V)", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Two-Axis Pick & Place 1 (Grab)", MemoryType.Output)
             );
-
             
             //conveyor belts
             conveyorMc2Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);
-            conveyorMc0Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output);
-            conveyorMc0BadPiece = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 1", MemoryType.Output);
+            conveyorMc1Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output);
+            conveyorMc1BadPiece = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 1", MemoryType.Output);
             conveyorFinishedPiece = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 2", MemoryType.Output);
             conveyorMc2BadPiece = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output);
             conveyorEmitter = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output);
@@ -217,29 +217,32 @@ namespace Controllers
             //Buffer
             bufferStopblade = MemoryMap.Instance.GetBit("Stop Blade 0", MemoryType.Output);
 
-            mc0Status = McStatus.IDLE;
+            mc1Status = McStatus.IDLE;
             mc2Status = McStatus.IDLE;
 
-            McPositionerStatus mc0PositionerStatus = McPositionerStatus.UP;
+            McPositionerStatus mc1PositionerStatus = McPositionerStatus.UP;
             McPositionerStatus mc2PositionerStatus = McPositionerStatus.UP;
 
             BufferStatus bufferStatus = BufferStatus.EMPTY;
 
             Mc2LoadingSteps loadingMc2Step = Mc2LoadingSteps.IDLE;
 
-            mc0PieceReady = Mc0PieceReady.NOT_READY;
-            mc0PieceReadySteps = Mc0PieceReadySteps.IDLE;
+            mc1PieceReady = Mc1PieceReady.NOT_READY;
+            mc1PieceReadySteps = Mc1PieceReadySteps.IDLE;
 
-            eventsMc0 = EventsMc0.i0;
+            eventsMc1 = EventsMc1.i1;
             eventsMc2 = EventsMc2.i2;
 
             breakdownM2 = BreakdownM2.OK;
 
-            ftAtEntranceMc0 = new FTRIG();
-            ftAtExitMc0 = new FTRIG();
+            mc1WorkingStage = Mc1WorkingStage.CONVEYOR;
+
+            ftAtEntranceMc1 = new FTRIG();
+            ftAtEntranceMc2 = new FTRIG();
+            ftAtExitMc1 = new FTRIG();
             ftAtExitMc2 = new FTRIG();
             ftAtBufferEnd = new FTRIG();
-            ftAtBadPieceExitMc0 = new FTRIG();
+            ftAtBadPieceExitMc1 = new FTRIG();
             ftAtBadPieceExitMc2 = new FTRIG();
             ftAtFinishedPieceExit = new FTRIG();
             ftAtBufferStart = new FTRIG();
@@ -248,22 +251,23 @@ namespace Controllers
 
             //%% EXPERIMENT END 
 
-            ////mc0
+            ////mc1
             //mc0Start.Value = false;
+            mc1Busy.Value = false;
 
-            ////mc0 buttons
-            mc0StartButton.Value = false;
+            ////mc1 buttons
+            mc1StartButton.Value = false;
             //mc0FailButton.Value = true;//unpressed is true
-            mc0RepairButton.Value = false;
+            mc1RepairButton.Value = false;
 
-            ////mc0 lights
+            ////mc1 lights
             //mc0RedLight.Value = false;
             //mc0YellowLight.Value = false;
             //mc0GreenLight.Value = true;
 
-            //mc0 others
-            mc0PositionerClamp.Value = false;
-            mc0PositionerRise.Value = true;
+            //mc1 others
+            mc1PositionerClamp.Value = false;
+            mc1PositionerRise.Value = true;
 
             ////Emitter
             emitter.Value = true;
@@ -281,17 +285,18 @@ namespace Controllers
             //mc2YellowLight.Value = false;
             //mc2GreenLight.Value = true;
 
-            s0Counter = 0;
-            r0Counter = 0;
+            s1Counter = 0;
+            r1Counter = 0;
             s2Counter = 0;
             r2Counter = 0;
 
             //Buffer
             bufferStopblade.Value = true;//True is rised
 
-            Console.WriteLine("State mc0Status: " + mc0Status);
+            Console.WriteLine("State mc1Status: " + mc1Status);
             Console.WriteLine("State mc2Status: " + mc2Status);
             Console.WriteLine("State bufferStatus: " + bufferStatus);
+            Console.WriteLine("State breakdownM2: " + breakdownM2);
 
             supervisoryControl = new SupervisoryControl();
 
@@ -299,41 +304,38 @@ namespace Controllers
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%
         {
-            supervisoryControl.On(mc0Status, mc2Status);
-            Console.WriteLine("Programa principal mc0Status: " + mc0Status);
-            Console.WriteLine("Programa principal mc2Status: " + mc2Status);
+            supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, eventsMc1, eventsMc2);
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            //s0
-            if (mc0StartButton.Value == true)
+            //s1
+            if (mc1StartButton.Value == true)
             {
-                if (s0Counter == 0)
+                if (s1Counter == 0)
                 {
-                    eventsMc0 = EventsMc0.s0;
-                    Console.WriteLine("s0 (c)");
-                    Console.WriteLine("State mc0Status: WORKING");
-                    s0Counter++;
+                    eventsMc1 = EventsMc1.s1;
+                    Console.WriteLine("s1 (c)");
+                    s1Counter++;
                 }
             }
             else
             {
-                s0Counter = 0;
+                s1Counter = 0;
             }
 
-            //r0
-            if (mc0RepairButton.Value == true)
+            //r1
+            if (mc1RepairButton.Value == true)
             {
-                if (r0Counter == 0)
+                if (r1Counter == 0)
                 {
-                    eventsMc0 = EventsMc0.r0;
-                    Console.WriteLine("r0 (c)");
-                    r0Counter++;
+                    eventsMc1 = EventsMc1.r1;
+                    Console.WriteLine("r1 (c)");
+                    r1Counter++;
                 }
                 
             }
             else
             {
-                r0Counter = 0;
+                r1Counter = 0;
             }
 
             //s2
@@ -343,7 +345,7 @@ namespace Controllers
                 {
                     eventsMc2 = EventsMc2.s2;
                     Console.WriteLine("s2 (c)");
-                    Console.WriteLine("State mc2Status: WORKING");
+                    //Console.WriteLine("State mc2Status: WORKING");
                     s2Counter++;
                 }
             }
@@ -375,23 +377,24 @@ namespace Controllers
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING TRIGGERS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             // Falling triggers
-            ftAtEntranceMc0.CLK(sensorEntranceMc0.Value);
-            ftAtExitMc0.CLK(sensorExitMc0.Value);
+            ftAtEntranceMc1.CLK(sensorEntranceMc1.Value);
+            ftAtEntranceMc2.CLK(sensorEntranceMc2.Value);
+            ftAtExitMc1.CLK(sensorExitMc1.Value);
             ftAtExitMc2.CLK(sensorExitMc2.Value);
             ftAtBufferEnd.CLK(sensorBufferEnd.Value);
             ftAtBufferStart.CLK(sensorMc2loadingConveyorStart.Value);
-            ftAtBadPieceExitMc0.CLK(sensorBadPieceFilterConveyorEndMc0.Value);
+            ftAtBadPieceExitMc1.CLK(sensorBadPieceFilterConveyorEndMc1.Value);
             ftAtBadPieceExitMc2.CLK(sensorBadPieceFilterConveyorEndMc2.Value);
             ftAtFinishedPieceExit.CLK(sensorFinishedPartExit.Value);
             ftAtMc2LoadingConveyorStart.CLK(sensorMc2loadingConveyorStart.Value);
-            ftAtEmitter.CLK(sensorMc0ConveyorEntrance.Value);
+            ftAtEmitter.CLK(sensorMc1ConveyorEntrance.Value);
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING TRIGGERS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONVEYORS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             //Buffer conveyor
-            if (sensorExitMc0.Value == true)
+            if (sensorExitMc1.Value == true)
             {
                 conveyorBuffer.Value = true;
             }
@@ -400,14 +403,14 @@ namespace Controllers
                 conveyorBuffer.Value = false;
             }
 
-            //Mc0 bad piece conveyor
-            if (sensorBadPieceFilterConveyorStartMc0.Value == true)
+            //Mc1 bad piece conveyor
+            if (sensorBadPieceFilterConveyorStartMc1.Value == true)
             {
-                conveyorMc0BadPiece.Value = true;
+                conveyorMc1BadPiece.Value = true;
             }
-            else if (ftAtBadPieceExitMc0.Q == true)
+            else if (ftAtBadPieceExitMc1.Q == true)
             {
-                conveyorMc0BadPiece.Value = false;
+                conveyorMc1BadPiece.Value = false;
             }
 
             //Finished piece conveyor
@@ -437,7 +440,7 @@ namespace Controllers
             if (bufferStatus == BufferStatus.EMPTY)
             {
                 //type here
-                if (sensorExitMc0.Value == true && mc0Failed == false)
+                if (sensorExitMc1.Value == true && mc1Failed == false)
                 {
                     Console.WriteLine("f0 (uc)");
                     bufferStatus = BufferStatus.FULL;
@@ -461,95 +464,108 @@ namespace Controllers
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            // %%%%%%%%%%%%% MC0 STARTS %%%%%%%%%%%%%%%%%%%
+            // %%%%%%%%%%%%% MC1 STARTS %%%%%%%%%%%%%%%%%%%
 
-            //%%%%%%%%%%%%%%%%%%% PREPARING MC0 PIECE STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            //%%%%%%%%%%%%%%%%%%% PREPARING MC1 PIECE STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            if (mc0PieceReady == Mc0PieceReady.NOT_READY)
+            if (mc1PieceReady == Mc1PieceReady.NOT_READY)
             {
                 emitter.Value = true;
                 if (sensorEmitter.Value == true)
                 {
-                    mc0PieceReady = Mc0PieceReady.READY;
+                    mc1PieceReady = Mc1PieceReady.READY;
                 }
             }
-            else if (mc0PieceReady == Mc0PieceReady.READY)
+            else if (mc1PieceReady == Mc1PieceReady.READY)
             {
                 emitter.Value = false;
+                if (ftAtEntranceMc1.Q)
+                {
+                    mc1PieceReady = Mc1PieceReady.NOT_READY;
+                }
             }
 
-            //%%%%%%%%%%%%%%%%%%% PREPARING MC0 PIECE ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            //%%%%%%%%%%%%%%%%%%% PREPARING MC1 PIECE ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            if (mc0Status == McStatus.IDLE)
+            if (mc1Status == McStatus.IDLE)
             {
-                if (eventsMc0 == EventsMc0.s0 && mc0PieceReady == Mc0PieceReady.READY)
+                if (eventsMc1 == EventsMc1.s1 && mc1PieceReady == Mc1PieceReady.READY)
                 {
-                    mc0PieceReadySteps = Mc0PieceReadySteps.SWITCHING_CONVEYORS;
-                    eventsMc0 = EventsMc0.i0;
+                    mc1Status = McStatus.WORKING;
+                    Console.WriteLine("State mc1Status: " + mc1Status);
+                    mc1PieceReadySteps = Mc1PieceReadySteps.SWITCHING_CONVEYORS;
+                    eventsMc1 = EventsMc1.i1;
                 }
-                else if (mc0PieceReadySteps == Mc0PieceReadySteps.SWITCHING_CONVEYORS)
+            }
+            else if (mc1Status == McStatus.WORKING)
+            {
+                if (mc1WorkingStage == Mc1WorkingStage.CONVEYOR)
                 {
-                    conveyorEmitter.Value = true;//Turns on both conveyors
-                    conveyorMc0Entrance.Value = true;//Turns on both conveyors
-                    if (ftAtEmitter.Q == true)//If it exits emitter sensor
+                    if (mc1PieceReadySteps == Mc1PieceReadySteps.SWITCHING_CONVEYORS)
                     {
-                        mc0PieceReadySteps = Mc0PieceReadySteps.REACHING_MC0ENTRANCE;
+                        conveyorEmitter.Value = true;//Turns on both conveyors
+                        conveyorMc1Entrance.Value = true;//Turns on both conveyors
+                        if (ftAtEmitter.Q == true)//If it exits emitter sensor
+                        {
+                            mc1PieceReadySteps = Mc1PieceReadySteps.REACHING_MC1ENTRANCE;
+                        }
                     }
-                }
-                else if (mc0PieceReadySteps == Mc0PieceReadySteps.REACHING_MC0ENTRANCE)
-                {
-                    conveyorEmitter.Value = false;//Turns off emitter conveyor
+                    else if (mc1PieceReadySteps == Mc1PieceReadySteps.REACHING_MC1ENTRANCE)
+                    {
+                        conveyorEmitter.Value = false;//Turns off emitter conveyor
+
+                        if (ftAtEntranceMc1.Q == true)
+                        {
+                            conveyorMc1Entrance.Value = false;//Turns off mc1 entrance conveyor
+                            mc1Start.Value = true;//Starts mc1
+                            mc1PieceReadySteps = Mc1PieceReadySteps.IDLE;
+                        }
+                    }
                     
-                    if (ftAtEntranceMc0.Q == true)
+                }
+                else if (mc1WorkingStage == Mc1WorkingStage.MACHINING_CENTER)
+                {
+                    if (mc1Busy.Value == true)
                     {
-                        conveyorMc0Entrance.Value = false;//Turns off mc0 entrance conveyor
-                        mc0Start.Value = true;//Starts mc0
-                        mc0PieceReadySteps = Mc0PieceReadySteps.IDLE;
-                        mc0PieceReady = Mc0PieceReady.NOT_READY;
+                        mc1Start.Value = false;
+                    }
+
+                    if (mc1Progress.Value == 90)
+                    {
+                        mc1Reset.Value = true;
+                    }
+
+                    if (mc1Busy.Value == false && mc1Failed == false)
+                    {
+                        mc1Reset.Value = false;
+                        mc1Status = McStatus.IDLE;
+                        Console.WriteLine("State mc1Status: " + mc1Status);
+                        mc1Failed = true; //will fail next time
+                    }
+                    else if (mc1Busy.Value == false && mc1Failed == true)
+                    {
+                        mc1Reset.Value = false;
+                        Console.WriteLine("b1 (uc)");
+                        mc1Status = McStatus.DOWN;
+                        Console.WriteLine("State mc1Status: " + mc1Status);
                     }
                 }
 
-                if (mc0Busy.Value == true)
-                {
-                    mc0Status = McStatus.WORKING;
-                    mc0Start.Value = false;
-                }
+                
             }
-            else if (mc0Status == McStatus.WORKING)
+            else if (mc1Status == McStatus.DOWN)
             {
-                if (mc0Progress.Value == 90)
-                {
-                    mc0Reset.Value = true;
-                }
+                mc1AlarmSiren.Value = true;
 
-                if (mc0Busy.Value == false && mc0Failed == false)
+                if (eventsMc1 == EventsMc1.r1)
                 {
-                    mc0Reset.Value = false;
-                    mc0Status = McStatus.IDLE;
-                    Console.WriteLine("State mc0Status: " + mc0Status);
-                    mc0Failed = true; //will fail next time
-                }
-                else if (mc0Busy.Value == false && mc0Failed == true)
-                {
-                    mc0Reset.Value = false;
-                    Console.WriteLine("b0 (uc)");
-                    mc0Status = McStatus.DOWN;
-                    Console.WriteLine("State mc0Status: " + mc0Status);
+                    mc1Failed = false;//Next piece will not fail
+                    mc1Status = McStatus.IDLE;
+                    Console.WriteLine("State mc1Status: " + mc1Status);
+                    mc1AlarmSiren.Value = false;
                 }
             }
-            else if (mc0Status == McStatus.DOWN)
-            {
-                mc0AlarmSiren.Value = true;
-
-                if (eventsMc0 == EventsMc0.r0)
-                {
-                    mc0Failed = false;//Next piece will not fail
-                    mc0Status = McStatus.IDLE;
-                    Console.WriteLine("State mc0Status: " + mc0Status);
-                    mc0AlarmSiren.Value = false;
-                }
-            }
-            // %%%%%%%%%%%% MC0 ENDS %%%%%%%%%%%%%%%%%%%%%%
+            // %%%%%%%%%%%% MC1 ENDS %%%%%%%%%%%%%%%%%%%%%%
 
             // %%%%%%%%%%%% MC2 STARTS %%%%%%%%%%%%%%%%%%%%
 
@@ -561,6 +577,7 @@ namespace Controllers
                     //type here
                     if (eventsMc2 == EventsMc2.s2 && bufferStatus == BufferStatus.FULL)
                     {
+                        Console.WriteLine("State mc2Status: " + mc2Status);
                         loadingMc2Step = Mc2LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
                     }
                 }
@@ -568,8 +585,8 @@ namespace Controllers
                 {
                     bufferStopblade.Value = false;//Drop Stopblade
                     mc2Start.Value = true;
-                    conveyorBuffer.Value = true;
-                    conveyorMc2Entrance.Value = true;
+                    conveyorBuffer.Value = true;//turn on both conveyors
+                    conveyorMc2Entrance.Value = true;//turn on both conveyors
 
                     if (sensorMc2loadingConveyorStart.Value == true)
                     {
@@ -578,7 +595,7 @@ namespace Controllers
                 }
                 else if (loadingMc2Step == Mc2LoadingSteps.SEPARATE_OTHER_PIECES)
                 {
-                    conveyorBuffer.Value = false;
+                    conveyorBuffer.Value = false;//turn of buffer conveyor
 
                     if (ftAtMc2LoadingConveyorStart.Q == true)
                     {
@@ -588,13 +605,21 @@ namespace Controllers
                 else if (loadingMc2Step == Mc2LoadingSteps.RESTORING_BUFFER_ORDER)
                 {
                     bufferStopblade.Value = true;
-                    conveyorBuffer.Value = true;
+                    conveyorBuffer.Value = true;//turn on buffer conveyor
 
-                    if (sensorBufferEnd.Value == true)
+                    if (sensorBufferEnd.Value == true || bufferStatus == BufferStatus.EMPTY)
                     {
-                        conveyorBuffer.Value = false;
-                        loadingMc2Step = Mc2LoadingSteps.IDLE;
+                        conveyorBuffer.Value = false;//turn off buffer conveyor
                     }
+                    if (ftAtEntranceMc2.Q == true)
+                    {
+                        loadingMc2Step = Mc2LoadingSteps.REACHED_MC2;
+                    }
+                }
+                else if (loadingMc2Step == Mc2LoadingSteps.REACHED_MC2)
+                {
+                    conveyorMc2Entrance.Value = false;//turn off entrance conveyor
+                    loadingMc2Step = Mc2LoadingSteps.IDLE;
                 }
 
                 if (mc2Busy.Value == true)
@@ -624,13 +649,14 @@ namespace Controllers
             else if (mc2Status == McStatus.DOWN)
             {
                 mc2AlarmSiren.Value = true;
-
+                breakdownM2 = BreakdownM2.KO;
                 if (eventsMc2 == EventsMc2.r2)
                 {
                     mc2Failed = false;
                     mc2Status = McStatus.IDLE;
                     Console.WriteLine("State mc2Status: " + mc2Status);
                     mc2AlarmSiren.Value = false;
+                    breakdownM2 = BreakdownM2.OK;
                 }
             }
 
@@ -641,44 +667,44 @@ namespace Controllers
             
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BAD PIECES FILTER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            //mc0
-            gripperMc0.stateTransition();
+            //mc1
+            gripperMc1.stateTransition();
 
-            if (mc0PositionerStatus == McPositionerStatus.UP)
+            if (mc1PositionerStatus == McPositionerStatus.UP)
             {
-                mc0PositionerClamp.Value = false;
-                mc0PositionerRise.Value = true;
-                if (sensorExitMc0.Value == true && mc0Failed == true)
+                mc1PositionerClamp.Value = false;
+                mc1PositionerRise.Value = true;
+                if (sensorExitMc1.Value == true && mc1Failed == true)
                 {
-                    mc0PositionerStatus = McPositionerStatus.DOWN;
+                    mc1PositionerStatus = McPositionerStatus.DOWN;
                 }
             }
-            else if (mc0PositionerStatus == McPositionerStatus.DOWN)
+            else if (mc1PositionerStatus == McPositionerStatus.DOWN)
             {
-                mc0PositionerRise.Value = false;
-                if (ftAtExitMc0.Q == true)
+                mc1PositionerRise.Value = false;
+                if (ftAtExitMc1.Q == true)
                 {
-                    mc0PositionerStatus = McPositionerStatus.CLAMP;
+                    mc1PositionerStatus = McPositionerStatus.CLAMP;
                 }
             }
-            else if (mc0PositionerStatus == McPositionerStatus.CLAMP)
+            else if (mc1PositionerStatus == McPositionerStatus.CLAMP)
             {
-                mc0PositionerClamp.Value = true;
-                if (mc0PositionerClamped.Value == true)
+                mc1PositionerClamp.Value = true;
+                if (mc1PositionerClamped.Value == true)
                 {
-                    gripperMc0.start();
-                    if (mc0GripperItemDetected.Value == true)
+                    gripperMc1.start();
+                    if (mc1GripperItemDetected.Value == true)
                     {
-                        mc0PositionerStatus = McPositionerStatus.GOING_UP;
+                        mc1PositionerStatus = McPositionerStatus.GOING_UP;
                     }
                 }
             }
-            else if (mc0PositionerStatus == McPositionerStatus.GOING_UP)
+            else if (mc1PositionerStatus == McPositionerStatus.GOING_UP)
             {
-                mc0PositionerClamp.Value = false;
-                if (sensorBadPieceFilterConveyorStartMc0.Value == true)
+                mc1PositionerClamp.Value = false;
+                if (sensorBadPieceFilterConveyorStartMc1.Value == true)
                 {
-                    mc0PositionerStatus = McPositionerStatus.UP;
+                    mc1PositionerStatus = McPositionerStatus.UP;
                 }
             }
 
@@ -748,18 +774,18 @@ public enum McPositionerStatus
     CLAMP,
     GOING_UP
 }
-public enum Mc0PieceReady
+public enum Mc1PieceReady
 {
     NOT_READY,
     READY
 }
 
-public enum Mc0PieceReadySteps
+public enum Mc1PieceReadySteps
 {
     IDLE,
     SWITCHING_CONVEYORS,
-    REACHING_MC0ENTRANCE,
-    ENTERINGMC0
+    REACHING_MC1ENTRANCE,
+    ENTERINGMC1
 }
 
 public enum Mc2LoadingSteps
@@ -767,16 +793,17 @@ public enum Mc2LoadingSteps
     IDLE,
     PIECE_TO_LOADING_CONVEYOR,
     SEPARATE_OTHER_PIECES,
-    RESTORING_BUFFER_ORDER
+    RESTORING_BUFFER_ORDER,
+    REACHED_MC2
 }
 
-public enum EventsMc0
+public enum EventsMc1
 {
-    s0,
-    f0,
-    b0,
-    r0,
-    i0
+    s1,
+    f1,
+    b1,
+    r1,
+    i1
 }
 
 public enum EventsMc2
@@ -792,6 +819,12 @@ public enum BreakdownM2
 {
     OK,
     KO
+}
+
+public enum Mc1WorkingStage
+{
+    CONVEYOR,
+    MACHINING_CENTER
 }
 
 
