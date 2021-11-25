@@ -59,12 +59,13 @@ namespace Controllers.Scenes
 
                 if (eventsMc1 == Events.s1)
                 {
-                    Console.WriteLine("Event " + eventsMc1 + " forbidden.");
+                    Console.WriteLine("Event " + eventsMc1 + " blocked.");
                     return (false);
                 }
                 else if (eventsMc2 == Events.s2)
                 {
-
+                    Console.WriteLine("Event " + eventsMc2 + " approved.");
+                    return (true);
                 }
             }
             return (false);

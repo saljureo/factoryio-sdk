@@ -486,6 +486,7 @@ namespace Controllers
             }
 
             //%%%%%%%%%%%%%%%%%%% PREPARING MC1 PIECE ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
 
             if (mc1Status == McStatus.IDLE)
             {
@@ -493,6 +494,8 @@ namespace Controllers
                 {
                     mc1Status = McStatus.WORKING;
                     Console.WriteLine("State mc1Status: " + mc1Status);
+                    mc1WorkingStage = Mc1WorkingStage.CONVEYOR;
+                    Console.WriteLine("mc1WorkingStage = " + mc1WorkingStage);
                     mc1PieceReadySteps = Mc1PieceReadySteps.SWITCHING_CONVEYORS;
                     eventsMc1 = Events.i1;
                 }
@@ -519,11 +522,12 @@ namespace Controllers
                             conveyorMc1Entrance.Value = false;//Turns off mc1 entrance conveyor
                             mc1Start.Value = true;//Starts mc1
                             mc1PieceReadySteps = Mc1PieceReadySteps.IDLE;
+                            mc1WorkingStage = Mc1WorkingStage.MACHINING_CENTER1;
                         }
                     }
                     
                 }
-                else if (mc1WorkingStage == Mc1WorkingStage.MACHINING_CENTER)
+                else if (mc1WorkingStage == Mc1WorkingStage.MACHINING_CENTER1)
                 {
                     if (mc1Busy.Value == true)
                     {
@@ -533,9 +537,12 @@ namespace Controllers
                     if (mc1Progress.Value == 90)
                     {
                         mc1Reset.Value = true;
+                        mc1WorkingStage = Mc1WorkingStage.MACHINING_CENTER2;
                     }
-
-                    if (mc1Busy.Value == false && mc1Failed == false)
+                }
+                else if (mc1WorkingStage == Mc1WorkingStage.MACHINING_CENTER2) 
+                {                    
+                if (mc1Busy.Value == false && mc1Failed == false)
                     {
                         mc1Reset.Value = false;
                         mc1Status = McStatus.IDLE;
@@ -820,7 +827,8 @@ public enum BreakdownM2
 public enum Mc1WorkingStage
 {
     CONVEYOR,
-    MACHINING_CENTER
+    MACHINING_CENTER1,
+    MACHINING_CENTER2
 }
 
 
