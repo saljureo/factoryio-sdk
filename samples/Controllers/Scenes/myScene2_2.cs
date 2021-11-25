@@ -102,8 +102,8 @@ namespace Controllers
         Mc1PieceReady mc1PieceReady;
         Mc1PieceReadySteps mc1PieceReadySteps;
 
-        EventsMc1 eventsMc1;
-        EventsMc2 eventsMc2;
+        Events eventsMc1;
+        Events eventsMc2;
 
         BreakdownM2 breakdownM2;
 
@@ -230,8 +230,8 @@ namespace Controllers
             mc1PieceReady = Mc1PieceReady.NOT_READY;
             mc1PieceReadySteps = Mc1PieceReadySteps.IDLE;
 
-            eventsMc1 = EventsMc1.i1;
-            eventsMc2 = EventsMc2.i2;
+            eventsMc1 = Events.i1;
+            eventsMc2 = Events.i2;
 
             breakdownM2 = BreakdownM2.OK;
 
@@ -312,7 +312,7 @@ namespace Controllers
             {
                 if (s1Counter == 0)
                 {
-                    eventsMc1 = EventsMc1.s1;
+                    eventsMc1 = Events.s1;
                     Console.WriteLine("s1 (c)");
                     s1Counter++;
                 }
@@ -327,7 +327,7 @@ namespace Controllers
             {
                 if (r1Counter == 0)
                 {
-                    eventsMc1 = EventsMc1.r1;
+                    eventsMc1 = Events.r1;
                     Console.WriteLine("r1 (c)");
                     r1Counter++;
                 }
@@ -343,7 +343,7 @@ namespace Controllers
             {
                 if (s2Counter == 0)
                 {
-                    eventsMc2 = EventsMc2.s2;
+                    eventsMc2 = Events.s2;
                     Console.WriteLine("s2 (c)");
                     //Console.WriteLine("State mc2Status: WORKING");
                     s2Counter++;
@@ -359,7 +359,7 @@ namespace Controllers
             {
                 if (r2Counter == 0)
                 {
-                    eventsMc2 = EventsMc2.r2;
+                    eventsMc2 = Events.r2;
                     Console.WriteLine("r2 (c)");
                     r2Counter++;
                 }
@@ -489,12 +489,12 @@ namespace Controllers
 
             if (mc1Status == McStatus.IDLE)
             {
-                if (eventsMc1 == EventsMc1.s1 && mc1PieceReady == Mc1PieceReady.READY)
+                if (eventsMc1 == Events.s1 && mc1PieceReady == Mc1PieceReady.READY)
                 {
                     mc1Status = McStatus.WORKING;
                     Console.WriteLine("State mc1Status: " + mc1Status);
                     mc1PieceReadySteps = Mc1PieceReadySteps.SWITCHING_CONVEYORS;
-                    eventsMc1 = EventsMc1.i1;
+                    eventsMc1 = Events.i1;
                 }
             }
             else if (mc1Status == McStatus.WORKING)
@@ -557,7 +557,7 @@ namespace Controllers
             {
                 mc1AlarmSiren.Value = true;
 
-                if (eventsMc1 == EventsMc1.r1)
+                if (eventsMc1 == Events.r1)
                 {
                     mc1Failed = false;//Next piece will not fail
                     mc1Status = McStatus.IDLE;
@@ -575,7 +575,7 @@ namespace Controllers
                 if (loadingMc2Step == Mc2LoadingSteps.IDLE)
                 {
                     //type here
-                    if (eventsMc2 == EventsMc2.s2 && bufferStatus == BufferStatus.FULL)
+                    if (eventsMc2 == Events.s2 && bufferStatus == BufferStatus.FULL)
                     {
                         Console.WriteLine("State mc2Status: " + mc2Status);
                         loadingMc2Step = Mc2LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
@@ -632,7 +632,7 @@ namespace Controllers
             {
                 if (mc2Busy.Value == false && mc2Failed == false)
                 {
-                    eventsMc2 = EventsMc2.f2;
+                    eventsMc2 = Events.f2;
                     Console.WriteLine("f2 (uc)");
                     mc2Status = McStatus.IDLE;
                     Console.WriteLine("State mc2Status: " + mc2Status);
@@ -640,7 +640,7 @@ namespace Controllers
                 }
                 else if (mc2Busy.Value == false && mc2Failed == true)
                 {
-                    eventsMc2 = EventsMc2.b2;
+                    eventsMc2 = Events.b2;
                     Console.WriteLine("b2 (uc)");
                     mc2Status = McStatus.DOWN;
                     Console.WriteLine("State mc2Status: " + mc2Status);
@@ -650,7 +650,7 @@ namespace Controllers
             {
                 mc2AlarmSiren.Value = true;
                 breakdownM2 = BreakdownM2.KO;
-                if (eventsMc2 == EventsMc2.r2)
+                if (eventsMc2 == Events.r2)
                 {
                     mc2Failed = false;
                     mc2Status = McStatus.IDLE;
@@ -797,17 +797,13 @@ public enum Mc2LoadingSteps
     REACHED_MC2
 }
 
-public enum EventsMc1
+public enum Events
 {
     s1,
     f1,
     b1,
     r1,
-    i1
-}
-
-public enum EventsMc2
-{
+    i1,
     s2,
     f2,
     b2,
