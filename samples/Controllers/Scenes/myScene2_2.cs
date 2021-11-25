@@ -88,6 +88,7 @@ namespace Controllers
 
         bool mc1Failed;
         bool mc2Failed;
+        bool supervisoryApproval;
 
         McStatus mc1Status;
         McStatus mc2Status;
@@ -102,8 +103,8 @@ namespace Controllers
         Mc1PieceReady mc1PieceReady;
         Mc1PieceReadySteps mc1PieceReadySteps;
 
-        Events eventsMc1;
-        Events eventsMc2;
+        Events eventsMc;
+        Events preeventMc;
 
         BreakdownM2 breakdownM2;
 
@@ -230,8 +231,8 @@ namespace Controllers
             mc1PieceReady = Mc1PieceReady.NOT_READY;
             mc1PieceReadySteps = Mc1PieceReadySteps.IDLE;
 
-            eventsMc1 = Events.i1;
-            eventsMc2 = Events.i2;
+            eventsMc = Events.i1;
+            preeventMc = Events.i1;
 
             breakdownM2 = BreakdownM2.OK;
 
@@ -293,18 +294,14 @@ namespace Controllers
             //Buffer
             bufferStopblade.Value = true;//True is rised
 
-            Console.WriteLine("State mc1Status: " + mc1Status);
-            Console.WriteLine("State mc2Status: " + mc2Status);
-            Console.WriteLine("State bufferStatus: " + bufferStatus);
-            Console.WriteLine("State breakdownM2: " + breakdownM2);
-
             supervisoryControl = new SupervisoryControl();
+            supervisoryApproval = true;
 
         } // %%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%
         {
-            supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, eventsMc1, eventsMc2);
+            
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             //s1
@@ -312,9 +309,15 @@ namespace Controllers
             {
                 if (s1Counter == 0)
                 {
-                    eventsMc1 = Events.s1;
-                    Console.WriteLine("s1 (c)");
-                    s1Counter++;
+                    preeventMc = Events.s1;
+                    supervisoryApproval = supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, preeventMc);
+                    if (supervisoryApproval == true)
+                    {
+                        eventsMc = Events.s1;
+                        Console.WriteLine("Event s1 executed.");
+                        s1Counter++;
+                    }
+                    
                 }
             }
             else
@@ -327,9 +330,15 @@ namespace Controllers
             {
                 if (r1Counter == 0)
                 {
-                    eventsMc1 = Events.r1;
-                    Console.WriteLine("r1 (c)");
-                    r1Counter++;
+                    preeventMc = Events.r1;
+                    supervisoryApproval = supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, preeventMc);
+                    if (supervisoryApproval == true)
+                    {
+                        eventsMc = Events.r1;
+                        Console.WriteLine("Event r1 executed.");
+                        r1Counter++;
+                    }
+                    
                 }
                 
             }
@@ -343,10 +352,15 @@ namespace Controllers
             {
                 if (s2Counter == 0)
                 {
-                    eventsMc2 = Events.s2;
-                    Console.WriteLine("s2 (c)");
-                    //Console.WriteLine("State mc2Status: WORKING");
-                    s2Counter++;
+                    preeventMc = Events.s2;
+                    supervisoryApproval = supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, preeventMc);
+                    if (supervisoryApproval == true)
+                    {
+                        eventsMc = Events.s2;
+                        Console.WriteLine("Event s2 executed.");
+                        s2Counter++;
+                    }
+                    
                 }
             }
             else
@@ -359,9 +373,15 @@ namespace Controllers
             {
                 if (r2Counter == 0)
                 {
-                    eventsMc2 = Events.r2;
-                    Console.WriteLine("r2 (c)");
-                    r2Counter++;
+                    preeventMc = Events.r2;
+                    supervisoryApproval = supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, preeventMc);
+                    if (supervisoryApproval == true)
+                    {
+                        eventsMc = Events.r2;
+                        Console.WriteLine("Event r2 executed.");
+                        r2Counter++;
+                    }
+                    
                 }
 
             }
@@ -442,7 +462,7 @@ namespace Controllers
                 //type here
                 if (sensorExitMc1.Value == true && mc1Failed == false)
                 {
-                    Console.WriteLine("f0 (uc)");
+                    Console.WriteLine("Event f1 is uncontrollable");
                     bufferStatus = BufferStatus.FULL;
                     Console.WriteLine("State bufferStatus: " + bufferStatus);
                 }
@@ -490,14 +510,13 @@ namespace Controllers
 
             if (mc1Status == McStatus.IDLE)
             {
-                if (eventsMc1 == Events.s1 && mc1PieceReady == Mc1PieceReady.READY)
+                if (eventsMc == Events.s1 && mc1PieceReady == Mc1PieceReady.READY)
                 {
                     mc1Status = McStatus.WORKING;
                     Console.WriteLine("State mc1Status: " + mc1Status);
                     mc1WorkingStage = Mc1WorkingStage.CONVEYOR;
-                    Console.WriteLine("mc1WorkingStage = " + mc1WorkingStage);
                     mc1PieceReadySteps = Mc1PieceReadySteps.SWITCHING_CONVEYORS;
-                    eventsMc1 = Events.i1;
+                    eventsMc = Events.i1;
                 }
             }
             else if (mc1Status == McStatus.WORKING)
@@ -552,7 +571,7 @@ namespace Controllers
                     else if (mc1Busy.Value == false && mc1Failed == true)
                     {
                         mc1Reset.Value = false;
-                        Console.WriteLine("b1 (uc)");
+                        Console.WriteLine("Event b1 is uncontrollable");
                         mc1Status = McStatus.DOWN;
                         Console.WriteLine("State mc1Status: " + mc1Status);
                     }
@@ -564,7 +583,7 @@ namespace Controllers
             {
                 mc1AlarmSiren.Value = true;
 
-                if (eventsMc1 == Events.r1)
+                if (eventsMc == Events.r1)
                 {
                     mc1Failed = false;//Next piece will not fail
                     mc1Status = McStatus.IDLE;
@@ -582,7 +601,7 @@ namespace Controllers
                 if (loadingMc2Step == Mc2LoadingSteps.IDLE)
                 {
                     //type here
-                    if (eventsMc2 == Events.s2 && bufferStatus == BufferStatus.FULL)
+                    if (eventsMc == Events.s2 && bufferStatus == BufferStatus.FULL)
                     {
                         Console.WriteLine("State mc2Status: " + mc2Status);
                         loadingMc2Step = Mc2LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
@@ -639,7 +658,7 @@ namespace Controllers
             {
                 if (mc2Busy.Value == false && mc2Failed == false)
                 {
-                    eventsMc2 = Events.f2;
+                    eventsMc = Events.f2;
                     Console.WriteLine("f2 (uc)");
                     mc2Status = McStatus.IDLE;
                     Console.WriteLine("State mc2Status: " + mc2Status);
@@ -647,7 +666,7 @@ namespace Controllers
                 }
                 else if (mc2Busy.Value == false && mc2Failed == true)
                 {
-                    eventsMc2 = Events.b2;
+                    eventsMc = Events.b2;
                     Console.WriteLine("b2 (uc)");
                     mc2Status = McStatus.DOWN;
                     Console.WriteLine("State mc2Status: " + mc2Status);
@@ -657,7 +676,7 @@ namespace Controllers
             {
                 mc2AlarmSiren.Value = true;
                 breakdownM2 = BreakdownM2.KO;
-                if (eventsMc2 == Events.r2)
+                if (eventsMc == Events.r2)
                 {
                     mc2Failed = false;
                     mc2Status = McStatus.IDLE;
