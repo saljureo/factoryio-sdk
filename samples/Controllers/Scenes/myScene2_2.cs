@@ -7,6 +7,7 @@
 using Controllers.Scenes;
 using EngineIO;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Controllers
@@ -74,6 +75,7 @@ namespace Controllers
         GripperArm gripperMc2;
 
         SupervisoryControl supervisoryControl;
+        SupervisoryControl2 supervisoryControl2;
 
         //conveyor belts
         MemoryBit conveyorMc2Entrance;
@@ -136,9 +138,10 @@ namespace Controllers
         FTRIG ftAtMc2LoadingConveyorStart;
         FTRIG ftAtEmitter;
         
-
+        
+        
         public myScene2_2()// %%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%
-        {  
+        {
             //%% EXPERIMENT START
 
             //Mc1
@@ -315,7 +318,10 @@ namespace Controllers
             //potentiometerMc2.Value = 1.0;
 
             supervisoryControl = new SupervisoryControl();
+            supervisoryControl2 = new SupervisoryControl2();
             supervisoryApproval = true;
+
+            supervisoryControl2.CreateController();
 
         } // %%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%
 
@@ -337,11 +343,10 @@ namespace Controllers
                 if (s1Counter == 0)
                 {
                     preeventMc = Events.s1;
-                    supervisoryApproval = supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, preeventMc);
+                    supervisoryApproval = supervisoryControl2.On2("s1");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s1;
-                        Console.WriteLine("Event s1 executed.");
                         s1Counter++;
                     }
                     
@@ -358,11 +363,10 @@ namespace Controllers
                 if (r1Counter == 0)
                 {
                     preeventMc = Events.r1;
-                    supervisoryApproval = supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, preeventMc);
+                    supervisoryApproval = supervisoryControl2.On2("r1");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r1;
-                        Console.WriteLine("Event r1 executed.");
                         r1Counter++;
                     }
                     
@@ -380,11 +384,10 @@ namespace Controllers
                 if (s2Counter == 0)
                 {
                     preeventMc = Events.s2;
-                    supervisoryApproval = supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, preeventMc);
+                    supervisoryApproval = supervisoryControl2.On2("s2");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s2;
-                        Console.WriteLine("Event s2 executed.");
                         s2Counter++;
                     }
                     
@@ -401,11 +404,10 @@ namespace Controllers
                 if (r2Counter == 0)
                 {
                     preeventMc = Events.r2;
-                    supervisoryApproval = supervisoryControl.On(mc1Status, mc2Status, bufferStatus, breakdownM2, preeventMc);
+                    supervisoryApproval = supervisoryControl2.On2("r2");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r2;
-                        Console.WriteLine("Event r2 executed.");
                         r2Counter++;
                     }
                     
@@ -489,9 +491,7 @@ namespace Controllers
                 //type here
                 if (sensorExitMc1.Value == true && mc1Failed == false)
                 {
-                    Console.WriteLine("Event f1 is uncontrollable");
                     bufferStatus = BufferStatus.FULL;
-                    Console.WriteLine("State bufferStatus: " + bufferStatus);
                 }
             }
             else if (bufferStatus == BufferStatus.FULL)
@@ -500,7 +500,6 @@ namespace Controllers
                 if (sensorEntranceMc2.Value == true)
                 {
                     bufferStatus = BufferStatus.EMPTY;
-                    Console.WriteLine("State bufferStatus: " + bufferStatus);
                 }
             }
 
@@ -540,7 +539,6 @@ namespace Controllers
                 if (eventsMc == Events.s1 && mc1PieceReady == Mc1PieceReady.READY)
                 {
                     mc1Status = McStatus.WORKING;
-                    Console.WriteLine("State mc1Status: " + mc1Status);
                     mc1WorkingStage = Mc1WorkingStage.CONVEYOR;
                     mc1PieceReadySteps = Mc1PieceReadySteps.SWITCHING_CONVEYORS;
                     eventsMc = Events.i1;
@@ -580,7 +578,7 @@ namespace Controllers
                         mc1Start.Value = false;
                     }
 
-                    if (mc1Progress.Value == 90)
+                    if (mc1Progress.Value > 90)
                     {
                         mc1Reset.Value = true;
                         mc1WorkingStage = Mc1WorkingStage.MACHINING_CENTER2;
@@ -592,15 +590,14 @@ namespace Controllers
                     {
                         mc1Reset.Value = false;
                         mc1Status = McStatus.IDLE;
-                        Console.WriteLine("State mc1Status: " + mc1Status);
+                        supervisoryApproval = supervisoryControl2.On2("f1");
                         mc1Failed = true; //will fail next time
                     }
                     else if (mc1Busy.Value == false && mc1Failed == true)
                     {
                         mc1Reset.Value = false;
-                        Console.WriteLine("Event b1 is uncontrollable");
                         mc1Status = McStatus.DOWN;
-                        Console.WriteLine("State mc1Status: " + mc1Status);
+                        supervisoryApproval = supervisoryControl2.On2("b1");
                     }
                 }
 
@@ -614,7 +611,6 @@ namespace Controllers
                 {
                     mc1Failed = false;//Next piece will not fail
                     mc1Status = McStatus.IDLE;
-                    Console.WriteLine("State mc1Status: " + mc1Status);
                     mc1AlarmSiren.Value = false;
                 }
             }
@@ -630,7 +626,6 @@ namespace Controllers
                     //type here
                     if (eventsMc == Events.s2 && bufferStatus == BufferStatus.FULL)
                     {
-                        Console.WriteLine("State mc2Status: " + mc2Status);
                         loadingMc2Step = Mc2LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
                     }
                 }
@@ -686,17 +681,15 @@ namespace Controllers
                 if (mc2Busy.Value == false && mc2Failed == false)
                 {
                     eventsMc = Events.f2;
-                    Console.WriteLine("f2 (uc)");
                     mc2Status = McStatus.IDLE;
-                    Console.WriteLine("State mc2Status: " + mc2Status);
+                    supervisoryApproval = supervisoryControl2.On2("f2");
                     mc2Failed = true; //will fail next time
                 }
                 else if (mc2Busy.Value == false && mc2Failed == true)
                 {
                     eventsMc = Events.b2;
-                    Console.WriteLine("b2 (uc)");
                     mc2Status = McStatus.DOWN;
-                    Console.WriteLine("State mc2Status: " + mc2Status);
+                    supervisoryApproval = supervisoryControl2.On2("b2");
                 }
             }
             else if (mc2Status == McStatus.DOWN)
@@ -707,7 +700,6 @@ namespace Controllers
                 {
                     mc2Failed = false;
                     mc2Status = McStatus.IDLE;
-                    Console.WriteLine("State mc2Status: " + mc2Status);
                     mc2AlarmSiren.Value = false;
                     breakdownM2 = BreakdownM2.OK;
                 }
