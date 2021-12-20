@@ -14,7 +14,7 @@ namespace Controllers
 {
     public class machines2AndBuffer : Controller
     {
-        //Mc0
+        //Mc1
         MemoryBit mc1StartButton;
         MemoryBit mc1FailButton;
         MemoryBit mc1RepairButton;
@@ -33,7 +33,9 @@ namespace Controllers
         MemoryBit mc1AlarmSiren;
         MemoryBit mc1PositionerRise;
         MemoryBit mc1PositionerClamp;
-        
+        int timeDownMc1;
+        int timeDownMc2;
+
         //Sensors
         MemoryBit sensorMc1ConveyorEntrance;//Diffuse Sensor 0 - Emitter
         MemoryBit sensorEntranceMc1;//Diffuse Sensor 1 - MC0 entrance
@@ -75,7 +77,6 @@ namespace Controllers
         GripperArm gripperMc2;
 
         SupervisoryControl supervisoryControl;
-        SupervisoryControl2 supervisoryControl2;
 
         //conveyor belts
         MemoryBit conveyorMc2Entrance;
@@ -109,15 +110,14 @@ namespace Controllers
 
         BufferStatus bufferStatus = BufferStatus.EMPTY;
 
-        Mc2LoadingSteps loadingMc2Step = Mc2LoadingSteps.IDLE;
+        Mc2andMc3LoadingSteps loadingMc2Step = Mc2andMc3LoadingSteps.IDLE;
 
         Mc1PieceReady mc1PieceReady;
         Mc1PieceReadySteps mc1PieceReadySteps;
 
         Events eventsMc;
-        Events preeventMc;
 
-        BreakdownM2 breakdownM2;
+        BreakdownMc2OrMc3 breakdownM2;
 
         Mc1WorkingStage mc1WorkingStage;
 
@@ -164,7 +164,8 @@ namespace Controllers
             mc1PositionerRise = MemoryMap.Instance.GetBit("Right Positioner 0 (Raise)", MemoryType.Output);
             mc1PositionerClamp = MemoryMap.Instance.GetBit("Right Positioner 0 (Clamp)", MemoryType.Output);
 
-
+            timeDownMc1 = 0;
+            timeDownMc2 = 0;
 
             //Sensors
             sensorMc1ConveyorEntrance = MemoryMap.Instance.GetBit("Diffuse Sensor 0", MemoryType.Input);//Diffuse Sensor 0 - Emitter
@@ -245,15 +246,14 @@ namespace Controllers
 
             BufferStatus bufferStatus = BufferStatus.EMPTY;
 
-            Mc2LoadingSteps loadingMc2Step = Mc2LoadingSteps.IDLE;
+            Mc2andMc3LoadingSteps loadingMc2Step = Mc2andMc3LoadingSteps.IDLE;
 
             mc1PieceReady = Mc1PieceReady.NOT_READY;
             mc1PieceReadySteps = Mc1PieceReadySteps.IDLE;
 
             eventsMc = Events.i1;
-            preeventMc = Events.i1;
 
-            breakdownM2 = BreakdownM2.OK;
+            breakdownM2 = BreakdownMc2OrMc3.OK;
 
             mc1WorkingStage = Mc1WorkingStage.CONVEYOR;
 
@@ -318,10 +318,10 @@ namespace Controllers
             //potentiometerMc2.Value = 1.0;
 
             supervisoryControl = new SupervisoryControl();
-            supervisoryControl2 = new SupervisoryControl2();
+            supervisoryControl = new SupervisoryControl();
             supervisoryApproval = true;
 
-            supervisoryControl2.CreateController();
+            supervisoryControl.CreateController();
 
         } // %%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%
 
@@ -342,8 +342,7 @@ namespace Controllers
             {
                 if (s1Counter == 0)
                 {
-                    preeventMc = Events.s1;
-                    supervisoryApproval = supervisoryControl2.On2("s1");
+                    supervisoryApproval = supervisoryControl.On2("s1");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s1;
@@ -362,8 +361,7 @@ namespace Controllers
             {
                 if (r1Counter == 0)
                 {
-                    preeventMc = Events.r1;
-                    supervisoryApproval = supervisoryControl2.On2("r1");
+                    supervisoryApproval = supervisoryControl.On2("r1");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r1;
@@ -383,8 +381,7 @@ namespace Controllers
             {
                 if (s2Counter == 0)
                 {
-                    preeventMc = Events.s2;
-                    supervisoryApproval = supervisoryControl2.On2("s2");
+                    supervisoryApproval = supervisoryControl.On2("s2");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s2;
@@ -403,8 +400,7 @@ namespace Controllers
             {
                 if (r2Counter == 0)
                 {
-                    preeventMc = Events.r2;
-                    supervisoryApproval = supervisoryControl2.On2("r2");
+                    supervisoryApproval = supervisoryControl.On2("r2");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r2;
@@ -590,14 +586,14 @@ namespace Controllers
                     {
                         mc1Reset.Value = false;
                         mc1Status = McStatus.IDLE;
-                        supervisoryApproval = supervisoryControl2.On2("f1");
+                        supervisoryApproval = supervisoryControl.On2("f1");
                         mc1Failed = true; //will fail next time
                     }
                     else if (mc1Busy.Value == false && mc1Failed == true)
                     {
                         mc1Reset.Value = false;
                         mc1Status = McStatus.DOWN;
-                        supervisoryApproval = supervisoryControl2.On2("b1");
+                        supervisoryApproval = supervisoryControl.On2("b1");
                     }
                 }
 
@@ -607,8 +603,31 @@ namespace Controllers
             {
                 mc1AlarmSiren.Value = true;
 
+                // %%%%%%%%%%%%%%%%% DOWN LIGHTS START %%%%%%%%%%%%%%%%
+                if (timeDownMc1 < 30)
+                {
+                    mc1GreenLight.Value = false;
+                    mc1YellowLight.Value = false;
+                    mc1RedLight.Value = false;
+                }
+                else if (timeDownMc1 < 60)
+                {
+                    mc1GreenLight.Value = true;
+                    mc1YellowLight.Value = true;
+                    mc1RedLight.Value = true;
+                }
+                else if (timeDownMc1 == 60)
+                {
+                    timeDownMc1 = 0;
+                }
+                timeDownMc1++;
+                // %%%%%%%%%%%%%%%%% DOWN LIGHTS END %%%%%%%%%%%%%%%%
+
                 if (eventsMc == Events.r1)
                 {
+                    mc1GreenLight.Value = false;
+                    mc1YellowLight.Value = false;
+                    mc1RedLight.Value = false;
                     mc1Failed = false;//Next piece will not fail
                     mc1Status = McStatus.IDLE;
                     mc1AlarmSiren.Value = false;
@@ -621,15 +640,15 @@ namespace Controllers
             if (mc2Status == McStatus.IDLE)
             {
                 // %%%%%%%%% MC2 LOADING STEPS START %%%%%%%%%%%%%%
-                if (loadingMc2Step == Mc2LoadingSteps.IDLE)
+                if (loadingMc2Step == Mc2andMc3LoadingSteps.IDLE)
                 {
                     //type here
                     if (eventsMc == Events.s2 && bufferStatus == BufferStatus.FULL)
                     {
-                        loadingMc2Step = Mc2LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
+                        loadingMc2Step = Mc2andMc3LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
                     }
                 }
-                else if (loadingMc2Step == Mc2LoadingSteps.PIECE_TO_LOADING_CONVEYOR)
+                else if (loadingMc2Step == Mc2andMc3LoadingSteps.PIECE_TO_LOADING_CONVEYOR)
                 {
                     bufferStopblade.Value = false;//Drop Stopblade
                     mc2Start.Value = true;
@@ -638,19 +657,19 @@ namespace Controllers
 
                     if (sensorMc2loadingConveyorStart.Value == true)
                     {
-                        loadingMc2Step = Mc2LoadingSteps.SEPARATE_OTHER_PIECES;
+                        loadingMc2Step = Mc2andMc3LoadingSteps.SEPARATE_OTHER_PIECES;
                     }
                 }
-                else if (loadingMc2Step == Mc2LoadingSteps.SEPARATE_OTHER_PIECES)
+                else if (loadingMc2Step == Mc2andMc3LoadingSteps.SEPARATE_OTHER_PIECES)
                 {
                     conveyorBuffer.Value = false;//turn of buffer conveyor
 
                     if (ftAtMc2LoadingConveyorStart.Q == true)
                     {
-                        loadingMc2Step = Mc2LoadingSteps.RESTORING_BUFFER_ORDER;
+                        loadingMc2Step = Mc2andMc3LoadingSteps.RESTORING_BUFFER_ORDER;
                     }
                 }
-                else if (loadingMc2Step == Mc2LoadingSteps.RESTORING_BUFFER_ORDER)
+                else if (loadingMc2Step == Mc2andMc3LoadingSteps.RESTORING_BUFFER_ORDER)
                 {
                     bufferStopblade.Value = true;
                     conveyorBuffer.Value = true;//turn on buffer conveyor
@@ -661,13 +680,13 @@ namespace Controllers
                     }
                     if (ftAtEntranceMc2.Q == true)
                     {
-                        loadingMc2Step = Mc2LoadingSteps.REACHED_MC2;
+                        loadingMc2Step = Mc2andMc3LoadingSteps.REACHED_MC;
                     }
                 }
-                else if (loadingMc2Step == Mc2LoadingSteps.REACHED_MC2)
+                else if (loadingMc2Step == Mc2andMc3LoadingSteps.REACHED_MC)
                 {
                     conveyorMc2Entrance.Value = false;//turn off entrance conveyor
-                    loadingMc2Step = Mc2LoadingSteps.IDLE;
+                    loadingMc2Step = Mc2andMc3LoadingSteps.IDLE;
                 }
 
                 if (mc2Busy.Value == true)
@@ -682,26 +701,47 @@ namespace Controllers
                 {
                     eventsMc = Events.f2;
                     mc2Status = McStatus.IDLE;
-                    supervisoryApproval = supervisoryControl2.On2("f2");
+                    supervisoryApproval = supervisoryControl.On2("f2");
                     mc2Failed = true; //will fail next time
                 }
                 else if (mc2Busy.Value == false && mc2Failed == true)
                 {
                     eventsMc = Events.b2;
                     mc2Status = McStatus.DOWN;
-                    supervisoryApproval = supervisoryControl2.On2("b2");
+                    supervisoryApproval = supervisoryControl.On2("b2");
                 }
             }
             else if (mc2Status == McStatus.DOWN)
             {
                 mc2AlarmSiren.Value = true;
-                breakdownM2 = BreakdownM2.KO;
+                breakdownM2 = BreakdownMc2OrMc3.KO;
+
+                // %%%%%%%%%%%%%%%%% DOWN LIGHTS START %%%%%%%%%%%%%%%%
+                if (timeDownMc2 < 30)
+                {
+                    mc2GreenLight.Value = false;
+                    mc2YellowLight.Value = false;
+                    mc2RedLight.Value = false;
+                }
+                else if (timeDownMc2 < 60)
+                {
+                    mc2GreenLight.Value = true;
+                    mc2YellowLight.Value = true;
+                    mc2RedLight.Value = true;
+                }
+                else if (timeDownMc2 == 60)
+                {
+                    timeDownMc2 = 0;
+                }
+                timeDownMc2++;
+                // %%%%%%%%%%%%%%%%% DOWN LIGHTS END %%%%%%%%%%%%%%%%
+
                 if (eventsMc == Events.r2)
                 {
                     mc2Failed = false;
                     mc2Status = McStatus.IDLE;
                     mc2AlarmSiren.Value = false;
-                    breakdownM2 = BreakdownM2.OK;
+                    breakdownM2 = BreakdownMc2OrMc3.OK;
                 }
             }
 
@@ -833,13 +873,13 @@ public enum Mc1PieceReadySteps
     ENTERINGMC1
 }
 
-public enum Mc2LoadingSteps
+public enum Mc2andMc3LoadingSteps
 {
     IDLE,
     PIECE_TO_LOADING_CONVEYOR,
     SEPARATE_OTHER_PIECES,
     RESTORING_BUFFER_ORDER,
-    REACHED_MC2
+    REACHED_MC
 }
 
 public enum Events
@@ -853,10 +893,15 @@ public enum Events
     f2,
     b2,
     r2,
-    i2
+    i2,
+    s3,
+    f3,
+    b3,
+    r3,
+    i3
 }
 
-public enum BreakdownM2
+public enum BreakdownMc2OrMc3
 {
     OK,
     KO
