@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace Controllers
 {
-    public class myScene2_2 : Controller
+    public class machines2AndBuffer : Controller
     {
         //Mc0
         MemoryBit mc1StartButton;
@@ -140,7 +140,7 @@ namespace Controllers
         
         
         
-        public myScene2_2()// %%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%
+        public machines2AndBuffer()// %%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%
         {
             //%% EXPERIMENT START
 
