@@ -41,7 +41,7 @@ namespace Controllers.Scenes
             diccionario.Add(("OK_E_w1_w2", "b1"), "OK_E_d1_w2");//Uncontrollable
         }
 
-        public bool On2(string evento)
+        public bool On(string evento)
         {
             
             if (diccionario.ContainsKey((currentState, evento)))

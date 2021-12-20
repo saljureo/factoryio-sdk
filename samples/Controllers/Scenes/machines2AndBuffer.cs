@@ -347,7 +347,7 @@ namespace Controllers
             {
                 if (s1Counter == 0)
                 {
-                    supervisoryApproval = supervisoryControl.On2("s1");
+                    supervisoryApproval = supervisoryControl.On("s1");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s1;
@@ -366,7 +366,7 @@ namespace Controllers
             {
                 if (r1Counter == 0)
                 {
-                    supervisoryApproval = supervisoryControl.On2("r1");
+                    supervisoryApproval = supervisoryControl.On("r1");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r1;
@@ -386,7 +386,7 @@ namespace Controllers
             {
                 if (s2Counter == 0)
                 {
-                    supervisoryApproval = supervisoryControl.On2("s2");
+                    supervisoryApproval = supervisoryControl.On("s2");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s2;
@@ -405,7 +405,7 @@ namespace Controllers
             {
                 if (r2Counter == 0)
                 {
-                    supervisoryApproval = supervisoryControl.On2("r2");
+                    supervisoryApproval = supervisoryControl.On("r2");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r2;
@@ -591,14 +591,14 @@ namespace Controllers
                     {
                         mc1Reset.Value = false;
                         mc1Status = McStatus.IDLE;
-                        supervisoryApproval = supervisoryControl.On2("f1");
+                        supervisoryApproval = supervisoryControl.On("f1");
                         mc1Failed = true; //will fail next time
                     }
                     else if (mc1Busy.Value == false && mc1Failed == true)
                     {
                         mc1Reset.Value = false;
                         mc1Status = McStatus.DOWN;
-                        supervisoryApproval = supervisoryControl.On2("b1");
+                        supervisoryApproval = supervisoryControl.On("b1");
                     }
                 }
 
@@ -685,14 +685,14 @@ namespace Controllers
                 {
                     eventsMc = Events.f2;
                     mc2Status = McStatus.IDLE;
-                    supervisoryApproval = supervisoryControl.On2("f2");
+                    supervisoryApproval = supervisoryControl.On("f2");
                     mc2Failed = true; //will fail next time
                 }
                 else if (mc2Busy.Value == false && mc2Failed == true)
                 {
                     eventsMc = Events.b2;
                     mc2Status = McStatus.DOWN;
-                    supervisoryApproval = supervisoryControl.On2("b2");
+                    supervisoryApproval = supervisoryControl.On("b2");
                 }
             }
             else if (mc2Status == McStatus.DOWN)
