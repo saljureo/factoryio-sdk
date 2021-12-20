@@ -738,6 +738,9 @@ namespace Controllers
 
                 if (eventsMc == Events.r2)
                 {
+                    mc2GreenLight.Value = false;
+                    mc2YellowLight.Value = false;
+                    mc2RedLight.Value = false;
                     mc2Failed = false;
                     mc2Status = McStatus.IDLE;
                     mc2AlarmSiren.Value = false;
