@@ -917,5 +917,12 @@ public enum Mc1WorkingStage
     MACHINING_CENTER2
 }
 
+public enum McStatus
+{
+    IDLE,
+    WORKING,
+    DOWN
+}
+
 
 
