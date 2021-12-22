@@ -14,8 +14,26 @@ namespace Controllers.Scenes
         private GripperStatus gripperStatus = GripperStatus.IDLE;
         private GripperStep gripperStep = GripperStep.INITIAL;
         private int timeVibrationGripper;
-        private int timeWorkingGripper;
-        private int timeDownGripper;
+
+        private enum GripperStatus
+        {
+            IDLE,
+            WORKING,
+            DOWN
+        }
+        private enum GripperStep
+        {
+            INITIAL,
+            DOWN_LOOK_FOR_PART,
+            GRAB,
+            UP_WITH_PART,
+            X_EXTEND,
+            DOWN_WITH_PART,
+            RELEASE,
+            UP_NO_PART,
+            X_RETRACT,
+            DOWN_VIBRATING
+        }
 
         public GripperArm(MemoryFloat posX, MemoryFloat posZ, MemoryFloat setX, MemoryFloat setZ, MemoryBit grab)
         {
@@ -26,7 +44,7 @@ namespace Controllers.Scenes
             this.grab = grab;
         }
 
-        public void start()
+        public void Start()
         {
             if (gripperStep == GripperStep.INITIAL && gripperStatus != GripperStatus.DOWN)
             {
@@ -34,13 +52,13 @@ namespace Controllers.Scenes
             }
         }
 
-        public void fail()
+        public void Fail()
         {
             gripperStatus = GripperStatus.DOWN;
             gripperStep = GripperStep.DOWN_VIBRATING;
         }
 
-        public void repair()
+        public void Repair()
         {
             if (gripperStatus == GripperStatus.DOWN)
             {
@@ -50,12 +68,7 @@ namespace Controllers.Scenes
             } 
         }
 
-        public int getTimeRunning()
-        {
-            return timeWorkingGripper;
-        }
-
-        public void stateTransition()
+        public void StateTransition()
         {
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GRIPPER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -68,8 +81,6 @@ namespace Controllers.Scenes
             }
             else if (gripperStatus == GripperStatus.WORKING)// %% IF GRIPPER IS WORKING %%%%
             {
-                timeWorkingGripper++;
-
                 if (gripperStep == GripperStep.INITIAL) //Gripper going to initial position.
                 {
                     setZ.Value = 0.0f;
@@ -144,8 +155,6 @@ namespace Controllers.Scenes
             }
             else if (gripperStatus == GripperStatus.DOWN) // %%%%%%%%%%%%%%%%% GRIPPER IS DOWN %%%%%%%%%%%%%%%%
             {
-                timeDownGripper++; // %%%%%%%%%%%%%%%%% DOWN LIGHTS AND ALARM END %%%%%%%%%%%%%%%%
-
                 if (gripperStep == GripperStep.DOWN_VIBRATING) // %%%%%%%%%%%%%%%%% DOWN VIBRATION STARTS %%%%%%%%%%%%%%%%
                 {
                     if (timeVibrationGripper == 1)
@@ -168,30 +177,5 @@ namespace Controllers.Scenes
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GRIPPER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         }
-
-        internal bool isDown()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public enum GripperStatus
-    {
-        IDLE,
-        WORKING,
-        DOWN
-    }
-    public enum GripperStep
-    {
-        INITIAL,
-        DOWN_LOOK_FOR_PART,
-        GRAB,
-        UP_WITH_PART,
-        X_EXTEND,
-        DOWN_WITH_PART,
-        RELEASE,
-        UP_NO_PART,
-        X_RETRACT,
-        DOWN_VIBRATING
     }
 }

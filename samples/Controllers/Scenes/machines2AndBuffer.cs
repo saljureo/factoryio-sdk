@@ -11,99 +11,97 @@ using System.Diagnostics;
 
 namespace Controllers
 {
-    public class machines2AndBuffer : Controller
+    public class Machines2AndBuffer : Controller
     {
         //Mc1 inputs
-        MemoryBit mc1StartButton;
-        MemoryBit mc1FailButton;
-        MemoryBit mc1RepairButton;
-        MemoryBit mc1Busy;
-        MemoryInt mc1Progress;
-        MemoryBit mc1PositionerClamped;//Mc1 positioner clamped sensor
-        MemoryBit mc1GripperItemDetected;//Mc1 positioner item detected sensor
-        
+        readonly MemoryBit mc1StartButton;
+        readonly MemoryBit mc1FailButton;
+        readonly MemoryBit mc1RepairButton;
+        readonly MemoryBit mc1Busy;
+        readonly MemoryInt mc1Progress;
+        readonly MemoryBit mc1PositionerClamped;//Mc1 positioner clamped sensor
+        readonly MemoryBit mc1GripperItemDetected;//Mc1 positioner item detected sensor
+
         //Mc1 outputs
-        MemoryBit mc1Start;//Machining Center start
-        MemoryBit mc1Reset;//Machining Center reset (so it leaves piece incomplete)
-        MemoryBit mc1RedLight;
-        MemoryBit mc1YellowLight;
-        MemoryBit mc1GreenLight;
-        MemoryBit mc1AlarmSiren;
-        MemoryBit mc1PositionerRise;
-        MemoryBit mc1PositionerClamp;
+        readonly MemoryBit mc1Start;//Machining Center start
+        readonly MemoryBit mc1Reset;//Machining Center reset (so it leaves piece incomplete)
+        readonly MemoryBit mc1RedLight;
+        readonly MemoryBit mc1YellowLight;
+        readonly MemoryBit mc1GreenLight;
+        readonly MemoryBit mc1AlarmSiren;
+        readonly MemoryBit mc1PositionerRise;
+        readonly MemoryBit mc1PositionerClamp;
 
         //Mc2 inputs
-        MemoryBit mc2StartButton;
-        MemoryBit mc2FailButton;
-        MemoryBit mc2RepairButton;
-        MemoryBit mc2Busy;
-        MemoryBit mc2PositionerClamped;
-        MemoryBit mc2GripperItemDetected;
+        readonly MemoryBit mc2StartButton;
+        readonly MemoryBit mc2FailButton;
+        readonly MemoryBit mc2RepairButton;
+        readonly MemoryBit mc2Busy;
+        readonly MemoryBit mc2PositionerClamped;
+        readonly MemoryBit mc2GripperItemDetected;
 
         //Mc2 outputs
-        MemoryBit mc2Start;
-        MemoryBit mc2RedLight;
-        MemoryBit mc2YellowLight;
-        MemoryBit mc2GreenLight;
-        MemoryBit mc2AlarmSiren;
-        MemoryBit mc2PositionerClamp;
-        MemoryBit mc2PositionerRise;
+        readonly MemoryBit mc2Start;
+        readonly MemoryBit mc2RedLight;
+        readonly MemoryBit mc2YellowLight;
+        readonly MemoryBit mc2GreenLight;
+        readonly MemoryBit mc2AlarmSiren;
+        readonly MemoryBit mc2PositionerClamp;
+        readonly MemoryBit mc2PositionerRise;
 
         //Sensors
-        MemoryBit sensorMc1ConveyorEntrance;//Diffuse Sensor 0 - Emitter
-        MemoryBit sensorEntranceMc1;//Diffuse Sensor 1 - MC0 entrance
-        MemoryBit sensorExitMc1;//Diffuse Sensor 2 - MC0 exit/Buffer conveyor entry/MC0 bad piece filter
-        MemoryBit sensorBufferEnd;//Diffuse Sensor 3 - Buffer end
-        MemoryBit sensorMc2loadingConveyorStart;//Diffuse Sensor 3_2 - Buffer start
-        MemoryBit sensorEntranceMc2;//Diffuse Sensor 5 - MC2 entrance
-        MemoryBit sensorBadPieceFilterConveyorStartMc1;//Diffuse Sensor 6 - MC0 bad piece filter conveyor entrance
-        MemoryBit sensorBadPieceFilterConveyorEndMc1;//Diffuse Sensor 7 - MC0 bad piece filter conveyor exit
-        MemoryBit sensorExitMc2;//Diffuse Sensor 8 - MC2 exit/MC2 bad piece filter
-        MemoryBit sensorFinishedPartExit;//Diffuse Sensor 9 - Finished piece exit
-        MemoryBit sensorBadPieceFilterConveyorStartMc2;//Diffuse Sensor 10 - MC2 bad piece conveyor entrance
-        MemoryBit sensorBadPieceFilterConveyorEndMc2;//Diffuse Sensor 11 - MC2 bad piece conveyor exit
-        MemoryBit sensorBufferSpot2;//Diffuse Sensor 13 
-        MemoryBit sensorBufferSpot3;//Diffuse Sensor 14
-        MemoryBit sensorEmitter;
+        readonly MemoryBit sensorMc1ConveyorEntrance;//Diffuse Sensor 0 - Emitter
+        readonly MemoryBit sensorEntranceMc1;//Diffuse Sensor 1 - MC0 entrance
+        readonly MemoryBit sensorExitMc1;//Diffuse Sensor 2 - MC0 exit/Buffer conveyor entry/MC0 bad piece filter
+        readonly MemoryBit sensorBufferEnd;//Diffuse Sensor 3 - Buffer end
+        readonly MemoryBit sensorMc2loadingConveyorStart;//Diffuse Sensor 3_2 - Buffer start
+        readonly MemoryBit sensorEntranceMc2;//Diffuse Sensor 5 - MC2 entrance
+        readonly MemoryBit sensorBadPieceFilterConveyorStartMc1;//Diffuse Sensor 6 - MC0 bad piece filter conveyor entrance
+        readonly MemoryBit sensorBadPieceFilterConveyorEndMc1;//Diffuse Sensor 7 - MC0 bad piece filter conveyor exit
+        readonly MemoryBit sensorExitMc2;//Diffuse Sensor 8 - MC2 exit/MC2 bad piece filter
+        readonly MemoryBit sensorFinishedPartExit;//Diffuse Sensor 9 - Finished piece exit
+        readonly MemoryBit sensorBadPieceFilterConveyorStartMc2;//Diffuse Sensor 10 - MC2 bad piece conveyor entrance
+        readonly MemoryBit sensorBadPieceFilterConveyorEndMc2;//Diffuse Sensor 11 - MC2 bad piece conveyor exit
+        readonly MemoryBit sensorBufferSpot2;//Diffuse Sensor 13 
+        readonly MemoryBit sensorBufferSpot3;//Diffuse Sensor 14
+        readonly MemoryBit sensorEmitter;
 
         //Emitter
-        MemoryBit emitterStartButton; //Emitter start button
-        MemoryBit emitter;//Emitter
+        readonly MemoryBit emitter;//Emitter
 
         //Buffer
-        MemoryBit bufferStopblade;//Buffer stopblade
+        readonly MemoryBit bufferStopblade;//Buffer stopblade
 
         //GripperArms
-        GripperArm gripperMc1;
-        GripperArm gripperMc2;
+        readonly GripperArm gripperMc1;
+        readonly GripperArm gripperMc2;
 
         //Light controls
-        McLightsControl mc1Lights;
-        McLightsControl mc2Lights;
+        readonly McLightsControl mc1Lights;
+        readonly McLightsControl mc2Lights;
 
         //SUPERVISORY CONTROL
-        machines2AndBufferSupervisor supervisoryControl;
+        readonly Machines2AndBufferSupervisor supervisoryControl;
         bool supervisoryApproval;
 
         //conveyor belts
-        MemoryBit conveyorMc2Entrance;
-        MemoryBit conveyorMc1Entrance;
-        MemoryBit conveyorMc1BadPiece;
-        MemoryBit conveyorFinishedPiece;
-        MemoryBit conveyorMc2BadPiece;
-        MemoryBit conveyorEmitter;
-        MemoryBit conveyorBuffer;
+        readonly MemoryBit conveyorMc2Entrance;
+        readonly MemoryBit conveyorMc1Entrance;
+        readonly MemoryBit conveyorMc1BadPiece;
+        readonly MemoryBit conveyorFinishedPiece;
+        readonly MemoryBit conveyorMc2BadPiece;
+        readonly MemoryBit conveyorEmitter;
+        readonly MemoryBit conveyorBuffer;
 
         //Failing time (potenciometer and display)
-        MemoryFloat potentiometerMc1;
-        MemoryFloat potentiometerMc2;
-        MemoryFloat displayMc1;
-        MemoryFloat displayMc2;
-        Stopwatch stopWatch;
+        readonly MemoryFloat potentiometerMc1;
+        readonly MemoryFloat potentiometerMc2;
+        readonly MemoryFloat displayMc1;
+        readonly MemoryFloat displayMc2;
+        readonly Stopwatch stopWatch;
         float tiempo;
         bool mc1Failed;
         bool mc2Failed;
-        string elapsedTime;
 
         //Others
         bool initialStateMessagePrinted;
@@ -111,14 +109,13 @@ namespace Controllers
         //Enums
         McStatus mc1Status;
         McStatus mc2Status;
-        McPositionerStatus mc1PositionerStatus = McPositionerStatus.UP;
-        McPositionerStatus mc2PositionerStatus = McPositionerStatus.UP;
-        BufferStatus bufferStatus = BufferStatus.EMPTY;
-        Mc2andMc3LoadingSteps loadingMc2Step = Mc2andMc3LoadingSteps.IDLE;
+        McPositionerStatus mc1PositionerStatus;
+        McPositionerStatus mc2PositionerStatus;
+        BufferStatus bufferStatus;
+        Mc2andMc3LoadingSteps loadingMc2Step;
         Mc1PieceReady mc1PieceReady;
         Mc1PieceReadySteps mc1PieceReadySteps;
         Events eventsMc;
-        BreakdownMc2OrMc3 breakdownM2;
         Mc1WorkingStage mc1WorkingStage;
 
         //Controllable events
@@ -128,29 +125,106 @@ namespace Controllers
         private int r2Counter;
 
         //FTRIG
-        FTRIG ftAtEntranceMc1;
-        FTRIG ftAtEntranceMc2;
-        FTRIG ftAtExitMc1;
-        FTRIG ftAtExitMc2;
-        FTRIG ftAtBufferEnd;
-        FTRIG ftAtBadPieceExitMc1;
-        FTRIG ftAtBadPieceExitMc2;
-        FTRIG ftAtFinishedPieceExit;
-        FTRIG ftAtBufferStart;
-        FTRIG ftAtMc2LoadingConveyorStart;
-        FTRIG ftAtEmitter;
+        readonly FTRIG ftAtEntranceMc1;
+        readonly FTRIG ftAtEntranceMc2;
+        readonly FTRIG ftAtExitMc1;
+        readonly FTRIG ftAtExitMc2;
+        readonly FTRIG ftAtBufferEnd;
+        readonly FTRIG ftAtBadPieceExitMc1;
+        readonly FTRIG ftAtBadPieceExitMc2;
+        readonly FTRIG ftAtFinishedPieceExit;
+        readonly FTRIG ftAtBufferStart;
+        readonly FTRIG ftAtMc2LoadingConveyorStart;
+        readonly FTRIG ftAtEmitter;
 
         //RTRIG
-        RTRIG rtAtExitMc1;
-        RTRIG rtAtExitMc2;
-        RTRIG rtAtMc2LoadingConveyorStart;
+        readonly RTRIG rtAtExitMc1;
+        readonly RTRIG rtAtExitMc2;
+        readonly RTRIG rtAtMc2LoadingConveyorStart;
 
-        public machines2AndBuffer()// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        private enum BufferStatus
+        {
+            EMPTY,
+            ONE,
+            TWO,
+            THREE
+        }
+        private enum BufferSteps
+        {
+            PIECE_ARRIVED_TO_BUFFER,
+            FILTERING_BAD_PIECE,
+            PIECE_REACHING_MC2,
+            PIECE_ARRIVED_TO_MC2
+        }
+        private enum McPositionerStatus
+        {
+            UP,
+            DOWN,
+            CLAMP,
+            GOING_UP
+        }
+        private enum Mc1PieceReady
+        {
+            NOT_READY,
+            READY
+        }
+        private enum Mc1PieceReadySteps
+        {
+            IDLE,
+            SWITCHING_CONVEYORS,
+            REACHING_MC1ENTRANCE,
+            ENTERINGMC1
+        }
+        private enum Mc2andMc3LoadingSteps
+        {
+            IDLE,
+            PIECE_TO_LOADING_CONVEYOR,
+            SEPARATE_OTHER_PIECES,
+            RESTORING_BUFFER_ORDER,
+            REACHED_MC
+        }
+        private enum Events
+        {
+            s1,
+            f1,
+            b1,
+            r1,
+            i1,
+            s2,
+            f2,
+            b2,
+            r2,
+            i2,
+            s3,
+            f3,
+            b3,
+            r3,
+            i3
+        }
+        private enum BreakdownMc2OrMc3
+        {
+            OK,
+            KO
+        }
+        private enum Mc1WorkingStage
+        {
+            CONVEYOR,
+            MACHINING_CENTER1,
+            MACHINING_CENTER2
+        }
+        private enum McStatus
+        {
+            IDLE,
+            WORKING,
+            DOWN
+        }
+
+        public Machines2AndBuffer()// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         {
             //Mc1 inputs
-            mc1StartButton = MemoryMap.Instance.GetBit("Start Button 0", MemoryType.Input);
-            mc1FailButton = MemoryMap.Instance.GetBit("Stop Button 0", MemoryType.Input);
-            mc1RepairButton = MemoryMap.Instance.GetBit("Reset Button 0", MemoryType.Input);
+            mc1StartButton = MemoryMap.Instance.GetBit("Start Mc1", MemoryType.Input);
+            mc1FailButton = MemoryMap.Instance.GetBit("Force Failure Mc1", MemoryType.Input);
+            mc1RepairButton = MemoryMap.Instance.GetBit("Repair Mc1", MemoryType.Input);
             mc1Busy = MemoryMap.Instance.GetBit("Machining Center 0 (Is Busy)", MemoryType.Input);//Machining Center 0 busy
             mc1Progress = MemoryMap.Instance.GetInt("Machining Center 0 (Progress)", MemoryType.Input);//Machining Center 0 opened
             mc1PositionerClamped = MemoryMap.Instance.GetBit("Right Positioner 0 (Clamped)", MemoryType.Input);//Mc1 positioner clamped sensor
@@ -180,11 +254,11 @@ namespace Controllers
             mc1PositionerRise.Value = true;
 
             //Mc2 inputs
-            mc2StartButton = MemoryMap.Instance.GetBit("Start Button 1", MemoryType.Input);
+            mc2StartButton = MemoryMap.Instance.GetBit("Start Mc2", MemoryType.Input);
             mc2StartButton.Value = false;
-            mc2FailButton = MemoryMap.Instance.GetBit("Stop Button 1", MemoryType.Input);
+            mc2FailButton = MemoryMap.Instance.GetBit("Force Failure Mc2", MemoryType.Input);
             mc2FailButton.Value = true;//True is unpressed
-            mc2RepairButton = MemoryMap.Instance.GetBit("Reset Button 1", MemoryType.Input);
+            mc2RepairButton = MemoryMap.Instance.GetBit("Repair Mc2", MemoryType.Input);
             mc2RepairButton.Value = false;
             mc2Busy = MemoryMap.Instance.GetBit("Machining Center 1 (Is Busy)", MemoryType.Input);
             mc2PositionerClamped = MemoryMap.Instance.GetBit("Right Positioner 3 (Clamped)", MemoryType.Input);//Mc2 positioner clamped sensor
@@ -220,7 +294,6 @@ namespace Controllers
             sensorEmitter = MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input);//Diffuse Sensor 4 - Sensor emitter
 
             //Emitter
-            emitterStartButton = MemoryMap.Instance.GetBit("Start Button 2", MemoryType.Input); //Emitter start button
             emitter = MemoryMap.Instance.GetBit("Emitter 0 (Emit)", MemoryType.Output);//Emitter
             emitter.Value = true;
 
@@ -259,23 +332,22 @@ namespace Controllers
             conveyorBuffer = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 1", MemoryType.Output);
 
             //Failing time (potenciometer and display)
-            potentiometerMc1 = MemoryMap.Instance.GetFloat("Potentiometer 0 (V)", MemoryType.Input);
-            potentiometerMc2 = MemoryMap.Instance.GetFloat("Potentiometer 1 (V)", MemoryType.Input);
-            displayMc1 = MemoryMap.Instance.GetFloat("Digital Display 0", MemoryType.Output);
-            displayMc2 = MemoryMap.Instance.GetFloat("Digital Display 1", MemoryType.Output);
+            potentiometerMc1 = MemoryMap.Instance.GetFloat("Mc1 Failure Time Control", MemoryType.Input);
+            potentiometerMc2 = MemoryMap.Instance.GetFloat("Mc2 Failure Time Control", MemoryType.Input);
+            displayMc1 = MemoryMap.Instance.GetFloat("Mc1 Failure time (in seconds x 100)", MemoryType.Output);
+            displayMc2 = MemoryMap.Instance.GetFloat("Mc2 Failure time (in seconds x 100)", MemoryType.Output);
             stopWatch = new Stopwatch();
 
             //Enums
             mc1Status = McStatus.IDLE;
             mc2Status = McStatus.IDLE;
-            McPositionerStatus mc1PositionerStatus = McPositionerStatus.UP;
-            McPositionerStatus mc2PositionerStatus = McPositionerStatus.UP;
-            BufferStatus bufferStatus = BufferStatus.EMPTY;
-            Mc2andMc3LoadingSteps loadingMc2Step = Mc2andMc3LoadingSteps.IDLE;
+            mc1PositionerStatus = McPositionerStatus.UP;
+            mc2PositionerStatus = McPositionerStatus.UP;
+            bufferStatus = BufferStatus.EMPTY;
+            loadingMc2Step = Mc2andMc3LoadingSteps.IDLE;
             mc1PieceReady = Mc1PieceReady.NOT_READY;
             mc1PieceReadySteps = Mc1PieceReadySteps.IDLE;
             eventsMc = Events.i1;
-            breakdownM2 = BreakdownMc2OrMc3.OK;
             mc1WorkingStage = Mc1WorkingStage.CONVEYOR;
 
             //FTRIG
@@ -303,8 +375,8 @@ namespace Controllers
             r2Counter = 0;
 
             //SUPERVISORY CONTROL
-            supervisoryControl = new machines2AndBufferSupervisor();
-            supervisoryControl = new machines2AndBufferSupervisor();
+            supervisoryControl = new Machines2AndBufferSupervisor();
+            supervisoryControl = new Machines2AndBufferSupervisor();
             supervisoryApproval = true;
 
             //Trick for printing initial state in console after start up messages
@@ -331,7 +403,6 @@ namespace Controllers
             displayMc2.Value = float.Parse(String.Format("{0:0.0}", potentiometerMc2.Value));
             stopWatch.Start();
             TimeSpan ts = stopWatch.Elapsed;
-            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
             tiempo = float.Parse(String.Format("{0:0.0}", ts.Seconds + "." + ts.Milliseconds / 10));
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -534,7 +605,7 @@ namespace Controllers
             // %%%%%%%%%%%%%%%%%%%% MC1 STARTS %%%%%%%%%%%%%%%%%%%%
 
             // %%%% BAD PIECES FILTER STARTS %%%%%
-            gripperMc1.stateTransition();
+            gripperMc1.StateTransition();
 
             if (mc1PositionerStatus == McPositionerStatus.UP)
             {
@@ -561,7 +632,7 @@ namespace Controllers
                 mc1PositionerClamp.Value = true;
                 if (mc1PositionerClamped.Value == true)
                 {
-                    gripperMc1.start();
+                    gripperMc1.Start();
                     if (mc1GripperItemDetected.Value == true)
                     {
                         mc1PositionerStatus = McPositionerStatus.GOING_UP;
@@ -603,6 +674,7 @@ namespace Controllers
             // %%%% MC1 IDLE STARTS %%%%%
             if (mc1Status == McStatus.IDLE)
             {
+                mc1Lights.IdleLights();
                 if (eventsMc == Events.s1 && mc1PieceReady == Mc1PieceReady.READY)
                 {
                     mc1Status = McStatus.WORKING;
@@ -616,6 +688,7 @@ namespace Controllers
             // %%%% MC1 WORKING STARTS %%%%%
             else if (mc1Status == McStatus.WORKING)
             {
+                mc1Lights.WorkingLights();
                 if (mc1WorkingStage == Mc1WorkingStage.CONVEYOR)
                 {
                     if (mc1PieceReadySteps == Mc1PieceReadySteps.SWITCHING_CONVEYORS)
@@ -679,11 +752,10 @@ namespace Controllers
             else if (mc1Status == McStatus.DOWN)
             {
                 mc1AlarmSiren.Value = true;                
-                mc1Lights.failingLights();
+                mc1Lights.FailingLights();
 
                 if (eventsMc == Events.r1)
-                {
-                    mc1Lights.workingLights();
+                {                    
                     mc1Failed = false;//Next piece will not fail
                     mc1Status = McStatus.IDLE;
                     mc1AlarmSiren.Value = false;
@@ -698,7 +770,7 @@ namespace Controllers
             // %%%%%%%%%%%%%%%%%%%% MC2 STARTS %%%%%%%%%%%%%%%%%%%%
 
             //%%%% BAD PIECES FILTER STARTS %%%%%
-            gripperMc2.stateTransition();
+            gripperMc2.StateTransition();
 
             if (mc2PositionerStatus == McPositionerStatus.UP)
             {
@@ -724,7 +796,7 @@ namespace Controllers
                 mc2PositionerClamp.Value = true;
                 if (mc2PositionerClamped.Value == true)
                 {
-                    gripperMc2.start();
+                    gripperMc2.Start();
                     if (mc2GripperItemDetected.Value == true)
                     {
                         mc2PositionerStatus = McPositionerStatus.GOING_UP;
@@ -744,6 +816,7 @@ namespace Controllers
             //%%% MC2 IDLE STARTS %%%%
             if (mc2Status == McStatus.IDLE)
             {
+                mc2Lights.IdleLights();
                 if (eventsMc == Events.s2 && bufferStatus != BufferStatus.EMPTY && loadingMc2Step == Mc2andMc3LoadingSteps.IDLE )
                 {
                     mc2Status = McStatus.WORKING;
@@ -755,6 +828,7 @@ namespace Controllers
             //%%% MC2 WORKING STARTS %%%%
             else if (mc2Status == McStatus.WORKING)
             {
+                mc2Lights.WorkingLights();
                 if (loadingMc2Step == Mc2andMc3LoadingSteps.PIECE_TO_LOADING_CONVEYOR)
                 {
                     bufferStopblade.Value = false;//Drop Stopblade
@@ -822,16 +896,13 @@ namespace Controllers
             else if (mc2Status == McStatus.DOWN)
             {
                 mc2AlarmSiren.Value = true;
-                breakdownM2 = BreakdownMc2OrMc3.KO;
-                mc2Lights.failingLights();
+                mc2Lights.FailingLights();
                 
                 if (eventsMc == Events.r2)
                 {
-                    mc2Lights.workingLights();
                     mc2Failed = false;
                     mc2Status = McStatus.IDLE;
                     mc2AlarmSiren.Value = false;
-                    breakdownM2 = BreakdownMc2OrMc3.OK;
                 }
             }
             //%%% MC2 DOWN ENDS %%%%
@@ -851,90 +922,9 @@ namespace Controllers
     }
 }
 
-public enum BufferStatus
-{
-    EMPTY,
-    ONE,
-    TWO,
-    THREE
-}
 
-public enum BufferSteps
-{
-    PIECE_ARRIVED_TO_BUFFER,
-    FILTERING_BAD_PIECE,
-    PIECE_REACHING_MC2,
-    PIECE_ARRIVED_TO_MC2
-}
 
-public enum McPositionerStatus
-{
-    UP,
-    DOWN,
-    CLAMP,
-    GOING_UP
-}
-public enum Mc1PieceReady
-{
-    NOT_READY,
-    READY
-}
 
-public enum Mc1PieceReadySteps
-{
-    IDLE,
-    SWITCHING_CONVEYORS,
-    REACHING_MC1ENTRANCE,
-    ENTERINGMC1
-}
-
-public enum Mc2andMc3LoadingSteps
-{
-    IDLE,
-    PIECE_TO_LOADING_CONVEYOR,
-    SEPARATE_OTHER_PIECES,
-    RESTORING_BUFFER_ORDER,
-    REACHED_MC
-}
-
-public enum Events
-{
-    s1,
-    f1,
-    b1,
-    r1,
-    i1,
-    s2,
-    f2,
-    b2,
-    r2,
-    i2,
-    s3,
-    f3,
-    b3,
-    r3,
-    i3
-}
-
-public enum BreakdownMc2OrMc3
-{
-    OK,
-    KO
-}
-
-public enum Mc1WorkingStage
-{
-    CONVEYOR,
-    MACHINING_CENTER1,
-    MACHINING_CENTER2
-}
-
-public enum McStatus
-{
-    IDLE,
-    WORKING,
-    DOWN
-}
 
 
 

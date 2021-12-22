@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Controllers.Scenes
 {
-    class machines2AndBufferSupervisor
+    class Machines2AndBufferSupervisor
     {
 
         // #### VARIABLE CREATION TO ALLOCATE IN MEMORY ####

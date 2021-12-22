@@ -4,43 +4,63 @@ namespace Controllers.Scenes
 {
     class McLightsControl
     {
-        private MemoryBit mcRedLight;
-        private MemoryBit mcYellowLight;
-        private MemoryBit mcGreenLight;
-        private int timeDownMc;
+        private readonly MemoryBit mcRedLight;
+        private readonly MemoryBit mcYellowLight;
+        private readonly MemoryBit mcGreenLight;
+        private int timeBlinkingLights;
 
         public McLightsControl(MemoryBit mcRedLight, MemoryBit mcYellowLight, MemoryBit mcGreenLight)
         {
             this.mcRedLight = mcRedLight;
             this.mcYellowLight = mcYellowLight;
             this.mcGreenLight = mcGreenLight;
-            timeDownMc = 0;
+            timeBlinkingLights = 0;
         }
 
-        public void failingLights()
+        public void FailingLights()
         {
-            if (timeDownMc < 30)
+            if (timeBlinkingLights < 30)
             {
                 mcGreenLight.Value = false;
                 mcYellowLight.Value = false;
                 mcRedLight.Value = false;
             }
-            else if (timeDownMc < 60)
+            else if (timeBlinkingLights < 60)
             {
                 mcGreenLight.Value = true;
                 mcYellowLight.Value = true;
                 mcRedLight.Value = true;
             }
-            else if (timeDownMc >= 60)
+            else if (timeBlinkingLights >= 60)
             {
-                timeDownMc = 0;
+                timeBlinkingLights = 0;
             }
-            timeDownMc++;
+            timeBlinkingLights++;
         }
 
-        public void workingLights()
+        public void WorkingLights()
         {
-            mcGreenLight.Value = false;
+            if (timeBlinkingLights < 60)
+            {
+                mcGreenLight.Value = true;
+                mcYellowLight.Value = false;
+                mcRedLight.Value = false;
+            }
+            else if (timeBlinkingLights < 120)
+            {
+                mcGreenLight.Value = true;
+                mcYellowLight.Value = true;
+                mcRedLight.Value = false;
+            }
+            else if (timeBlinkingLights >= 120)
+            {
+                timeBlinkingLights = 0;
+            }
+            timeBlinkingLights++;
+        }
+        public void IdleLights()
+        {
+            mcGreenLight.Value = true;
             mcYellowLight.Value = false;
             mcRedLight.Value = false;
         }

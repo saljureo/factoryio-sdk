@@ -62,7 +62,7 @@ namespace Controllers
             //Controller controller = new SortingStation();
             //Controller controller = new myScene();
             //Controller controller = new myScene2();
-            Controller controller = new machines2AndBuffer();
+            Controller controller = new Machines2AndBuffer();
             //Controller controller = new machines3AndBuffer();
 
             Console.WriteLine(string.Format("Running controller: {0}", controller.GetType().Name));
