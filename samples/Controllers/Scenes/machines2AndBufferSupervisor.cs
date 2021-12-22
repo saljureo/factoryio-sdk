@@ -82,7 +82,7 @@ namespace Controllers.Scenes
 
             //#########  STATELABEL END ############
 
-            Console.WriteLine("\nCurrent state is: " + stateLabels[currentState]);
+            Console.WriteLine("\nCurrent state is: " + stateLabels[currentState] + "\n");
         }
 
         public bool On(string eventoLabel)

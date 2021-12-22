@@ -96,7 +96,7 @@ for state in states:
     print(state)
 
 f.write("\n            //#########  STATELABEL END ############\n\n")
-stringy = '            Console.WriteLine("' + r'\n' + 'Current state is: " + stateLabels[currentState]);\n'
+stringy = '            Console.WriteLine("' + r'\n' + 'Current state is: " + stateLabels[currentState] + ' + r'"\n"' + ');\n'
 f.write(stringy)
 f.write("        }\n\n")
 f.write("        public bool On(string eventoLabel)\n")

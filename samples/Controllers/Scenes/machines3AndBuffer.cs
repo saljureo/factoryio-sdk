@@ -645,10 +645,10 @@ namespace Controllers
                 //type here
                 if (sensorExitMc1.Value == true && mc1Failed == false)
                 {
-                    bufferStatus1 = BufferStatus.FULL;
+                    bufferStatus1 = BufferStatus.ONE;
                 }
             }
-            else if (bufferStatus1 == BufferStatus.FULL)
+            else if (bufferStatus1 == BufferStatus.ONE)
             {
                 //type here
                 if (sensorEntranceMc2.Value == true)
@@ -666,10 +666,10 @@ namespace Controllers
                 //type here
                 if (sensorExitMc2.Value == true && mc2Failed == false)
                 {
-                    bufferStatus2 = BufferStatus.FULL;
+                    bufferStatus2 = BufferStatus.ONE;
                 }
             }
-            else if (bufferStatus2 == BufferStatus.FULL)
+            else if (bufferStatus2 == BufferStatus.ONE)
             {
                 //type here
                 if (sensorEntranceMc3.Value == true)
@@ -800,7 +800,7 @@ namespace Controllers
                 if (loadingMc2Step == Mc2andMc3LoadingSteps.IDLE)
                 {
                     //type here
-                    if (eventsMc == Events.s2 && bufferStatus1 == BufferStatus.FULL)
+                    if (eventsMc == Events.s2 && bufferStatus1 == BufferStatus.ONE)
                     {
                         loadingMc2Step = Mc2andMc3LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
                     }
