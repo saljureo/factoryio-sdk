@@ -146,9 +146,11 @@ namespace Controllers
 
         RTRIG rtAtExitMc1;
         RTRIG rtAtExitMc2;
-        
-        
-        
+        RTRIG rtAtMc2LoadingConveyorStart;
+
+
+
+
         public machines2AndBuffer()// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         {
             //Mc1
@@ -282,6 +284,7 @@ namespace Controllers
 
             rtAtExitMc1 = new RTRIG();
             rtAtExitMc2 = new RTRIG();
+            rtAtMc2LoadingConveyorStart = new RTRIG();
 
             ////mc1
             //mc0Start.Value = false;
@@ -458,6 +461,7 @@ namespace Controllers
 
             rtAtExitMc1.CLK(sensorExitMc1.Value);
             rtAtExitMc2.CLK(sensorExitMc2.Value);
+            rtAtMc2LoadingConveyorStart.CLK(sensorMc2loadingConveyorStart.Value);
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING AND RISING TRIGGERS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -508,6 +512,7 @@ namespace Controllers
                 {
                     conveyorBuffer.Value = true;
                     bufferStatus = BufferStatus.ONE;
+                    Console.WriteLine("BufferStatus: One");
                 }
             }
             else if (bufferStatus == BufferStatus.ONE)
@@ -516,14 +521,16 @@ namespace Controllers
                 {
                     conveyorBuffer.Value = false;
                 }
-                if (sensorEntranceMc2.Value == true)
+                if (rtAtMc2LoadingConveyorStart.Q == true)
                 {
                     bufferStatus = BufferStatus.EMPTY;
+                    Console.WriteLine("BufferStatus: Zero");
                 }
                 if (rtAtExitMc1.Q == true && mc1Failed == false)
                 {
                     conveyorBuffer.Value = true;
                     bufferStatus = BufferStatus.TWO;
+                    Console.WriteLine("BufferStatus: Two");
                 }
             }
             else if (bufferStatus == BufferStatus.TWO)
@@ -532,14 +539,16 @@ namespace Controllers
                 {
                     conveyorBuffer.Value = false;
                 }
-                if (sensorEntranceMc2.Value == true)
+                if (rtAtMc2LoadingConveyorStart.Q == true)
                 {
                     bufferStatus = BufferStatus.ONE;
+                    Console.WriteLine("BufferStatus: One");
                 }
                 if (rtAtExitMc1.Q == true && mc1Failed == false)
                 {
                     conveyorBuffer.Value = true;
                     bufferStatus = BufferStatus.THREE;
+                    Console.WriteLine("BufferStatus: Three");
                 }
             }
             else if (bufferStatus == BufferStatus.THREE)
@@ -548,20 +557,64 @@ namespace Controllers
                 {
                     conveyorBuffer.Value = false;
                 }
-                if (sensorEntranceMc2.Value == true)
+                if (rtAtMc2LoadingConveyorStart.Q == true)
                 {
                     bufferStatus = BufferStatus.TWO;
+                    Console.WriteLine("BufferStatus: Two");
                 }
             }
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BUFFER ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
-
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINE CENTER STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             // %%%%%%%%%%%%%%%%%%%% MC1 STARTS %%%%%%%%%%%%%%%%%%%%
+
+            //%%%% BAD PIECES FILTER STARTS %%%%%
+            gripperMc1.stateTransition();
+
+            if (mc1PositionerStatus == McPositionerStatus.UP)
+            {
+                mc1PositionerClamp.Value = false;
+                mc1PositionerRise.Value = true;
+                if (rtAtExitMc1.Q == true && mc1Failed == true)
+                {
+                    conveyorBuffer.Value = true;
+                    mc1PositionerStatus = McPositionerStatus.DOWN;
+                }
+            }
+            else if (mc1PositionerStatus == McPositionerStatus.DOWN)
+            {
+
+                mc1PositionerRise.Value = false;
+                if (ftAtExitMc1.Q == true)
+                {
+                    conveyorBuffer.Value = false;
+                    mc1PositionerStatus = McPositionerStatus.CLAMP;
+                }
+            }
+            else if (mc1PositionerStatus == McPositionerStatus.CLAMP)
+            {
+                mc1PositionerClamp.Value = true;
+                if (mc1PositionerClamped.Value == true)
+                {
+                    gripperMc1.start();
+                    if (mc1GripperItemDetected.Value == true)
+                    {
+                        mc1PositionerStatus = McPositionerStatus.GOING_UP;
+                    }
+                }
+            }
+            else if (mc1PositionerStatus == McPositionerStatus.GOING_UP)
+            {
+                mc1PositionerClamp.Value = false;
+                if (sensorBadPieceFilterConveyorStartMc1.Value == true)
+                {
+                    mc1PositionerStatus = McPositionerStatus.UP;
+                }
+            }
+            // %%%% BAD PIECES FILTER ENDS %%%%
 
             //%%%% PREPARING MC1 PIECE STARTS %%%%
 
@@ -583,7 +636,9 @@ namespace Controllers
             }
 
             // %%%% PREPARING MC1 PIECE ENDS %%%%%
+
             
+
 
             if (mc1Status == McStatus.IDLE)
             {
@@ -668,54 +723,55 @@ namespace Controllers
                 }
             }
 
-            //%%%% BAD PIECES FILTER STARTS %%%%%
-            gripperMc1.stateTransition();
 
-            if (mc1PositionerStatus == McPositionerStatus.UP)
-            {
-                mc1PositionerClamp.Value = false;
-                mc1PositionerRise.Value = true;
-                if (rtAtExitMc1.Q == true && mc1Failed == true)
-                {
-                    conveyorBuffer.Value = true;
-                    mc1PositionerStatus = McPositionerStatus.DOWN;
-                }
-            }
-            else if (mc1PositionerStatus == McPositionerStatus.DOWN)
-            {
-
-                mc1PositionerRise.Value = false;
-                if (ftAtExitMc1.Q == true)
-                {
-                    conveyorBuffer.Value = false;
-                    mc1PositionerStatus = McPositionerStatus.CLAMP;
-                }
-            }
-            else if (mc1PositionerStatus == McPositionerStatus.CLAMP)
-            {
-                mc1PositionerClamp.Value = true;
-                if (mc1PositionerClamped.Value == true)
-                {
-                    gripperMc1.start();
-                    if (mc1GripperItemDetected.Value == true)
-                    {
-                        mc1PositionerStatus = McPositionerStatus.GOING_UP;
-                    }
-                }
-            }
-            else if (mc1PositionerStatus == McPositionerStatus.GOING_UP)
-            {
-                mc1PositionerClamp.Value = false;
-                if (sensorBadPieceFilterConveyorStartMc1.Value == true)
-                {
-                    mc1PositionerStatus = McPositionerStatus.UP;
-                }
-            }
-            // %%%% BAD PIECES FILTER ENDS %%%%
 
             // %%%%%%%%%%%%%%%%%%%% MC1 ENDS %%%%%%%%%%%%%%%%%%%%
 
             // %%%%%%%%%%%%%%%%%%%% MC2 STARTS %%%%%%%%%%%%%%%%%%%%
+
+            //%%%% BAD PIECES FILTER STARTS %%%%%
+            gripperMc2.stateTransition();
+
+            if (mc2PositionerStatus == McPositionerStatus.UP)
+            {
+                mc2PositionerClamp.Value = false;
+                mc2PositionerRise.Value = true;
+                if (rtAtExitMc2.Q == true && mc2Failed == true)
+                {
+                    conveyorFinishedPiece.Value = true;
+                    mc2PositionerStatus = McPositionerStatus.DOWN;
+                }
+            }
+            else if (mc2PositionerStatus == McPositionerStatus.DOWN)
+            {
+                mc2PositionerRise.Value = false;
+                if (ftAtExitMc2.Q == true)
+                {
+                    conveyorFinishedPiece.Value = false;
+                    mc2PositionerStatus = McPositionerStatus.CLAMP;
+                }
+            }
+            else if (mc2PositionerStatus == McPositionerStatus.CLAMP)
+            {
+                mc2PositionerClamp.Value = true;
+                if (mc2PositionerClamped.Value == true)
+                {
+                    gripperMc2.start();
+                    if (mc2GripperItemDetected.Value == true)
+                    {
+                        mc2PositionerStatus = McPositionerStatus.GOING_UP;
+                    }
+                }
+            }
+            else if (mc2PositionerStatus == McPositionerStatus.GOING_UP)
+            {
+                mc2PositionerClamp.Value = false;
+                if (sensorBadPieceFilterConveyorStartMc2.Value == true)
+                {
+                    mc2PositionerStatus = McPositionerStatus.UP;
+                }
+            }
+            //%%% BAD PIECES FILTER ENDS %%%%
 
             if (mc2Status == McStatus.IDLE)
             {
@@ -724,6 +780,7 @@ namespace Controllers
                     //type here
                     if (eventsMc == Events.s2 && bufferStatus == BufferStatus.ONE)
                     {
+                        Console.WriteLine("Here!");
                         loadingMc2Step = Mc2andMc3LoadingSteps.PIECE_TO_LOADING_CONVEYOR;
                     }
                 }
@@ -784,7 +841,7 @@ namespace Controllers
                     supervisoryApproval = supervisoryControl.On("f2");                    
                     mc2Failed = true; //will fail next time
                 }
-                else if (mc2Busy.Value == false && mc2Failed == true)
+                else if (rtAtExitMc2.Q == true && mc2Failed == true)
                 {
                     eventsMc = Events.b2;
                     mc2Status = McStatus.DOWN;
@@ -807,49 +864,7 @@ namespace Controllers
                 }
             }
 
-            //%%%% BAD PIECES FILTER STARTS %%%%%
-            gripperMc2.stateTransition();
-
-            if (mc2PositionerStatus == McPositionerStatus.UP)
-            {
-                mc2PositionerClamp.Value = false;
-                mc2PositionerRise.Value = true;
-                if (rtAtExitMc2.Q == true && mc2Failed == true)
-                {
-                    conveyorFinishedPiece.Value = true;
-                    mc2PositionerStatus = McPositionerStatus.DOWN;
-                }
-            }
-            else if (mc2PositionerStatus == McPositionerStatus.DOWN)
-            {
-                mc2PositionerRise.Value = false;
-                if (ftAtExitMc2.Q == true)
-                {
-                    conveyorFinishedPiece.Value = false;
-                    mc2PositionerStatus = McPositionerStatus.CLAMP;
-                }
-            }
-            else if (mc2PositionerStatus == McPositionerStatus.CLAMP)
-            {
-                mc2PositionerClamp.Value = true;
-                if (mc2PositionerClamped.Value == true)
-                {
-                    gripperMc2.start();
-                    if (mc2GripperItemDetected.Value == true)
-                    {
-                        mc2PositionerStatus = McPositionerStatus.GOING_UP;
-                    }
-                }
-            }
-            else if (mc2PositionerStatus == McPositionerStatus.GOING_UP)
-            {
-                mc2PositionerClamp.Value = false;
-                if (sensorBadPieceFilterConveyorStartMc2.Value == true)
-                {
-                    mc2PositionerStatus = McPositionerStatus.UP;
-                }
-            }
-            //%%% BAD PIECES FILTER ENDS %%%%
+            
 
             // %%%%%%%%%%%%%%%%%%%% MC2 ENDS %%%%%%%%%%%%%%%%%%%%
 
