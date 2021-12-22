@@ -95,7 +95,11 @@ namespace Controllers
         GripperArm gripperMc2;
         GripperArm gripperMc3;
 
-        SupervisoryControl supervisoryControl;
+        McLightsControl mc1Lights;
+        McLightsControl mc2Lights;
+        McLightsControl mc3Lights;
+
+        machines2AndBufferSupervisor supervisoryControl;
 
         //conveyor belts
         MemoryBit conveyorMc2Entrance;
@@ -284,6 +288,10 @@ namespace Controllers
                 MemoryMap.Instance.GetBit("Two-Axis Pick & Place 2 (Grab)", MemoryType.Output)
             );
 
+            mc1Lights = new McLightsControl(mc1RedLight, mc1YellowLight, mc1GreenLight);
+            mc2Lights = new McLightsControl(mc2RedLight, mc2YellowLight, mc2GreenLight);
+            mc3Lights = new McLightsControl(mc3RedLight, mc3YellowLight, mc3GreenLight);
+
             //conveyor belts
             conveyorMc2Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);
             conveyorMc3Entrance = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 7", MemoryType.Output);
@@ -409,8 +417,8 @@ namespace Controllers
             //potentiometerMc1.Value = 1.0;//1 is 10 seconds, 10 is 100 seconds
             //potentiometerMc2.Value = 1.0;
 
-            supervisoryControl = new SupervisoryControl();
-            supervisoryControl = new SupervisoryControl();
+            supervisoryControl = new machines2AndBufferSupervisor();
+            supervisoryControl = new machines2AndBufferSupervisor();
             supervisoryApproval = true;
 
             supervisoryControl.CreateController();
@@ -435,7 +443,7 @@ namespace Controllers
                 if (s1Counter == 0)
                 {
                     preeventMc = Events.s1;
-                    supervisoryApproval = supervisoryControl.On2("s1");
+                    supervisoryApproval = supervisoryControl.On("s1");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s1;
@@ -455,7 +463,7 @@ namespace Controllers
                 if (r1Counter == 0)
                 {
                     preeventMc = Events.r1;
-                    supervisoryApproval = supervisoryControl.On2("r1");
+                    supervisoryApproval = supervisoryControl.On("r1");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r1;
@@ -476,7 +484,7 @@ namespace Controllers
                 if (s2Counter == 0)
                 {
                     preeventMc = Events.s2;
-                    supervisoryApproval = supervisoryControl.On2("s2");
+                    supervisoryApproval = supervisoryControl.On("s2");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s2;
@@ -496,7 +504,7 @@ namespace Controllers
                 if (r2Counter == 0)
                 {
                     preeventMc = Events.r2;
-                    supervisoryApproval = supervisoryControl.On2("r2");
+                    supervisoryApproval = supervisoryControl.On("r2");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r2;
@@ -517,7 +525,7 @@ namespace Controllers
                 if (s3Counter == 0)
                 {
                     preeventMc = Events.s3;
-                    supervisoryApproval = supervisoryControl.On2("s3");
+                    supervisoryApproval = supervisoryControl.On("s3");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.s3;
@@ -537,7 +545,7 @@ namespace Controllers
                 if (r3Counter == 0)
                 {
                     preeventMc = Events.r3;
-                    supervisoryApproval = supervisoryControl.On2("r3");
+                    supervisoryApproval = supervisoryControl.On("r3");
                     if (supervisoryApproval == true)
                     {
                         eventsMc = Events.r3;
@@ -757,14 +765,14 @@ namespace Controllers
                     {
                         mc1Reset.Value = false;
                         mc1Status = McStatus.IDLE;
-                        supervisoryApproval = supervisoryControl.On2("f1");
+                        supervisoryApproval = supervisoryControl.On("f1");
                         mc1Failed = true; //will fail next time
                     }
                     else if (mc1Busy.Value == false && mc1Failed == true)
                     {
                         mc1Reset.Value = false;
                         mc1Status = McStatus.DOWN;
-                        supervisoryApproval = supervisoryControl.On2("b1");
+                        supervisoryApproval = supervisoryControl.On("b1");
                     }
                 }
 
@@ -773,9 +781,10 @@ namespace Controllers
             else if (mc1Status == McStatus.DOWN)
             {
                 mc1AlarmSiren.Value = true;
-
+                mc1Lights.failingLights();
                 if (eventsMc == Events.r1)
                 {
+                    mc1Lights.workingLights();
                     mc1Failed = false;//Next piece will not fail
                     mc1Status = McStatus.IDLE;
                     mc1AlarmSiren.Value = false;
@@ -849,22 +858,24 @@ namespace Controllers
                 {
                     eventsMc = Events.f2;
                     mc2Status = McStatus.IDLE;
-                    supervisoryApproval = supervisoryControl.On2("f2");
+                    supervisoryApproval = supervisoryControl.On("f2");
                     mc2Failed = true; //will fail next time
                 }
                 else if (mc2Busy.Value == false && mc2Failed == true)
                 {
                     eventsMc = Events.b2;
                     mc2Status = McStatus.DOWN;
-                    supervisoryApproval = supervisoryControl.On2("b2");
+                    supervisoryApproval = supervisoryControl.On("b2");
                 }
             }
             else if (mc2Status == McStatus.DOWN)
             {
                 mc2AlarmSiren.Value = true;
+                mc2Lights.failingLights();
                 breakdownM2 = BreakdownMc2OrMc3.KO;
                 if (eventsMc == Events.r2)
                 {
+                    mc2Lights.workingLights();
                     mc2Failed = false;
                     mc2Status = McStatus.IDLE;
                     mc2AlarmSiren.Value = false;
@@ -940,22 +951,24 @@ namespace Controllers
                 {
                     eventsMc = Events.f3;
                     mc3Status = McStatus.IDLE;
-                    supervisoryApproval = supervisoryControl.On2("f3");
+                    supervisoryApproval = supervisoryControl.On("f3");
                     mc3Failed = true; //will fail next time
                 }
                 else if (mc2Busy.Value == false && mc2Failed == true)
                 {
                     eventsMc = Events.b3;
                     mc3Status = McStatus.DOWN;
-                    supervisoryApproval = supervisoryControl.On2("b3");
+                    supervisoryApproval = supervisoryControl.On("b3");
                 }
             }
             else if (mc3Status == McStatus.DOWN)
             {
                 mc3AlarmSiren.Value = true;
+                mc3Lights.failingLights();
                 breakdownM3 = BreakdownMc2OrMc3.KO;
                 if (eventsMc == Events.r3)
                 {
+                    mc3Lights.workingLights();
                     mc3Failed = false;
                     mc3Status = McStatus.IDLE;
                     mc3AlarmSiren.Value = false;

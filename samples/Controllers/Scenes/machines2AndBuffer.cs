@@ -78,7 +78,7 @@ namespace Controllers
         McLightsControl mc1Lights;
         McLightsControl mc2Lights;
 
-        SupervisoryControl supervisoryControl;
+        machines2AndBufferSupervisor supervisoryControl;
 
         //conveyor belts
         MemoryBit conveyorMc2Entrance;
@@ -103,6 +103,7 @@ namespace Controllers
         bool mc1Failed;
         bool mc2Failed;
         bool supervisoryApproval;
+        bool initialStateMessagePrinted;
 
         McStatus mc1Status;
         McStatus mc2Status;
@@ -128,6 +129,8 @@ namespace Controllers
         private int s2Counter;
         private int r2Counter;
 
+        string elapsedTime;
+
         FTRIG ftAtEntranceMc1;
         FTRIG ftAtEntranceMc2;
         FTRIG ftAtExitMc1;
@@ -139,13 +142,14 @@ namespace Controllers
         FTRIG ftAtBufferStart;
         FTRIG ftAtMc2LoadingConveyorStart;
         FTRIG ftAtEmitter;
+
+        RTRIG rtAtExitMc1;
+        RTRIG rtAtExitMc2;
         
         
         
         public machines2AndBuffer()// %%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%
         {
-            //%% EXPERIMENT START
-
             //Mc1
             mc1StartButton = MemoryMap.Instance.GetBit("Start Button 0", MemoryType.Input);
             mc1FailButton = MemoryMap.Instance.GetBit("Stop Button 0", MemoryType.Input);
@@ -274,7 +278,8 @@ namespace Controllers
             ftAtMc2LoadingConveyorStart = new FTRIG();
             ftAtEmitter = new FTRIG();
 
-            //%% EXPERIMENT END 
+            rtAtExitMc1 = new RTRIG();
+            rtAtExitMc2 = new RTRIG();
 
             ////mc1
             //mc0Start.Value = false;
@@ -318,27 +323,30 @@ namespace Controllers
             //Buffer
             bufferStopblade.Value = true;//True is rised
 
-            //Failing time and display
-            //potentiometerMc1.Value = 1.0;//1 is 10 seconds, 10 is 100 seconds
-            //potentiometerMc2.Value = 1.0;
-
-            supervisoryControl = new SupervisoryControl();
-            supervisoryControl = new SupervisoryControl();
+            supervisoryControl = new machines2AndBufferSupervisor();
+            supervisoryControl = new machines2AndBufferSupervisor();
             supervisoryApproval = true;
+            initialStateMessagePrinted = false;
 
-            supervisoryControl.CreateController();
+            
 
         } // %%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%
         {
+            if (initialStateMessagePrinted == false)
+            {
+                supervisoryControl.CreateController();
+                initialStateMessagePrinted = true;
+            }
+
             //Failing time and display
-            displayMc1.Value = potentiometerMc1.Value;
-            displayMc2.Value = potentiometerMc2.Value;
+            displayMc1.Value = float.Parse(String.Format("{0:0.0}", potentiometerMc1.Value));
+            displayMc2.Value = float.Parse(String.Format("{0:0.0}", potentiometerMc2.Value));
             stopWatch.Start();
             TimeSpan ts = stopWatch.Elapsed;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-            //tiempo = ts.Seconds + "." + ts.Milliseconds;
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            tiempo = float.Parse(String.Format("{0:0.0}", ts.Seconds + "." + ts.Milliseconds / 10));
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -353,7 +361,6 @@ namespace Controllers
                         eventsMc = Events.s1;
                         s1Counter++;
                     }
-                    
                 }
             }
             else
@@ -372,9 +379,7 @@ namespace Controllers
                         eventsMc = Events.r1;
                         r1Counter++;
                     }
-                    
                 }
-                
             }
             else
             {
@@ -392,7 +397,6 @@ namespace Controllers
                         eventsMc = Events.s2;
                         s2Counter++;
                     }
-                    
                 }
             }
             else
@@ -411,22 +415,33 @@ namespace Controllers
                         eventsMc = Events.r2;
                         r2Counter++;
                     }
-                    
                 }
-
             }
             else
             {
                 r2Counter = 0;
             }
 
-
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            //if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01)%displayMc1.Value)) == 0.0f)//false is button pressed
+            if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc1.Value * 20) )) == 0.0f)//false is button pressed
+            {
+                mc1Failed = true;
+            }
 
-            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING TRIGGERS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if (mc2FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc2.Value * 20) )) == 0.0f)//false is button pressed)
+            {
+                mc2Failed = true;
+            }
 
-            // Falling triggers
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING AND RISING TRIGGERS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            // Falling and rising triggers
             ftAtEntranceMc1.CLK(sensorEntranceMc1.Value);
             ftAtEntranceMc2.CLK(sensorEntranceMc2.Value);
             ftAtExitMc1.CLK(sensorExitMc1.Value);
@@ -439,7 +454,10 @@ namespace Controllers
             ftAtMc2LoadingConveyorStart.CLK(sensorMc2loadingConveyorStart.Value);
             ftAtEmitter.CLK(sensorMc1ConveyorEntrance.Value);
 
-            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING TRIGGERS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            rtAtExitMc1.CLK(sensorExitMc1.Value);
+            rtAtExitMc2.CLK(sensorExitMc2.Value);
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING AND RISING TRIGGERS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONVEYORS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -725,16 +743,18 @@ namespace Controllers
             {
                 mc1PositionerClamp.Value = false;
                 mc1PositionerRise.Value = true;
-                if (sensorExitMc1.Value == true && mc1Failed == true)
+                if (rtAtExitMc1.Q == true && mc1Failed == true)
                 {
                     mc1PositionerStatus = McPositionerStatus.DOWN;
                 }
             }
             else if (mc1PositionerStatus == McPositionerStatus.DOWN)
             {
+                
                 mc1PositionerRise.Value = false;
                 if (ftAtExitMc1.Q == true)
                 {
+                    conveyorBuffer.Value = false;
                     mc1PositionerStatus = McPositionerStatus.CLAMP;
                 }
             }
@@ -766,7 +786,7 @@ namespace Controllers
             {
                 mc2PositionerClamp.Value = false;
                 mc2PositionerRise.Value = true;
-                if (sensorExitMc2.Value == true && mc2Failed == true)
+                if (rtAtExitMc2.Q == true && mc2Failed == true)
                 {
                     mc2PositionerStatus = McPositionerStatus.DOWN;
                 }
@@ -776,6 +796,7 @@ namespace Controllers
                 mc2PositionerRise.Value = false;
                 if (ftAtExitMc2.Q == true)
                 {
+                    conveyorFinishedPiece.Value = false;
                     mc2PositionerStatus = McPositionerStatus.CLAMP;
                 }
             }

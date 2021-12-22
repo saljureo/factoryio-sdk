@@ -3,13 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.6.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controllers", "Controllers\Controllers.csproj", "{C8B7C421-B089-4813-8709-000AEFFBAE92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Controllers", "Controllers\Controllers.csproj", "{C8B7C421-B089-4813-8709-000AEFFBAE92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Event Sample", "Event Sample\Event Sample.csproj", "{54BDB72A-6867-4F76-A628-3FF5C6093993}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Event Sample", "Event Sample\Event Sample.csproj", "{54BDB72A-6867-4F76-A628-3FF5C6093993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Read Sample", "Read Sample\Read Sample.csproj", "{47262537-9B8B-4492-8E95-8EFBFF1A4B73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Read Sample", "Read Sample\Read Sample.csproj", "{47262537-9B8B-4492-8E95-8EFBFF1A4B73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Write Sample", "Write Sample\Write Sample.csproj", "{57CBEE3D-5DD6-40E6-9A95-4F6F30B14209}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Write Sample", "Write Sample\Write Sample.csproj", "{57CBEE3D-5DD6-40E6-9A95-4F6F30B14209}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{183345B8-62EB-4D79-B44B-B068D90E1EA3}"
+	ProjectSection(SolutionItems) = preProject
+		xml2sdk.py = xml2sdk.py
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,9 +24,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C8B7C421-B089-4813-8709-000AEFFBAE92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -72,5 +74,11 @@ Global
 		{57CBEE3D-5DD6-40E6-9A95-4F6F30B14209}.Release|x64.Build.0 = Release|Any CPU
 		{57CBEE3D-5DD6-40E6-9A95-4F6F30B14209}.Release|x86.ActiveCfg = Release|Any CPU
 		{57CBEE3D-5DD6-40E6-9A95-4F6F30B14209}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0FA11279-D521-40F3-AF09-8DBF302754F2}
 	EndGlobalSection
 EndGlobal
