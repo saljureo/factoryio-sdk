@@ -81,7 +81,8 @@ namespace Controllers
         readonly McLightsControl mc2Lights;
 
         //SUPERVISORY CONTROL
-        readonly Machines2AndBufferSupervisor supervisoryControl;
+        //readonly Machines2AndBufferSupervisor supervisoryControl;
+        readonly Machines2AndBuffer3Supervisor supervisoryControl;
         bool supervisoryApproval;
 
         //conveyor belts
@@ -375,8 +376,8 @@ namespace Controllers
             r2Counter = 0;
 
             //SUPERVISORY CONTROL
-            supervisoryControl = new Machines2AndBufferSupervisor();
-            supervisoryControl = new Machines2AndBufferSupervisor();
+            //supervisoryControl = new Machines2AndBufferSupervisor();
+            supervisoryControl = new Machines2AndBuffer3Supervisor();
             supervisoryApproval = true;
 
             //Trick for printing initial state in console after start up messages
@@ -485,7 +486,6 @@ namespace Controllers
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            //if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01)%displayMc1.Value)) == 0.0f)//false is button pressed
             if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc1.Value * 100) )) == 0.0f)//false is button pressed
             {
                 mc1Failed = true;
@@ -555,7 +555,7 @@ namespace Controllers
             }
             else if (bufferStatus == BufferStatus.ONE)
             {
-                if (sensorBufferEnd.Value == true && loadingMc2Step == Mc2andMc3LoadingSteps.IDLE)
+                if (sensorBufferEnd.Value == true && loadingMc2Step == Mc2andMc3LoadingSteps.IDLE && mc1Failed == false)
                 {
                     conveyorBuffer.Value = false;
                 }
@@ -571,7 +571,7 @@ namespace Controllers
             }
             else if (bufferStatus == BufferStatus.TWO)
             {
-                if (sensorBufferSpot2.Value == true && loadingMc2Step == Mc2andMc3LoadingSteps.IDLE)
+                if (sensorBufferSpot2.Value == true && loadingMc2Step == Mc2andMc3LoadingSteps.IDLE && mc1Failed == false)
                 {
                     conveyorBuffer.Value = false;
                 }
@@ -587,7 +587,7 @@ namespace Controllers
             }
             else if (bufferStatus == BufferStatus.THREE)
             {
-                if (sensorBufferSpot3.Value == true && loadingMc2Step == Mc2andMc3LoadingSteps.IDLE)
+                if (sensorBufferSpot3.Value == true && loadingMc2Step == Mc2andMc3LoadingSteps.IDLE && mc1Failed == false)
                 {
                     conveyorBuffer.Value = false;
                 }
@@ -619,7 +619,6 @@ namespace Controllers
             }
             else if (mc1PositionerStatus == McPositionerStatus.DOWN)
             {
-
                 mc1PositionerRise.Value = false;
                 if (ftAtExitMc1.Q == true)
                 {
@@ -721,7 +720,7 @@ namespace Controllers
                         mc1Start.Value = false;
                     }
 
-                    if (mc1Progress.Value > 90)
+                    if (mc1Progress.Value > 80)
                     {
                         mc1Reset.Value = true;
                         mc1WorkingStage = Mc1WorkingStage.MACHINING_CENTER2;
@@ -921,10 +920,3 @@ namespace Controllers
         }
     }
 }
-
-
-
-
-
-
-

@@ -21,32 +21,32 @@ namespace Controllers.Scenes
             eventLabels = new Dictionary<string, int>();
             stateLabels = new Dictionary<int, string>();
 
-            currentState = 6;
+            currentState = 5;
             //#########  TRANSICIONES START ############
 
-            transiciones.Add((0, 5), 4);
-            transiciones.Add((1, 5), 6);
-            transiciones.Add((1, 6), 2);
-            transiciones.Add((2, 0), 0);
-            transiciones.Add((2, 2), 3);
-            transiciones.Add((2, 5), 8);
-            transiciones.Add((3, 5), 10);
-            transiciones.Add((4, 4), 6);
-            transiciones.Add((5, 1), 0);
-            transiciones.Add((5, 3), 4);
-            transiciones.Add((5, 4), 7);
-            transiciones.Add((6, 6), 8);
-            transiciones.Add((7, 1), 1);
-            transiciones.Add((7, 3), 6);
-            transiciones.Add((7, 6), 9);
-            transiciones.Add((8, 0), 4);
-            transiciones.Add((8, 2), 10);
-            transiciones.Add((9, 0), 5);
-            transiciones.Add((9, 1), 2);
-            transiciones.Add((9, 2), 11);
-            transiciones.Add((9, 3), 8);
-            transiciones.Add((10, 7), 7);
-            transiciones.Add((11, 1), 3);
+            transiciones.Add((0, 5), 1);
+            transiciones.Add((1, 4), 5);
+            transiciones.Add((2, 1), 0);
+            transiciones.Add((2, 3), 1);
+            transiciones.Add((2, 4), 7);
+            transiciones.Add((3, 5), 5);
+            transiciones.Add((3, 6), 9);
+            transiciones.Add((4, 5), 6);
+            transiciones.Add((5, 6), 10);
+            transiciones.Add((6, 7), 7);
+            transiciones.Add((7, 1), 3);
+            transiciones.Add((7, 3), 5);
+            transiciones.Add((7, 6), 11);
+            transiciones.Add((8, 1), 4);
+            transiciones.Add((8, 3), 6);
+            transiciones.Add((9, 0), 0);
+            transiciones.Add((9, 2), 4);
+            transiciones.Add((9, 5), 10);
+            transiciones.Add((10, 0), 1);
+            transiciones.Add((10, 2), 6);
+            transiciones.Add((11, 0), 2);
+            transiciones.Add((11, 1), 9);
+            transiciones.Add((11, 2), 8);
             transiciones.Add((11, 3), 10);
 
             //#########  TRANSICIONES END ############
@@ -67,18 +67,18 @@ namespace Controllers.Scenes
 
             //#########  STATELABEL START ############
 
-            stateLabels.Add(0, "KO_E_d1_d2");
-            stateLabels.Add(1, "KO_E_i1_d2");
-            stateLabels.Add(2, "KO_E_w1_d2");
-            stateLabels.Add(3, "KO_F_i1_d2");
-            stateLabels.Add(4, "OK_E_d1_i2");
-            stateLabels.Add(5, "OK_E_d1_w2");
-            stateLabels.Add(6, "OK_E_i1_i2");
-            stateLabels.Add(7, "OK_E_i1_w2");
-            stateLabels.Add(8, "OK_E_w1_i2");
-            stateLabels.Add(9, "OK_E_w1_w2");
-            stateLabels.Add(10, "OK_F_i1_i2");
-            stateLabels.Add(11, "OK_F_i1_w2");
+            stateLabels.Add(0, "d1.d2.EmptyB1.KO2");
+            stateLabels.Add(1, "d1.i2.EmptyB1.OK2");
+            stateLabels.Add(2, "d1.w2.EmptyB1.OK2");
+            stateLabels.Add(3, "i1.d2.EmptyB1.KO2");
+            stateLabels.Add(4, "i1.d2.FullB1.KO2");
+            stateLabels.Add(5, "i1.i2.EmptyB1.OK2");
+            stateLabels.Add(6, "i1.i2.FullB1.OK2");
+            stateLabels.Add(7, "i1.w2.EmptyB1.OK2");
+            stateLabels.Add(8, "i1.w2.FullB1.OK2");
+            stateLabels.Add(9, "w1.d2.EmptyB1.KO2");
+            stateLabels.Add(10, "w1.i2.EmptyB1.OK2");
+            stateLabels.Add(11, "w1.w2.EmptyB1.OK2");
 
             //#########  STATELABEL END ############
 
