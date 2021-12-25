@@ -15,7 +15,7 @@ XmlFileName = ''
 csFileName = ''
 # Read the XML file
 
-factoryIoFileName = 'machines2AndBuffer'
+factoryIoFileName = 'Machines3AndBuffer3'
 XmlFileName = factoryIoFileName + '.xml'
 #with open("supervisorBuffer2.xml", "r") as file:
 with open(XmlFileName, "r") as file:
@@ -81,11 +81,9 @@ f.write("            //#########  EVENTLABEL START ############\n\n")
 for event in events:    
     AddString = '            ' + 'eventLabels.Add("' + event["label"] + '", ' + event["id"] + ');\n'
     f.write(AddString)
-    print(event)
     try:
         event["controllable"]
         noncontrollableEvents.append(event["id"])
-        print("evento no controlable: " + event["id"] + " con label: " + event["label"])
     except:
         continue
 f.write("\n            //#########  EVENTLABEL END ############\n\n")
@@ -93,7 +91,6 @@ f.write("\n            //#########  STATELABEL START ############\n\n")
 for state in states:
     AddString = '            ' + 'stateLabels.Add(' + state["id"] + ', "' + state["name"] + '");\n'
     f.write(AddString)
-    print(state)
 
 f.write("\n            //#########  STATELABEL END ############\n\n")
 stringy = '            Console.WriteLine("' + r'\n' + 'Current state is: " + stateLabels[currentState] + ' + r'"\n"' + ');\n'
@@ -140,114 +137,5 @@ f.write('    }\n')
 f.write('}')
 f.close()
     
-for state in states:
-    print(state)
-
-
-
-    
-
+print("\n\nFile named " + csFileName + " created succesfully.\n\n")
 ##############  PROGRAM WRITING ENDS  ########################
-
-"""
-        public bool On(string evento)
-        {
-            if (diccionario.ContainsKey((currentState, evento)))
-            {
-                currentState = diccionario[(currentState, evento)];
-                if (evento != "f1" && evento != "f2" && evento != "b1" && evento != "b2")
-                {
-                    Console.WriteLine(evento + " event approved");
-                }
-                else
-                {
-                    Console.WriteLine(evento + " event is uncontrollable and must be enabled");
-                }
-                Console.WriteLine("Current state is: " + currentState + "\n");
-                return true;
-            } else
-            {
-                Console.WriteLine(evento + " event blocked");
-                Thread.Sleep(800);
-                return false;
-            }
-        }
-    }
-}
-
-"""
-
-
-"""
-
-#States and transitions - FIND INITIAL STATE
-for state in states:
-    try:        
-        whatever = state["initial"]        
-        initialStateName = state["name"]
-        initialStateId = state["id"]
-    except:
-        pass
-
-actualStateName = initialStateName
-actualStateId = initialStateId
-
-while(thereAreOtherStates == True): 
-    f = open("myfile.cs","a")
-    f.write('\nif (supervisorState == SupervisorState.'+ actualStateId+')\n')
-    f.write('{\n')
-    f.write('   //fill actions for state ' + actualStateName + "\n")
-    f.close()
-
-    transitionsFoundFromActualState = bs_content.find_all("transition", {"source":actualStateId})
-    for transition in transitionsFoundFromActualState:
-        transitioningEventId = transition["event"]
-        eventNameFoundTemp = bs_content.find_all("event", {"id":transitioningEventId})
-        eventNameFound = eventNameFoundTemp[0]["label"]
-        nextStateId = transition["dest"]
-        nextStateNameFoundTemp = bs_content.find_all("state", {"id":nextStateId})
-        nextStateNameFound = nextStateNameFoundTemp[0]["name"]
-        f = open("myfile.cs","a")
-        f.write('   if (supervisorEvent == SupervisorEvent.'+ eventNameFound + ")//Which is event "+ transitioningEventId + "\n")
-        f.write("   {\n")
-        f.write("       supervisorState = SupervisorState." + nextStateNameFound + ";\n")
-        f.write("   }\n")
-        f.close()
-        actualStateId = nextStateId
-    f = open("myfile.cs","a")
-    f.write('}')
-    f.close()
-
-#%%%%%%%%%%%%%%%%%% Public enum States %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-f = open("myfile.cs","a")
-f.write('\npublic enum SupervisorState\n')
-f.write('{\n')
-longitud = len(states)
-for i,state in enumerate(states):
-    nombre = state["name"]
-    f.write('   ' + nombre)
-    if (i+1 != longitud):
-        f.write(',\n')
-f.write('\n}\n')
-f.close()
-
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Public enum Events %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-f = open("myfile.cs","a")
-f.write('\npublic enum SupervisorEvent\n')
-f.write('{\n')
-longitud = len(events)
-for i,event in enumerate(events):
-    nombre = event["label"]
-    f.write('   ' + nombre)
-    if (i+1 != longitud):
-        f.write(',\n')
-f.write('\n}\n')
-f.close()
-
-
-#open and read the file after the appending:
-f = open("myfile.cs", "r")
-print(f.read()) 
-
-"""
-

@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Scenes\Component1.cs" />
+    <Compile Remove="Scenes\Component1.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Engine IO">
       <HintPath>..\..\lib\Engine IO.dll</HintPath>
     </Reference>

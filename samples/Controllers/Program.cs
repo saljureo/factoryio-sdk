@@ -63,7 +63,8 @@ namespace Controllers
             //Controller controller = new myScene();
             //Controller controller = new myScene2();
             //Controller controller = new Machines2AndBuffer();
-            Controller controller = new Machines3AndBuffer();
+            //Controller controller = new Machines3AndBuffer();
+            Controller controller = new SistemaDeManufatura();
 
             Console.WriteLine(string.Format("Running controller: {0}", controller.GetType().Name));
             Console.WriteLine("Press Escape to shutdown...");
