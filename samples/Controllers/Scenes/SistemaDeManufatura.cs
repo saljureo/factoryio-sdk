@@ -57,7 +57,6 @@ namespace Controllers
         readonly MemoryBit sensorSecondSpotE2;
         readonly MemoryBit sensorThirdSpotE2;
         readonly MemoryBit sensorFourthSpotE2;
-        readonly MemoryBit sensorFifthSpotE2;
         private enum BufferE2
         {
             ZERO,
@@ -65,7 +64,6 @@ namespace Controllers
             TWO,
             THREE,
             FOUR,
-            FIVE
         }
         BufferE2 bufferE2;
         //GripperArm
@@ -79,7 +77,6 @@ namespace Controllers
         readonly MemoryBit armPieceRotate;
         readonly MemoryBit armRotating;
         readonly MemoryBit armPieceDetected;
-        int counter;
 
         //ROBÔ
         readonly MemoryFloat robo0X;
@@ -127,7 +124,7 @@ namespace Controllers
             stopbladeEndE1 = MemoryMap.Instance.GetBit("Stop Blade 1", MemoryType.Output);
             stopbladeEndE1.Value = true;
             e1ConveyorState = E1ConveyorState.EMITTING;
-            e2toE1Steps = E2toE1Steps.IDLE;
+            e2toE1Steps = E2toE1Steps.GOING_TO_E2;
 
             //Emitter
             emitter = MemoryMap.Instance.GetBit("Emitter 0 (Emit)", MemoryType.Output);
@@ -147,12 +144,13 @@ namespace Controllers
             sensorSecondSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 12", MemoryType.Input);
             sensorThirdSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 13", MemoryType.Input);
             sensorFourthSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 14", MemoryType.Input);
-            sensorFifthSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 15", MemoryType.Input);
 
             //GripperArm
             armX = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Set Point (V)", MemoryType.Output);
+            armX.Value = 2.3f;
             armXpos = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Position (V)", MemoryType.Input);
             armZ = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 Z Set Point (V)", MemoryType.Output);
+            armZ.Value = 6.0f;
             armZpos = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 Z Position (V)", MemoryType.Input);
             armGrab = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Grab)", MemoryType.Output);
             armRotate = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 Rotate CCW", MemoryType.Output);
@@ -160,7 +158,6 @@ namespace Controllers
             armPieceRotate = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 Gripper CCW", MemoryType.Output);
             armRotating = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Rotating)", MemoryType.Input);
             armPieceDetected = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Item Detected)", MemoryType.Input);
-            counter = 0;
 
 
             //ROBÔ0
@@ -192,7 +189,6 @@ namespace Controllers
         public override void Execute(int elapsedMilliseconds)
         {
 
-            counter++;
             
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA START %%%%%%%%%%%%%%%%%%%%
 
@@ -245,7 +241,7 @@ namespace Controllers
                     e2toE1Steps = E2toE1Steps.GOING_TO_E2;
                 }
             }
-            else if (e1ConveyorState == E1ConveyorState.E2_TO_E1)
+            else if (e1ConveyorState == E1ConveyorState.E2_TO_E1) //%%%%%%%%%%%% ARM
             {
                 if (e2toE1Steps == E2toE1Steps.GOING_TO_E2)
                 {
@@ -266,6 +262,7 @@ namespace Controllers
                 else if (e2toE1Steps == E2toE1Steps.GRABBING_PIECE)
                 {
                     armGrab.Value = true;
+                    conveyorEndE2.Value = false;
                     if (armPieceDetected.Value && armZpos.Value > 8.8f)
                     {
                         e2toE1Steps = E2toE1Steps.UP_WITH_PIECE;
@@ -287,6 +284,7 @@ namespace Controllers
                     if (armXpos.Value > 3.9f)
                     {
                         armRotate.Value = false;
+                        armPieceRotate.Value = false;
                     }
                     if (!armRotating.Value && armXpos.Value > 3.9f)
                     {
@@ -342,18 +340,16 @@ namespace Controllers
                     {
                         armUnrotate.Value = false;
                         e1ConveyorState = E1ConveyorState.EMITTED;
-                        armX.Value = 0.0f;
-                        armZ.Value = 4.0f;
+                        armX.Value = 2.3f;
+                        armZ.Value = 6.0f;
                     }
                 }
             }
-
 
             if (sensorEmitter.Value)
             {
                 emitter.Value = false;
             }
-
 
             if (sensorEndE1.Value == true)
             {
@@ -431,7 +427,7 @@ namespace Controllers
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.ONE;
                 }
-                if (sensorEndE2.Value && sensorSecondSpotE2.Value)
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && !sensorThirdSpotE2.Value && !sensorFourthSpotE2.Value)
                 {
                     conveyorStartE2.Value = false;
                     conveyorFirstCornerE2.Value = false;
@@ -456,7 +452,7 @@ namespace Controllers
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.TWO;
                 }
-                if (sensorEndE2.Value && sensorSecondSpotE2.Value & sensorThirdSpotE2.Value)
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && !sensorFourthSpotE2.Value)
                 {
                     conveyorStartE2.Value = false;
                     conveyorFirstCornerE2.Value = false;
@@ -467,21 +463,12 @@ namespace Controllers
             }
             else if (bufferE2 == BufferE2.FOUR)
             {
-                if (rtSensorStartE2.Q == true)
-                {
-                    conveyorStartE2.Value = true;
-                    conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
-                    conveyorSecondCornerE2.Value = true;
-                    conveyorEndE2.Value = true;
-                    bufferE2 = BufferE2.FIVE;
-                }
                 if (ftSensorEndE2.Q == true)
                 {
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.THREE;
                 }
-                if (sensorEndE2.Value && sensorSecondSpotE2.Value & sensorThirdSpotE2.Value & sensorFourthSpotE2.Value)
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value)
                 {
                     conveyorStartE2.Value = false;
                     conveyorFirstCornerE2.Value = false;
@@ -490,23 +477,6 @@ namespace Controllers
                     conveyorEndE2.Value = false;
                 }
             }
-            else if (bufferE2 == BufferE2.FIVE)
-            {
-                if (ftSensorEndE2.Q == true)
-                {
-                    conveyorEndE2.Value = true;
-                    bufferE2 = BufferE2.FOUR;
-                }
-                if (sensorEndE2.Value && sensorSecondSpotE2.Value & sensorThirdSpotE2.Value & sensorFourthSpotE2.Value & sensorFifthSpotE2.Value)
-                {
-                    conveyorStartE2.Value = false;
-                    conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
-                    conveyorSecondCornerE2.Value = false;
-                    conveyorEndE2.Value = false;
-                }
-            }
-
 
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA ENDS %%%%%%%%%%%%%%%%%%%%
 
@@ -540,14 +510,14 @@ namespace Controllers
                 robo0Y.Value = searchingForPieceYvalue;
                 if (Math.Abs(robo0YPos.Value - robo0Y.Value) < 0.1)
                 {
-                    if (!robo0Grabbed.Value && !loweestYinSearchFound)
+                    //if (!robo0Grabbed.Value && !loweestYinSearchFound)
+                    //{
+                    //    tempLowestYinSearch = searchingForPieceYvalue + 0.1f;
+                    //}
+                    if (robo0Grabbed.Value)
                     {
-                        tempLowestYinSearch = searchingForPieceYvalue + 0.1f;
-                    }
-                    else if (robo0Grabbed.Value)
-                    {
-                        loweestYinSearchFound = true;
-                        lowestYinSearch = tempLowestYinSearch;
+                        //loweestYinSearchFound = true;
+                        //lowestYinSearch = tempLowestYinSearch;
                         highestYinSearch = searchingForPieceYvalue;
                     }
                     searchingForPieceYvalue += 0.8f;
@@ -562,7 +532,7 @@ namespace Controllers
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
-                        pieceFoundYcoordinates = (highestYinSearch + lowestYinSearch) / 2;
+                        pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
             }
