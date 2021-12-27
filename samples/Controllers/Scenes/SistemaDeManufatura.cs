@@ -90,10 +90,7 @@ namespace Controllers
         readonly MemoryBit robo0Grabbed;
         readonly MemoryBit robo0RotatePiece;
         float searchingForPieceYvalue;
-        float lowestYinSearch;
         float highestYinSearch;
-        float tempLowestYinSearch;
-        bool loweestYinSearchFound;
         float pieceFoundYcoordinates;
 
         private enum RoboSteps
