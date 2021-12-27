@@ -80,6 +80,7 @@ namespace Controllers
         readonly MemoryBit armPieceRotate;
         readonly MemoryBit armRotating;
         readonly MemoryBit armPieceDetected;
+        int counter;
 
         //ROBÔ
         readonly MemoryFloat robo0X;
@@ -91,6 +92,7 @@ namespace Controllers
         readonly MemoryBit robo0Grab;
         readonly MemoryBit robo0ToE2start;
         readonly MemoryBit robo0Grabbed;
+        readonly MemoryBit robo0RotatePiece;
         float searchingForPieceYvalue;
         float lowestYinSearch;
         float highestYinSearch;
@@ -159,6 +161,7 @@ namespace Controllers
             armPieceRotate = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 Gripper CCW", MemoryType.Output);
             armRotating = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Rotating)", MemoryType.Input);
             armPieceDetected = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Item Detected)", MemoryType.Input);
+            counter = 0;
 
 
             //ROBÔ0
@@ -175,6 +178,7 @@ namespace Controllers
             robo0ToE2start = MemoryMap.Instance.GetBit("Robô E1 to E2", MemoryType.Input);
             robo0Steps = RoboSteps.IDLE;
             robo0Grabbed = MemoryMap.Instance.GetBit("Pick & Place 0 (Box Detected)", MemoryType.Input);
+            robo0RotatePiece = MemoryMap.Instance.GetBit("Pick & Place 0 C(+)", MemoryType.Output);
             searchingForPieceYvalue = 0.0f;
             lowestYinSearch = 0.0f;
             highestYinSearch = 13.0f;
@@ -188,6 +192,9 @@ namespace Controllers
 
         public override void Execute(int elapsedMilliseconds)
         {
+
+            counter++;
+            
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA START %%%%%%%%%%%%%%%%%%%%
 
             rtSensorStartE2.CLK(sensorStartE2.Value);
@@ -236,27 +243,22 @@ namespace Controllers
                 else if (!sensorEndE1.Value && sensorEndE2.Value)
                 {
                     e1ConveyorState = E1ConveyorState.E2_TO_E1;
+                    e2toE1Steps = E2toE1Steps.GOING_TO_E2;
                 }
             }
             else if (e1ConveyorState == E1ConveyorState.E2_TO_E1)
             {
-                if (e2toE1Steps == E2toE1Steps.IDLE)
-                {
-                    armX.Value = 0.0f;
-                    armZ.Value = 4.0f;
-                    e2toE1Steps = E2toE1Steps.GOING_TO_E2;
-                }
-                else if (e2toE1Steps == E2toE1Steps.GOING_TO_E2)
+                if (e2toE1Steps == E2toE1Steps.GOING_TO_E2)
                 {
                     armX.Value = 2.3f;
-                    if (armXpos.Value > 2.0f)
+                    if (armXpos.Value > 2.1f)
                     {
                         e2toE1Steps = E2toE1Steps.DOWN_LOOKING_FOR_PIECE;
                     }
                 }
                 else if (e2toE1Steps == E2toE1Steps.DOWN_LOOKING_FOR_PIECE)
                 {
-                    armZ.Value = 9.2f;
+                    armZ.Value = 9.0f;
                     if (armZpos.Value > 8.5f)
                     {
                         e2toE1Steps = E2toE1Steps.GRABBING_PIECE;
@@ -265,7 +267,7 @@ namespace Controllers
                 else if (e2toE1Steps == E2toE1Steps.GRABBING_PIECE)
                 {
                     armGrab.Value = true;
-                    if (armPieceDetected.Value)
+                    if (armPieceDetected.Value && armZpos.Value > 8.8f)
                     {
                         e2toE1Steps = E2toE1Steps.UP_WITH_PIECE;
                     }
@@ -273,7 +275,7 @@ namespace Controllers
                 else if (e2toE1Steps == E2toE1Steps.UP_WITH_PIECE)
                 {
                     armZ.Value = 4.0f;
-                    if (armZpos.Value < 6.0f)
+                    if (armZpos.Value < 4.4f)
                     {
                         e2toE1Steps = E2toE1Steps.GOING_TO_E1_FIRST_HALF;
                     }
@@ -281,18 +283,21 @@ namespace Controllers
                 else if (e2toE1Steps == E2toE1Steps.GOING_TO_E1_FIRST_HALF)
                 {
                     armRotate.Value = true;
-                    armX.Value = 5.9f;
                     armPieceRotate.Value = true;
-                    if (!armRotating.Value)
+                    armX.Value = 4.0f;
+                    if (armXpos.Value > 3.0f)
                     {
                         armRotate.Value = false;
-                        armPieceRotate.Value = false;
+                    }
+                    if (!armRotating.Value && armXpos.Value > 3.0f)
+                    {
                         e2toE1Steps = E2toE1Steps.GOING_TO_E1_SECOND_HALF;
                     }
                 }
                 else if (e2toE1Steps == E2toE1Steps.GOING_TO_E1_SECOND_HALF)
                 {
                     armRotate.Value = true;
+                    armX.Value = 5.0f;
                     if (!armRotating.Value && armXpos.Value > 4.9f)
                     {
                         armRotate.Value = false;
@@ -314,7 +319,7 @@ namespace Controllers
                 }
                 else if (e2toE1Steps == E2toE1Steps.UP_WITHOUT_PIECE)
                 {
-                    armZ.Value = 4.0f;
+                    armZ.Value = 5.5f;
                     if (armZpos.Value < 6.0f)
                     {
                         e2toE1Steps = E2toE1Steps.UNROTATE_FIRST_HALF;
@@ -323,25 +328,40 @@ namespace Controllers
                 else if (e2toE1Steps == E2toE1Steps.UNROTATE_FIRST_HALF)
                 {
                     armUnrotate.Value = true;
-                    if (!armRotating.Value)
+                    armZ.Value = 4.5f;
+                    if (!armRotating.Value && armZpos.Value < 5.0f)
                     {
+                        armUnrotate.Value = false;
                         e2toE1Steps = E2toE1Steps.UNROTATE_SECOND_HALF;
                     }
                 }
                 else if (e2toE1Steps == E2toE1Steps.UNROTATE_SECOND_HALF)
                 {
                     armUnrotate.Value = true;
-                    if (!armRotating.Value)
+                    armZ.Value = 4.0f;
+                    if (!armRotating.Value && armZpos.Value < 4.1f)
                     {
+                        armUnrotate.Value = false;
                         e2toE1Steps = E2toE1Steps.IDLE;
+                        e1ConveyorState = E1ConveyorState.EMITTED;
                     }
                 }
-                
-                if (sensorEmitter.Value)
+                else if (e2toE1Steps == E2toE1Steps.IDLE)
                 {
-                    emitter.Value = false;
+                    armX.Value = 0.0f;
+                    armZ.Value = 4.0f;
                 }
+
+                
             }
+
+
+            if (sensorEmitter.Value)
+            {
+                emitter.Value = false;
+            }
+
+
             if (sensorEndE1.Value == true)
             {
                 if (messageOnlyOnce)
@@ -365,6 +385,7 @@ namespace Controllers
                 conveyorEndE2.Value = false;
                 if (rtSensorStartE2.Q == true)
                 {
+                    Console.WriteLine("Buffer One");
                     conveyorStartE2.Value = true;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
@@ -377,6 +398,7 @@ namespace Controllers
             {
                 if (rtSensorStartE2.Q == true)
                 {
+                    Console.WriteLine("Buffer Two");
                     conveyorStartE2.Value = true;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
@@ -386,6 +408,7 @@ namespace Controllers
                 }
                 if (ftSensorEndE2.Q == true)
                 {
+                    Console.WriteLine("Buffer Zero");
                     bufferE2 = BufferE2.ZERO;
                 }
                 if (sensorEndE2.Value)
@@ -401,6 +424,7 @@ namespace Controllers
             {
                 if (rtSensorStartE2.Q == true)
                 {
+                    Console.WriteLine("Buffer Three");
                     conveyorStartE2.Value = true;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
@@ -410,6 +434,7 @@ namespace Controllers
                 }
                 if (ftSensorEndE2.Q == true)
                 {
+                    Console.WriteLine("Buffer One");
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.ONE;
                 }
@@ -547,8 +572,6 @@ namespace Controllers
                         pieceFoundYcoordinates = (highestYinSearch + lowestYinSearch) / 2;
                     }
                 }
-                Console.WriteLine("highestYinSearch = " + highestYinSearch);
-                Console.WriteLine("lowestYinSearch = " + lowestYinSearch);
             }
             else if (robo0Steps == RoboSteps.GRAB_PIECE)
             {
@@ -557,7 +580,6 @@ namespace Controllers
                     robo0Y.Value = pieceFoundYcoordinates;
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
-                        Console.WriteLine("Here");
                         robo0Z.Value = 9.0f;
                         robo0Grab.Value = true;
                         MemoryMap.Instance.Update();
@@ -578,6 +600,7 @@ namespace Controllers
             {
                 robo0X.Value = 9.25f;
                 robo0Y.Value = 2.3f;
+                robo0RotatePiece.Value = true;
                 if (robo0XPos.Value > 8.0f && robo0YPos.Value > 2.0f)
                 {
                     robo0Steps = RoboSteps.DOWN_WITH_PIECE;
@@ -599,6 +622,7 @@ namespace Controllers
             else if (robo0Steps == RoboSteps.UP_WITHOUT_PIECE)
             {
                 robo0Z.Value = 4.0f;
+                robo0RotatePiece.Value = false;
                 if (robo0ZPos.Value < 6.0f)
                 {
                     robo0Steps = RoboSteps.IDLE;
