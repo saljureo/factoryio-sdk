@@ -285,11 +285,11 @@ namespace Controllers
                     armRotate.Value = true;
                     armPieceRotate.Value = true;
                     armX.Value = 4.0f;
-                    if (armXpos.Value > 3.0f)
+                    if (armXpos.Value > 3.9f)
                     {
                         armRotate.Value = false;
                     }
-                    if (!armRotating.Value && armXpos.Value > 3.0f)
+                    if (!armRotating.Value && armXpos.Value > 3.9f)
                     {
                         e2toE1Steps = E2toE1Steps.GOING_TO_E1_SECOND_HALF;
                     }
@@ -306,8 +306,8 @@ namespace Controllers
                 }
                 else if (e2toE1Steps == E2toE1Steps.DOWN_WITH_PIECE)
                 {
-                    armZ.Value = 9.2f;
-                    if (armZpos.Value > 9.0f)
+                    armZ.Value = 9.0f;
+                    if (armZpos.Value > 8.9f)
                     {
                         e2toE1Steps = E2toE1Steps.UNGRABBING_PIECE;
                     }
@@ -320,7 +320,7 @@ namespace Controllers
                 else if (e2toE1Steps == E2toE1Steps.UP_WITHOUT_PIECE)
                 {
                     armZ.Value = 5.5f;
-                    if (armZpos.Value < 6.0f)
+                    if (armZpos.Value < 5.6f)
                     {
                         e2toE1Steps = E2toE1Steps.UNROTATE_FIRST_HALF;
                     }
@@ -329,7 +329,7 @@ namespace Controllers
                 {
                     armUnrotate.Value = true;
                     armZ.Value = 4.5f;
-                    if (!armRotating.Value && armZpos.Value < 5.0f)
+                    if (!armRotating.Value && armZpos.Value < 4.6f)
                     {
                         armUnrotate.Value = false;
                         e2toE1Steps = E2toE1Steps.UNROTATE_SECOND_HALF;
@@ -338,8 +338,8 @@ namespace Controllers
                 else if (e2toE1Steps == E2toE1Steps.UNROTATE_SECOND_HALF)
                 {
                     armUnrotate.Value = true;
-                    armZ.Value = 4.0f;
-                    if (!armRotating.Value && armZpos.Value < 4.1f)
+                    armZ.Value = 3.5f;
+                    if (!armRotating.Value && armZpos.Value < 3.6f)
                     {
                         armUnrotate.Value = false;
                         e2toE1Steps = E2toE1Steps.IDLE;
