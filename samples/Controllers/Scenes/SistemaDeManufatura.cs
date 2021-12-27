@@ -1,8 +1,6 @@
 ﻿using Controllers.Scenes;
 using EngineIO;
 using System;
-using System.Diagnostics;
-using System.Threading;
 
 namespace Controllers
 {
@@ -79,34 +77,8 @@ namespace Controllers
         readonly MemoryBit armPieceDetected;
 
         //ROBÔ
-        readonly MemoryFloat robo0X;
-        readonly MemoryFloat robo0Y;
-        readonly MemoryFloat robo0Z;
-        readonly MemoryFloat robo0XPos;
-        readonly MemoryFloat robo0YPos;
-        readonly MemoryFloat robo0ZPos;
-        readonly MemoryBit robo0Grab;
-        readonly MemoryBit robo0ToE2start;
-        readonly MemoryBit robo0Grabbed;
-        readonly MemoryBit robo0RotatePiece;
-        float searchingForPieceYvalue;
-        float highestYinSearch;
-        float pieceFoundYcoordinates;
-
-        private enum RoboSteps
-        {
-            IDLE,
-            DOWN_FOR_PIECE,
-            SEARCHING_FOR_PIECE,
-            GRAB_PIECE,
-            UP_WITH_PIECE,
-            TO_E2,
-            DOWN_WITH_PIECE,
-            RELEASE_PIECE,
-            UP_WITHOUT_PIECE
-        }
-        RoboSteps robo0Steps;
-
+        SistemaDeManufatura_Robo0 robo0;
+        
         //Messages only once
         bool messageOnlyOnce;
         bool initialMessage;
@@ -159,23 +131,19 @@ namespace Controllers
 
 
             //ROBÔ0
-            robo0X = MemoryMap.Instance.GetFloat("Pick & Place 0 X Set Point (V)", MemoryType.Output);
-            robo0Y = MemoryMap.Instance.GetFloat("Pick & Place 0 Y Set Point (V)", MemoryType.Output);
-            robo0Z = MemoryMap.Instance.GetFloat("Pick & Place 0 Z Set Point (V)", MemoryType.Output);
-            robo0X.Value = 9.9f;//0.9f initial state
-            robo0Y.Value = 0.0f;//0.7f initial state
-            robo0Y.Value = 5.0f;//0.0f initial state
-            robo0XPos = MemoryMap.Instance.GetFloat("Pick & Place 0 X Position (V)", MemoryType.Input);
-            robo0YPos = MemoryMap.Instance.GetFloat("Pick & Place 0 Y Position (V)", MemoryType.Input);
-            robo0ZPos = MemoryMap.Instance.GetFloat("Pick & Place 0 Z Position (V)", MemoryType.Input);
-            robo0Grab = MemoryMap.Instance.GetBit("Pick & Place 0 (Grab)", MemoryType.Output);
-            robo0ToE2start = MemoryMap.Instance.GetBit("Robô E1 to E2", MemoryType.Input);
-            robo0Steps = RoboSteps.IDLE;
-            robo0Grabbed = MemoryMap.Instance.GetBit("Pick & Place 0 (Box Detected)", MemoryType.Input);
-            robo0RotatePiece = MemoryMap.Instance.GetBit("Pick & Place 0 C(+)", MemoryType.Output);
-            searchingForPieceYvalue = 0.0f;
-            highestYinSearch = 13.0f;
-            pieceFoundYcoordinates = 0.0f;
+            
+            robo0 = new SistemaDeManufatura_Robo0(
+                MemoryMap.Instance.GetFloat("Pick & Place 0 X Set Point (V)", MemoryType.Output),
+                MemoryMap.Instance.GetFloat("Pick & Place 0 X Position (V)", MemoryType.Input),
+                MemoryMap.Instance.GetFloat("Pick & Place 0 Y Set Point (V)", MemoryType.Output),
+                MemoryMap.Instance.GetFloat("Pick & Place 0 Y Position (V)", MemoryType.Input),
+                MemoryMap.Instance.GetFloat("Pick & Place 0 Z Set Point (V)", MemoryType.Output),
+                MemoryMap.Instance.GetFloat("Pick & Place 0 Z Position (V)", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Pick & Place 0 (Grab)", MemoryType.Output),
+                MemoryMap.Instance.GetBit("Pick & Place 0 (Box Detected)", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Pick & Place 0 C(+)", MemoryType.Output),
+                MemoryMap.Instance.GetBit("Robô E1 to E2", MemoryType.Input));
+                
 
             //Messages only once
             messageOnlyOnce = true;
@@ -199,7 +167,6 @@ namespace Controllers
             ftSensorEndE2.CLK(sensorEndE2.Value);
 
             //E1
-
             if (conveyorE1Start.Value)
             {
                 conveyorE1.Value = true;
@@ -484,115 +451,8 @@ namespace Controllers
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA ENDS %%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%% ROBÔ STARTS %%%%%%%%%%%%%%%%%%%%
-
-            //Piece to E2
-            if (robo0Steps == RoboSteps.IDLE)
-            {
-                robo0X.Value = 0.9f;
-                robo0Y.Value = 0.0f;
-                robo0Z.Value = 0.0f;
-                highestYinSearch = 13.0f;
-                searchingForPieceYvalue = 0.0f;
-                if (robo0ToE2start.Value)
-                {
-                    robo0Steps = RoboSteps.DOWN_FOR_PIECE;
-                }
-            }
-            else if (robo0Steps == RoboSteps.DOWN_FOR_PIECE)
-            {
-                robo0Z.Value = 8.0f;
-                if (robo0ZPos.Value > 7.7f)
-                {
-                    robo0Steps = RoboSteps.SEARCHING_FOR_PIECE;
-                    robo0Y.Value = 0.0f;
-                }
-            }
-            else if (robo0Steps == RoboSteps.SEARCHING_FOR_PIECE)
-            {
-                robo0Y.Value = searchingForPieceYvalue;
-                if (Math.Abs(robo0YPos.Value - robo0Y.Value) < 0.1)
-                {
-                    //if (!robo0Grabbed.Value && !loweestYinSearchFound)
-                    //{
-                    //    tempLowestYinSearch = searchingForPieceYvalue + 0.1f;
-                    //}
-                    if (robo0Grabbed.Value)
-                    {
-                        //loweestYinSearchFound = true;
-                        //lowestYinSearch = tempLowestYinSearch;
-                        highestYinSearch = searchingForPieceYvalue;
-                    }
-                    searchingForPieceYvalue += 0.8f;
-                }
-                if (searchingForPieceYvalue > 5.5f)
-                {
-                    if (highestYinSearch == 13.0f)
-                    {
-                        robo0Steps = RoboSteps.IDLE;
-                    }
-                    else
-                    {
-                        robo0Steps = RoboSteps.GRAB_PIECE;
-                        robo0Z.Value = 6.9f;
-                        pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
-                    }
-                }
-            }
-            else if (robo0Steps == RoboSteps.GRAB_PIECE)
-            {
-                if (robo0ZPos.Value < 8.0f)
-                {
-                    robo0Y.Value = pieceFoundYcoordinates;
-                    if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
-                    {
-                        robo0Z.Value = 9.0f;
-                        robo0Grab.Value = true;
-                        MemoryMap.Instance.Update();
-                        Thread.Sleep(300);
-                        robo0Steps = RoboSteps.UP_WITH_PIECE;
-                    }
-                }
-            }
-            else if (robo0Steps == RoboSteps.UP_WITH_PIECE)
-            {
-                robo0Z.Value = 4.0f;
-                if (robo0ZPos.Value < 6.0f)
-                {
-                    robo0Steps = RoboSteps.TO_E2;
-                }
-            }
-            else if (robo0Steps == RoboSteps.TO_E2)
-            {
-                robo0X.Value = 9.25f;
-                robo0Y.Value = 2.3f;
-                robo0RotatePiece.Value = true;
-                if (robo0XPos.Value > 8.0f && robo0YPos.Value > 2.0f)
-                {
-                    robo0Steps = RoboSteps.DOWN_WITH_PIECE;
-                }
-            }
-            else if (robo0Steps == RoboSteps.DOWN_WITH_PIECE)
-            {
-                robo0Z.Value = 8.4f;
-                if (robo0ZPos.Value > 8.1f)
-                {
-                    robo0Steps = RoboSteps.RELEASE_PIECE;
-                }
-            }
-            else if (robo0Steps == RoboSteps.RELEASE_PIECE)
-            {
-                robo0Grab.Value = false;
-                robo0Steps = RoboSteps.UP_WITHOUT_PIECE;
-            }
-            else if (robo0Steps == RoboSteps.UP_WITHOUT_PIECE)
-            {
-                robo0Z.Value = 4.0f;
-                robo0RotatePiece.Value = false;
-                if (robo0ZPos.Value < 6.0f)
-                {
-                    robo0Steps = RoboSteps.IDLE;
-                }
-            }
+            robo0.E1toE2();
+            
             //%%%%%%%%%%%%%%%%%%%% ROBÔ ENDS %%%%%%%%%%%%%%%%%%%%
         }
     }
