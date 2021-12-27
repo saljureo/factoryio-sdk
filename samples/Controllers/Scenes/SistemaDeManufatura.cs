@@ -78,10 +78,13 @@ namespace Controllers
 
         //ROBÔ
         SistemaDeManufatura_Robo0 robo0;
-        MemoryBit startE1toE2;
-        MemoryBit startE1toB1;
-        MemoryBit startE1toB2;
-        MemoryBit startE1toB3;
+        MemoryBit startC1toB1;
+        MemoryBit startC2toB1;
+        MemoryBit startC2toB2;
+        MemoryBit startC3toB3;
+        MemoryBit startC1toE2;
+        MemoryBit startC2toE2;
+        MemoryBit startC3toE2;
         private enum Robo0State
         {
             IDLE,
@@ -144,10 +147,13 @@ namespace Controllers
 
 
             //ROBÔ0
-            startE1toE2 = MemoryMap.Instance.GetBit("Robô E1 to E2", MemoryType.Input);
-            startE1toB1 = MemoryMap.Instance.GetBit("Robô E1 to B1", MemoryType.Input);
-            startE1toB2 = MemoryMap.Instance.GetBit("Robô E1 to B2", MemoryType.Input);
-            startE1toB3 = MemoryMap.Instance.GetBit("Robô E1 to B3", MemoryType.Input);
+            startC1toB1 = MemoryMap.Instance.GetBit("Robô C1 to B1", MemoryType.Input);
+            startC2toB1 = MemoryMap.Instance.GetBit("Robô C2 to B1", MemoryType.Input);
+            startC2toB2 = MemoryMap.Instance.GetBit("Robô C2 to B2", MemoryType.Input);
+            startC3toB3 = MemoryMap.Instance.GetBit("Robô C3 to B3", MemoryType.Input);
+            startC1toE2 = MemoryMap.Instance.GetBit("Robô C1 to E2", MemoryType.Input);
+            startC2toE2 = MemoryMap.Instance.GetBit("Robô C2 to E2", MemoryType.Input);
+            startC3toE2 = MemoryMap.Instance.GetBit("Robô C3 to E2", MemoryType.Input);
             robo0State = Robo0State.IDLE;
 
             robo0 = new SistemaDeManufatura_Robo0(
@@ -160,7 +166,7 @@ namespace Controllers
                 MemoryMap.Instance.GetBit("Pick & Place 0 (Grab)", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Pick & Place 0 (Box Detected)", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Pick & Place 0 C(+)", MemoryType.Output),
-                startE1toE2,startE1toB1,startE1toB2,startE1toB3);
+                startC1toB1, startC2toB1, startC2toB2, startC3toB3, startC1toE2, startC2toE2, startC3toE2);
                 
 
             //Messages only once
@@ -469,19 +475,19 @@ namespace Controllers
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA ENDS %%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%% ROBÔ STARTS %%%%%%%%%%%%%%%%%%%%
-            if (startE1toE2.Value)
+            if (startC1toE2.Value || startC2toE2.Value || startC3toE2.Value)
             {
                 robo0State = Robo0State.E1toE2;
             }
-            else if (startE1toB1.Value)
+            else if (startC1toB1.Value || startC2toB1.Value)
             {
                 robo0State = Robo0State.E1toB1;
             }
-            else if (startE1toB2.Value)
+            else if (startC2toB2.Value)
             {
                 robo0State = Robo0State.E1toB2;
             }
-            else if (startE1toB3.Value)
+            else if (startC3toB3.Value)
             {
                 robo0State = Robo0State.E1toB3;
             }

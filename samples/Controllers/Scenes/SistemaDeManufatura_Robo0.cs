@@ -32,14 +32,17 @@ namespace Controllers.Scenes
         readonly MemoryBit robo0Grab;
         readonly MemoryBit robo0Grabbed;
         readonly MemoryBit robo0RotatePiece;
-        readonly MemoryBit robo0ToE2start;
-        readonly MemoryBit robo0ToB1start;
-        readonly MemoryBit robo0ToB2start;
-        readonly MemoryBit robo0ToB3start;
+        readonly MemoryBit startC1toB1;
+        readonly MemoryBit startC2toB1;
+        readonly MemoryBit startC2toB2;
+        readonly MemoryBit startC3toB3;
+        readonly MemoryBit startC1toE2;
+        readonly MemoryBit startC2toE2;
+        readonly MemoryBit startC3toE2;
         float highestYinSearch;
         float searchingForPieceYvalue;
         float pieceFoundYcoordinates;
-        public SistemaDeManufatura_Robo0(MemoryFloat robo0X, MemoryFloat robo0XPos, MemoryFloat robo0Y, MemoryFloat robo0YPos, MemoryFloat robo0Z, MemoryFloat robo0ZPos, MemoryBit robo0Grab, MemoryBit robo0Grabbed, MemoryBit robo0RotatePiece, MemoryBit robo0ToE2start, MemoryBit robo0ToB1start, MemoryBit robo0ToB2start, MemoryBit robo0ToB3start)
+        public SistemaDeManufatura_Robo0(MemoryFloat robo0X, MemoryFloat robo0XPos, MemoryFloat robo0Y, MemoryFloat robo0YPos, MemoryFloat robo0Z, MemoryFloat robo0ZPos, MemoryBit robo0Grab, MemoryBit robo0Grabbed, MemoryBit robo0RotatePiece, MemoryBit startC1toB1, MemoryBit startC2toB1, MemoryBit startC2toB2, MemoryBit startC3toB3, MemoryBit startC1toE2, MemoryBit startC2toE2, MemoryBit startC3toE2)
         {
             this.robo0X = robo0X;
             this.robo0XPos = robo0XPos;
@@ -50,10 +53,13 @@ namespace Controllers.Scenes
             this.robo0Grab = robo0Grab;
             this.robo0Grabbed = robo0Grabbed;
             this.robo0RotatePiece = robo0RotatePiece;
-            this.robo0ToE2start = robo0ToE2start;
-            this.robo0ToB1start = robo0ToB1start;
-            this.robo0ToB2start = robo0ToB2start;
-            this.robo0ToB3start = robo0ToB3start;
+            this.startC1toB1 = startC1toB1;
+            this.startC2toB1 = startC2toB1;
+            this.startC2toB2 = startC2toB2;
+            this.startC3toB3 = startC3toB3;
+            this.startC1toE2 = startC1toE2;
+            this.startC2toE2 = startC2toE2;
+            this.startC3toE2 = startC3toE2;
             robo0Steps = RoboSteps.IDLE;
         }
 
@@ -66,7 +72,7 @@ namespace Controllers.Scenes
                 robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
                 searchingForPieceYvalue = 0.0f;
-                if (robo0ToB1start.Value)
+                if (startC1toB1.Value || startC2toB1.Value)
                 {
                     robo0Steps = RoboSteps.DOWN_FOR_PIECE;
                 }
@@ -170,7 +176,7 @@ namespace Controllers.Scenes
                 robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
                 searchingForPieceYvalue = 0.0f;
-                if (robo0ToB2start.Value)
+                if (startC2toB2.Value)
                 {
                     robo0Steps = RoboSteps.DOWN_FOR_PIECE;
                 }
@@ -274,7 +280,7 @@ namespace Controllers.Scenes
                 robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
                 searchingForPieceYvalue = 0.0f;
-                if (robo0ToB3start.Value)
+                if (startC3toB3.Value)
                 {
                     robo0Steps = RoboSteps.DOWN_FOR_PIECE;
                 }
@@ -378,7 +384,7 @@ namespace Controllers.Scenes
                 robo0Z.Value = 5.0f;                
                 highestYinSearch = 13.0f;
                 searchingForPieceYvalue = 0.0f;
-                if (robo0ToE2start.Value)
+                if (startC1toE2.Value || startC2toE2.Value || startC3toE2.Value)
                 {
                     robo0Steps = RoboSteps.DOWN_FOR_PIECE;
                 }
