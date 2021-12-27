@@ -50,9 +50,6 @@ namespace Controllers.Scenes
             this.robo0ToE2start = robo0ToE2start;
             robo0Steps = RoboSteps.IDLE;            
         }
-        
-    
-
         public void E1toE2()
         {
             if (robo0Steps == RoboSteps.IDLE)
@@ -81,14 +78,8 @@ namespace Controllers.Scenes
                 robo0Y.Value = searchingForPieceYvalue;
                 if (Math.Abs(robo0YPos.Value - robo0Y.Value) < 0.1)
                 {
-                    //if (!robo0Grabbed.Value && !loweestYinSearchFound)
-                    //{
-                    //    tempLowestYinSearch = searchingForPieceYvalue + 0.1f;
-                    //}
                     if (robo0Grabbed.Value)
                     {
-                        //loweestYinSearchFound = true;
-                        //lowestYinSearch = tempLowestYinSearch;
                         highestYinSearch = searchingForPieceYvalue;
                     }
                     searchingForPieceYvalue += 0.8f;
