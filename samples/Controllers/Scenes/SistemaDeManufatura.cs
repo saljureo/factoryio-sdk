@@ -173,10 +173,7 @@ namespace Controllers
             robo0Grabbed = MemoryMap.Instance.GetBit("Pick & Place 0 (Box Detected)", MemoryType.Input);
             robo0RotatePiece = MemoryMap.Instance.GetBit("Pick & Place 0 C(+)", MemoryType.Output);
             searchingForPieceYvalue = 0.0f;
-            lowestYinSearch = 0.0f;
             highestYinSearch = 13.0f;
-            tempLowestYinSearch = 0.0f;
-            loweestYinSearchFound = false;
             pieceFoundYcoordinates = 0.0f;
 
             //Messages only once
@@ -486,7 +483,6 @@ namespace Controllers
                 robo0Y.Value = 0.0f;
                 robo0Z.Value = 0.0f;
                 highestYinSearch = 13.0f;
-                loweestYinSearchFound = false;
                 searchingForPieceYvalue = 0.0f;
                 if (robo0ToE2start.Value)
                 {
