@@ -78,7 +78,16 @@ namespace Controllers
 
         //ROBÔ
         SistemaDeManufatura_Robo0 robo0;
-        
+        MemoryBit startE1toE2;
+        MemoryBit startE1toB1;
+        private enum Robo0State
+        {
+            IDLE,
+            E1toE2,
+            E1toB1
+        }
+        Robo0State robo0State;
+
         //Messages only once
         bool messageOnlyOnce;
         bool initialMessage;
@@ -131,7 +140,10 @@ namespace Controllers
 
 
             //ROBÔ0
-            
+            startE1toE2 = MemoryMap.Instance.GetBit("Robô E1 to E2", MemoryType.Input);
+            startE1toB1 = MemoryMap.Instance.GetBit("Robô E1 to B1", MemoryType.Input);
+            robo0State = Robo0State.IDLE;
+
             robo0 = new SistemaDeManufatura_Robo0(
                 MemoryMap.Instance.GetFloat("Pick & Place 0 X Set Point (V)", MemoryType.Output),
                 MemoryMap.Instance.GetFloat("Pick & Place 0 X Position (V)", MemoryType.Input),
@@ -142,7 +154,7 @@ namespace Controllers
                 MemoryMap.Instance.GetBit("Pick & Place 0 (Grab)", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Pick & Place 0 (Box Detected)", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Pick & Place 0 C(+)", MemoryType.Output),
-                MemoryMap.Instance.GetBit("Robô E1 to E2", MemoryType.Input));
+                startE1toE2,startE1toB1);
                 
 
             //Messages only once
@@ -451,8 +463,24 @@ namespace Controllers
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA ENDS %%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%% ROBÔ STARTS %%%%%%%%%%%%%%%%%%%%
-            robo0.E1toE2();
-            
+            if (startE1toE2.Value)
+            {
+                robo0State = Robo0State.E1toE2;
+            }
+            else if (startE1toB1.Value)
+            {
+                robo0State = Robo0State.E1toB1;
+            }
+
+            if (robo0State == Robo0State.E1toE2)
+            {
+                robo0.E1toE2();
+            }
+            else if (robo0State == Robo0State.E1toB1)
+            {
+                robo0.E1toB1();
+            }
+
             //%%%%%%%%%%%%%%%%%%%% ROBÔ ENDS %%%%%%%%%%%%%%%%%%%%
         }
     }
