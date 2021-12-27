@@ -27,7 +27,6 @@ namespace Controllers
         E1ConveyorState e1ConveyorState;
         private enum E2toE1Steps
         {
-            IDLE,
             GOING_TO_E2,
             DOWN_LOOKING_FOR_PIECE,
             GRABBING_PIECE,
@@ -342,17 +341,11 @@ namespace Controllers
                     if (!armRotating.Value && armZpos.Value < 3.6f)
                     {
                         armUnrotate.Value = false;
-                        e2toE1Steps = E2toE1Steps.IDLE;
                         e1ConveyorState = E1ConveyorState.EMITTED;
+                        armX.Value = 0.0f;
+                        armZ.Value = 4.0f;
                     }
                 }
-                else if (e2toE1Steps == E2toE1Steps.IDLE)
-                {
-                    armX.Value = 0.0f;
-                    armZ.Value = 4.0f;
-                }
-
-                
             }
 
 
