@@ -109,6 +109,7 @@ namespace Controllers
 
         //Messages only once
         bool messageOnlyOnce;
+        bool initialMessage;
         public SistemaDeManufatura()
         {
             //ESTEIRAS E1 E2
@@ -178,11 +179,19 @@ namespace Controllers
 
             //Messages only once
             messageOnlyOnce = true;
+            initialMessage = true;
         }
 
         public override void Execute(int elapsedMilliseconds)
         {
 
+            if (initialMessage)
+            {
+                Console.WriteLine("\n");
+                Console.WriteLine("Green is C1, Metal is C2, and Blue is C3");
+                Console.WriteLine("\n");
+                initialMessage = false;
+            }
             
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA START %%%%%%%%%%%%%%%%%%%%
 
