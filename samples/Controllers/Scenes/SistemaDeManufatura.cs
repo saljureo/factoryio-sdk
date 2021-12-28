@@ -98,6 +98,8 @@ namespace Controllers
         //Messages only once
         bool messageOnlyOnce;
         bool initialMessage;
+        bool colorMessage;
+        bool colorMessage2;
         public SistemaDeManufatura()
         {
             //ESTEIRAS E1 E2
@@ -172,6 +174,8 @@ namespace Controllers
             //Messages only once
             messageOnlyOnce = true;
             initialMessage = true;
+            colorMessage = true;
+            colorMessage2 = true;
         }
 
         public override void Execute(int elapsedMilliseconds)
@@ -345,18 +349,7 @@ namespace Controllers
                 emitter.Value = false;
             }
 
-            if (sensorEndE1.Value == true)
-            {
-                if (messageOnlyOnce)
-                {
-                    Console.WriteLine("Part number is: " + sensorColor.Value);
-                    messageOnlyOnce = false;
-                }
-            }
-            else
-            {
-                messageOnlyOnce = true;
-            }
+            
 
             //E2
             if (bufferE2 == BufferE2.ZERO)
@@ -510,6 +503,47 @@ namespace Controllers
             }
 
             //%%%%%%%%%%%%%%%%%%%% ROBÔ ENDS %%%%%%%%%%%%%%%%%%%%
+
+            //%%%%%%%%%%%%%%%%%%%% COLOR SENSOR STARTS %%%%%%%%%%%%%%%%%%%%
+
+            if (sensorColor.Value == 5)
+            {
+                if (colorMessage)
+                {
+                    Console.WriteLine("evento s_C1");
+                    colorMessage = false;
+                    colorMessage2 = true;
+                }
+            }
+            else if (sensorColor.Value == 9)
+            {
+                if (colorMessage)
+                {
+                    Console.WriteLine("evento s_C2");
+                    colorMessage = false;
+                    colorMessage2 = true;
+                }
+            }
+            else if (sensorColor.Value == 2)
+            {
+                if (colorMessage)
+                {
+                    Console.WriteLine("evento s_C3");
+                    colorMessage = false;
+                    colorMessage2 = true;
+                }
+            }
+            else if (sensorColor.Value == 0)
+            {
+                if (colorMessage2)
+                {
+                    Console.WriteLine("evento s_des");
+                    colorMessage2 = false;
+                }
+                colorMessage = true;
+            }
+
+            //%%%%%%%%%%%%%%%%%%%% COLOR SENSOR ENDS %%%%%%%%%%%%%%%%%%%%
         }
     }
 }

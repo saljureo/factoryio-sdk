@@ -67,7 +67,7 @@ namespace Controllers.Scenes
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
-                robo0X.Value = 0.9f;
+                robo0X.Value = 1.2f;
                 robo0Y.Value = 0.0f;
                 robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
@@ -107,6 +107,7 @@ namespace Controllers.Scenes
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
+                        robo0X.Value = 0.9f;
                         pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
@@ -171,7 +172,7 @@ namespace Controllers.Scenes
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
-                robo0X.Value = 0.9f;
+                robo0X.Value = 1.2f;
                 robo0Y.Value = 0.0f;
                 robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
@@ -211,6 +212,7 @@ namespace Controllers.Scenes
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
+                        robo0X.Value = 0.9f;
                         pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
@@ -275,7 +277,7 @@ namespace Controllers.Scenes
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
-                robo0X.Value = 0.9f;
+                robo0X.Value = 1.2f;
                 robo0Y.Value = 0.0f;
                 robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
@@ -315,6 +317,7 @@ namespace Controllers.Scenes
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
+                        robo0X.Value = 0.9f;
                         pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
@@ -379,7 +382,7 @@ namespace Controllers.Scenes
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
-                robo0X.Value = 0.9f;
+                robo0X.Value = 1.2f;
                 robo0Y.Value = 0.0f;
                 robo0Z.Value = 5.0f;                
                 highestYinSearch = 13.0f;
@@ -419,6 +422,7 @@ namespace Controllers.Scenes
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
+                        robo0X.Value = 0.9f;
                         pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
