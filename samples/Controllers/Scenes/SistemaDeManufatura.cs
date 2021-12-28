@@ -1,6 +1,7 @@
 ﻿using Controllers.Scenes;
 using EngineIO;
 using System;
+using System.Threading;
 
 namespace Controllers
 {
@@ -75,6 +76,7 @@ namespace Controllers
         readonly MemoryBit armPieceRotate;
         readonly MemoryBit armRotating;
         readonly MemoryBit armPieceDetected;
+        bool rotationBool;
 
         //ROBÔ
         SistemaDeManufatura_Robo0 robo0;
@@ -146,6 +148,7 @@ namespace Controllers
             armPieceRotate = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 Gripper CCW", MemoryType.Output);
             armRotating = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Rotating)", MemoryType.Input);
             armPieceDetected = MemoryMap.Instance.GetBit("Two-Axis Pick & Place 0 (Item Detected)", MemoryType.Input);
+            rotationBool = false;
 
 
             //ROBÔ0
@@ -272,6 +275,7 @@ namespace Controllers
                     if (armZpos.Value < 4.4f)
                     {
                         e2toE1Steps = E2toE1Steps.GOING_TO_E1_FIRST_HALF;
+                        rotationBool = false;
                     }
                 }
                 else if (e2toE1Steps == E2toE1Steps.GOING_TO_E1_FIRST_HALF)
@@ -279,24 +283,35 @@ namespace Controllers
                     armRotate.Value = true;
                     armPieceRotate.Value = true;
                     armX.Value = 4.0f;
-                    if (armXpos.Value > 3.9f)
+                    if (rotationBool)
                     {
+                        Thread.Sleep(200);
                         armRotate.Value = false;
                         armPieceRotate.Value = false;
+                    }
+                    else
+                    {
+                        rotationBool = true;
                     }
                     if (!armRotating.Value && armXpos.Value > 3.9f)
                     {
                         e2toE1Steps = E2toE1Steps.GOING_TO_E1_SECOND_HALF;
+                        rotationBool = false;
                     }
                 }
                 else if (e2toE1Steps == E2toE1Steps.GOING_TO_E1_SECOND_HALF)
                 {
                     armRotate.Value = true;
                     armX.Value = 5.0f;
-                    if (!armRotating.Value && armXpos.Value > 4.9f)
+                    if (!armRotating.Value && armXpos.Value > 4.9f && rotationBool)
                     {
+                        Thread.Sleep(200);
                         armRotate.Value = false;
                         e2toE1Steps = E2toE1Steps.DOWN_WITH_PIECE;
+                    }
+                    else
+                    {
+                        rotationBool = true;
                     }
                 }
                 else if (e2toE1Steps == E2toE1Steps.DOWN_WITH_PIECE)
@@ -318,28 +333,40 @@ namespace Controllers
                     if (armZpos.Value < 5.6f)
                     {
                         e2toE1Steps = E2toE1Steps.UNROTATE_FIRST_HALF;
+                        rotationBool = false;                    
                     }
                 }
                 else if (e2toE1Steps == E2toE1Steps.UNROTATE_FIRST_HALF)
                 {
                     armUnrotate.Value = true;
                     armZ.Value = 4.5f;
-                    if (!armRotating.Value && armZpos.Value < 4.6f)
+                    if (!armRotating.Value && armZpos.Value < 4.6f && rotationBool)
                     {
+                        Thread.Sleep(200);
                         armUnrotate.Value = false;
                         e2toE1Steps = E2toE1Steps.UNROTATE_SECOND_HALF;
+                        rotationBool = false;
+                    }
+                    else
+                    {
+                        rotationBool = true;
                     }
                 }
                 else if (e2toE1Steps == E2toE1Steps.UNROTATE_SECOND_HALF)
                 {
                     armUnrotate.Value = true;
                     armZ.Value = 3.5f;
-                    if (!armRotating.Value && armZpos.Value < 3.6f)
+                    if (!armRotating.Value && armZpos.Value < 3.6f && rotationBool)
                     {
+                        Thread.Sleep(200);
                         armUnrotate.Value = false;
                         e1ConveyorState = E1ConveyorState.EMITTED;
                         armX.Value = 2.3f;
                         armZ.Value = 6.0f;
+                    }
+                    else
+                    {
+                        rotationBool = true;
                     }
                 }
             }
