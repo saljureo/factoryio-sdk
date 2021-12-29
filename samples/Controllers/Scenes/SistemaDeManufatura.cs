@@ -202,15 +202,15 @@ namespace Controllers
             startC2fromB1toM1 = MemoryMap.Instance.GetBit("C2fromB1toM1", MemoryType.Input);
             startC1fromB1toM1 = MemoryMap.Instance.GetBit("C1fromB1toM1", MemoryType.Input);
             startC3fromB3toM1 = MemoryMap.Instance.GetBit("C3fromB3toM1", MemoryType.Input);
-            conveyorB1 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output);
-            conveyorB2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output);
-            conveyorB3 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output);
-            sensorStartConveyorB1 = MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input);
-            sensorStartConveyorB2 = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);
-            sensorStartConveyorB3 = MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input);
-            sensorEndConveyorB1 = MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input);
-            sensorEndConveyorB2 = MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input);
-            sensorEndConveyorB3 = MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input);
+            //conveyorB1 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output);
+            //conveyorB2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output);
+            //conveyorB3 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output);
+            //sensorStartConveyorB1 = MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input);
+            //sensorStartConveyorB2 = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);
+            //sensorStartConveyorB3 = MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input);
+            //sensorEndConveyorB1 = MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input);
+            //sensorEndConveyorB2 = MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input);
+            //sensorEndConveyorB3 = MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input);
             m1states = M1states.IDLE;
             roboM1 = new SistemaDeManufatura_M1(
                 MemoryMap.Instance.GetFloat("Pick & Place 1 X Set Point (V)", MemoryType.Output),
@@ -221,6 +221,15 @@ namespace Controllers
                 MemoryMap.Instance.GetFloat("Pick & Place 1 Z Position (V)", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Pick & Place 1 (Grab)", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Pick & Place 1 (Box Detected)", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output),
+                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output),
+                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output),
                 startC1fromB1toM1, startC2fromB1toM1, startC2fromB2toM1, startC3fromB3toM1);
 
             //Messages only once
@@ -426,6 +435,18 @@ namespace Controllers
             }
 
             //E2
+            if (sensorEndE2.Value && sensorSecondSpotE2.Value)
+            {
+                Console.WriteLine("one and two");
+            }
+            else if (sensorSecondSpotE2.Value && sensorThirdSpotE2.Value)
+            {
+                Console.WriteLine("two and three");
+            }
+            else if (sensorThirdSpotE2.Value && sensorFourthSpotE2.Value)
+            {
+                Console.WriteLine("three and four");
+            }
             if (bufferE2 == BufferE2.ZERO)
             {
                 conveyorStartE2.Value = false;
