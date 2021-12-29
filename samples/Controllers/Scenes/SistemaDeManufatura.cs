@@ -97,6 +97,30 @@ namespace Controllers
         }
         Robo0State robo0State;
 
+        //M1
+        MemoryBit startC2fromB2toM1;
+        MemoryBit startC2fromB1toM1;
+        MemoryBit startC1fromB1toM1;
+        MemoryBit startC3fromB3toM1;
+        MemoryBit conveyorB1;
+        MemoryBit conveyorB2;
+        MemoryBit conveyorB3;
+        MemoryBit sensorStartConveyorB1;
+        MemoryBit sensorStartConveyorB2;
+        MemoryBit sensorStartConveyorB3;
+        MemoryBit sensorEndConveyorB1;
+        MemoryBit sensorEndConveyorB2;
+        MemoryBit sensorEndConveyorB3;
+        private enum M1states
+        {
+            IDLE,
+            fromB1toM1,
+            fromB2toM1,
+            fromB3toM1
+        }
+        M1states m1states;
+        SistemaDeManufatura_M1 roboM1;
+
         //Messages only once
         bool messageOnlyOnce;
         bool initialMessage;
@@ -172,7 +196,32 @@ namespace Controllers
                 MemoryMap.Instance.GetBit("Pick & Place 0 (Box Detected)", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Pick & Place 0 C(+)", MemoryType.Output),
                 startC1toB1, startC2toB1, startC2toB2, startC3toB3, startC1toE2, startC2toE2, startC3toE2);
-                
+
+            //M1
+            startC2fromB2toM1 = MemoryMap.Instance.GetBit("C2fromB2toM1", MemoryType.Input);
+            startC2fromB1toM1 = MemoryMap.Instance.GetBit("C2fromB1toM1", MemoryType.Input);
+            startC1fromB1toM1 = MemoryMap.Instance.GetBit("C1fromB1toM1", MemoryType.Input);
+            startC3fromB3toM1 = MemoryMap.Instance.GetBit("C3fromB3toM1", MemoryType.Input);
+            conveyorB1 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output);
+            conveyorB2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output);
+            conveyorB3 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output);
+            sensorStartConveyorB1 = MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input);
+            sensorStartConveyorB2 = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);
+            sensorStartConveyorB3 = MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input);
+            sensorEndConveyorB1 = MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input);
+            sensorEndConveyorB2 = MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input);
+            sensorEndConveyorB3 = MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input);
+            m1states = M1states.IDLE;
+            roboM1 = new SistemaDeManufatura_M1(
+                MemoryMap.Instance.GetFloat("Pick & Place 1 X Set Point (V)", MemoryType.Output),
+                MemoryMap.Instance.GetFloat("Pick & Place 1 X Position (V)", MemoryType.Input),
+                MemoryMap.Instance.GetFloat("Pick & Place 1 Y Set Point (V)", MemoryType.Output),
+                MemoryMap.Instance.GetFloat("Pick & Place 1 Y Position (V)", MemoryType.Input),
+                MemoryMap.Instance.GetFloat("Pick & Place 1 Z Set Point (V)", MemoryType.Output),
+                MemoryMap.Instance.GetFloat("Pick & Place 1 Z Position (V)", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Pick & Place 1 (Grab)", MemoryType.Output),
+                MemoryMap.Instance.GetBit("Pick & Place 1 (Box Detected)", MemoryType.Input),
+                startC1fromB1toM1, startC2fromB1toM1, startC2fromB2toM1, startC3fromB3toM1);
 
             //Messages only once
             messageOnlyOnce = true;
@@ -376,8 +425,6 @@ namespace Controllers
                 emitter.Value = false;
             }
 
-            
-
             //E2
             if (bufferE2 == BufferE2.ZERO)
             {
@@ -569,8 +616,42 @@ namespace Controllers
                 }
                 colorMessage = true;
             }
-
             //%%%%%%%%%%%%%%%%%%%% COLOR SENSOR ENDS %%%%%%%%%%%%%%%%%%%%
+
+            //%%%%%%%%%%%%%%%%%%%% M1 STARTS %%%%%%%%%%%%%%%%%%%%
+
+            
+            if (startC1fromB1toM1.Value || startC2fromB1toM1.Value)
+            {
+                m1states = M1states.fromB1toM1;
+            }
+            else if (startC2fromB2toM1.Value)
+            {
+                m1states = M1states.fromB2toM1;
+            }
+            else if (startC3fromB3toM1.Value)
+            {
+                m1states = M1states.fromB3toM1;
+            }
+
+            if (m1states == M1states.IDLE)
+            {
+
+            }
+            if (m1states == M1states.fromB1toM1)
+            {
+                roboM1.B1toM1();
+            }
+            else if (m1states == M1states.fromB2toM1)
+            {
+                roboM1.B2toM1();
+            }
+            else if (m1states == M1states.fromB3toM1)
+            {
+                roboM1.B3toM1();
+            }
+
+            //%%%%%%%%%%%%%%%%%%%% M1 ENDS %%%%%%%%%%%%%%%%%%%%
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using EngineIO;
 using System;
 
-namespace Controllers.Scenes
+namespace Controllers.Scenes.MachinesAndBuffer
 {
     class GripperArm
     {
