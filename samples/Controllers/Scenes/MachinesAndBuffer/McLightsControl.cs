@@ -1,6 +1,6 @@
 ﻿using EngineIO;
 
-namespace Controllers.Scenes
+namespace Controllers.Scenes.MachinesAndBuffer
 {
     class McLightsControl
     {

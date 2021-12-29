@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------
 
 using Controllers.Scenes;
+using Controllers.Scenes.MachinesAndBuffer;
 using EngineIO;
 using System;
 using System.Diagnostics;

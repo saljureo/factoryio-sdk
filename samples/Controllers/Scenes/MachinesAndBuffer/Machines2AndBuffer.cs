@@ -4,12 +4,11 @@
 // Copyright (C) Real Games. All rights reserved.
 //-----------------------------------------------------------------------------
 
-using Controllers.Scenes;
 using EngineIO;
 using System;
 using System.Diagnostics;
 
-namespace Controllers
+namespace Controllers.Scenes.MachinesAndBuffer
 {
     public class Machines2AndBuffer : Controller
     {

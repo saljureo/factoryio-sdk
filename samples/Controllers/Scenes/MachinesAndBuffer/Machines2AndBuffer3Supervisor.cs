@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Controllers.Scenes
+namespace Controllers.Scenes.MachinesAndBuffer
+
 {
     class Machines2AndBuffer3Supervisor
     {
