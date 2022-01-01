@@ -137,7 +137,7 @@ namespace Controllers.Scenes
             }
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
-                robo0X.Value = 0.9f;
+                robo0X.Value = 1.2f;
                 robo0Y.Value = 9.5f;
                 if (robo0YPos.Value > 9.4f)
                 {

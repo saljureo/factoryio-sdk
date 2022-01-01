@@ -184,7 +184,6 @@ namespace Controllers.Scenes
                     conveyorB2.Value = false;
                     roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
                     pieceFound = false;
-                    Console.WriteLine("DOWN FOR PIECE");
                 }
             }
             else if (roboM1Steps == RoboSteps.DOWN_FOR_PIECE)
