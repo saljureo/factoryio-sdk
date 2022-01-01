@@ -100,6 +100,7 @@ namespace Controllers.Scenes
                 }
                 else if (!pieceFound || sensorB1end.Value)
                 {
+                    conveyorB1.Value = false;
                     roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
                     pieceFound = false;
                 }
@@ -138,8 +139,8 @@ namespace Controllers.Scenes
             }
             else if (roboM1Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                roboM1Z.Value = 8.4f;
-                if (roboM1ZPos.Value > 8.25f)
+                roboM1Z.Value = 8.1f;
+                if (roboM1ZPos.Value > 8.0f)
                 {
                     roboM1Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -161,34 +162,26 @@ namespace Controllers.Scenes
 
         public void B2toM1()
         {
-            Console.WriteLine("sensorB1start.Value = " + sensorB1start.Value);
-            Console.WriteLine("sensorB2start.Value = " + sensorB2start.Value);
-            Console.WriteLine("sensorB3start.Value = " + sensorB3start.Value);
-            Console.WriteLine("sensorB1end.Value = " + sensorB1end.Value);
-            Console.WriteLine("sensorB2end.Value = " + sensorB2end.Value);
-            Console.WriteLine("sensorB3end.Value = " + sensorB3end.Value);
-            Console.WriteLine("\n");
             if (roboM1Steps == RoboSteps.IDLE)
             {
-                roboM1X.Value = 5.0f;
+                roboM1X.Value = 5.2f;
                 roboM1Y.Value = 0.6f;
                 roboM1Z.Value = 5.0f;
                 if (startC2fromB2toM1.Value)
                 {
                     roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
-                    Console.WriteLine("WAITING FOR PIECE");
                 }
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
                 if (sensorB2start.Value)
                 {
-                    Console.WriteLine("sensorB2start.Value = " + sensorB2start.Value);
                     conveyorB2.Value = true;
                     pieceFound = true;
                 }
                 else if (!pieceFound || sensorB2end.Value)
                 {
+                    conveyorB2.Value = false;
                     roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
                     pieceFound = false;
                     Console.WriteLine("DOWN FOR PIECE");
@@ -270,6 +263,7 @@ namespace Controllers.Scenes
                 }
                 else if (!pieceFound || sensorB3end.Value)
                 {
+                    conveyorB3.Value = false;
                     roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
                     pieceFound = false;
                 }
@@ -308,8 +302,8 @@ namespace Controllers.Scenes
             }
             else if (roboM1Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                roboM1Z.Value = 8.4f;
-                if (roboM1ZPos.Value > 8.25f)
+                roboM1Z.Value = 8.1f;
+                if (roboM1ZPos.Value > 8.0f)
                 {
                     roboM1Steps = RoboSteps.RELEASE_PIECE;
                 }
