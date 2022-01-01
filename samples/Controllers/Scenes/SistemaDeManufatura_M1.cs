@@ -161,6 +161,13 @@ namespace Controllers.Scenes
 
         public void B2toM1()
         {
+            Console.WriteLine("sensorB1start.Value = " + sensorB1start.Value);
+            Console.WriteLine("sensorB2start.Value = " + sensorB2start.Value);
+            Console.WriteLine("sensorB3start.Value = " + sensorB3start.Value);
+            Console.WriteLine("sensorB1end.Value = " + sensorB1end.Value);
+            Console.WriteLine("sensorB2end.Value = " + sensorB2end.Value);
+            Console.WriteLine("sensorB3end.Value = " + sensorB3end.Value);
+            Console.WriteLine("\n");
             if (roboM1Steps == RoboSteps.IDLE)
             {
                 roboM1X.Value = 5.0f;
@@ -169,12 +176,14 @@ namespace Controllers.Scenes
                 if (startC2fromB2toM1.Value)
                 {
                     roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
+                    Console.WriteLine("WAITING FOR PIECE");
                 }
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
                 if (sensorB2start.Value)
                 {
+                    Console.WriteLine("sensorB2start.Value = " + sensorB2start.Value);
                     conveyorB2.Value = true;
                     pieceFound = true;
                 }
@@ -182,6 +191,7 @@ namespace Controllers.Scenes
                 {
                     roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
                     pieceFound = false;
+                    Console.WriteLine("DOWN FOR PIECE");
                 }
             }
             else if (roboM1Steps == RoboSteps.DOWN_FOR_PIECE)

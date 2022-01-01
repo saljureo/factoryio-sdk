@@ -221,15 +221,15 @@ namespace Controllers
                 MemoryMap.Instance.GetFloat("Pick & Place 1 Z Position (V)", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Pick & Place 1 (Grab)", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Pick & Place 1 (Box Detected)", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output),
+                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output),
+                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input),
-                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output),
-                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output),
-                MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output),
                 startC1fromB1toM1, startC2fromB1toM1, startC2fromB2toM1, startC3fromB3toM1);
 
             //Messages only once
