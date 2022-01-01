@@ -248,7 +248,7 @@ namespace Controllers.Scenes
                 roboM1X.Value = 9.2f;
                 roboM1Y.Value = 0.6f;
                 roboM1Z.Value = 5.0f;
-                if (startC2fromB2toM1.Value)
+                if (startC3fromB3toM1.Value)
                 {
                     roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
                 }

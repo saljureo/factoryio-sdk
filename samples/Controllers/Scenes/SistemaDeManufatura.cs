@@ -246,6 +246,7 @@ namespace Controllers
             {
                 Console.WriteLine("\n");
                 Console.WriteLine("Green is C1, Metal is C2, and Blue is C3");
+                Console.WriteLine("Product A is C2 and C1. Product B is C2 and C3.");
                 Console.WriteLine("\n");
                 initialMessage = false;
             }
