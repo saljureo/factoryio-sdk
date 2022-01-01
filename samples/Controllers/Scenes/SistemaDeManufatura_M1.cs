@@ -132,7 +132,7 @@ namespace Controllers.Scenes
             {
                 roboM1X.Value = 5.0f;
                 roboM1Y.Value = 9.5f;
-                if (roboM1YPos.Value > 9.4f)
+                if (roboM1YPos.Value > 9.45f)
                 {
                     roboM1Steps = RoboSteps.DOWN_WITH_PIECE;
                 }
@@ -213,7 +213,7 @@ namespace Controllers.Scenes
             {
                 roboM1X.Value = 5.0f;
                 roboM1Y.Value = 9.5f;
-                if (roboM1YPos.Value > 9.4f)
+                if (roboM1YPos.Value > 9.45f)
                 {
                     roboM1Steps = RoboSteps.DOWN_WITH_PIECE;
                 }
@@ -294,7 +294,7 @@ namespace Controllers.Scenes
             {
                 roboM1X.Value = 5.0f;
                 roboM1Y.Value = 9.5f;
-                if (roboM1YPos.Value > 9.4f)
+                if (roboM1YPos.Value > 9.45f)
                 {
                     roboM1Steps = RoboSteps.DOWN_WITH_PIECE;
                 }
