@@ -119,15 +119,6 @@ namespace Controllers
         MemoryBit startC2fromB1toM1;
         MemoryBit startC1fromB1toM1;
         MemoryBit startC3fromB3toM1;
-        MemoryBit conveyorB1;
-        MemoryBit conveyorB2;
-        MemoryBit conveyorB3;
-        MemoryBit sensorStartConveyorB1;
-        MemoryBit sensorStartConveyorB2;
-        MemoryBit sensorStartConveyorB3;
-        MemoryBit sensorEndConveyorB1;
-        MemoryBit sensorEndConveyorB2;
-        MemoryBit sensorEndConveyorB3;
         private enum M1states
         {
             IDLE,
@@ -139,7 +130,6 @@ namespace Controllers
         SistemaDeManufatura_M1 roboM1;
 
         //Messages only once
-        bool messageOnlyOnce;
         bool initialMessage;
         bool colorMessage;
         bool colorMessage2;
@@ -229,15 +219,6 @@ namespace Controllers
             startC2fromB1toM1 = MemoryMap.Instance.GetBit("C2fromB1toM1", MemoryType.Input);
             startC1fromB1toM1 = MemoryMap.Instance.GetBit("C1fromB1toM1", MemoryType.Input);
             startC3fromB3toM1 = MemoryMap.Instance.GetBit("C3fromB3toM1", MemoryType.Input);
-            //conveyorB1 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output);
-            //conveyorB2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output);
-            //conveyorB3 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output);
-            //sensorStartConveyorB1 = MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input);
-            //sensorStartConveyorB2 = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);
-            //sensorStartConveyorB3 = MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input);
-            //sensorEndConveyorB1 = MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input);
-            //sensorEndConveyorB2 = MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input);
-            //sensorEndConveyorB3 = MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input);
             m1states = M1states.IDLE;
             roboM1 = new SistemaDeManufatura_M1(
                 MemoryMap.Instance.GetFloat("Pick & Place 1 X Set Point (V)", MemoryType.Output),
@@ -260,7 +241,6 @@ namespace Controllers
                 startC1fromB1toM1, startC2fromB1toM1, startC2fromB2toM1, startC3fromB3toM1);
 
             //Messages only once
-            messageOnlyOnce = true;
             initialMessage = true;
             colorMessage = true;
             colorMessage2 = true;
