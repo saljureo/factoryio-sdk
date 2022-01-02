@@ -50,6 +50,7 @@ namespace Controllers
         readonly MemoryBit conveyorFirstCornerE2;
         readonly MemoryBit conveyorMiddleE2;
         readonly MemoryBit conveyorSecondCornerE2;
+        readonly MemoryBit conveyorPreEndE2;
         readonly MemoryBit conveyorEndE2;
         readonly MemoryBit sensorEndE2;
         FTRIG ftSensorEndE2;
@@ -147,10 +148,11 @@ namespace Controllers
             //E2
             sensorStartE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 1", MemoryType.Input);
             rtSensorStartE2 = new RTRIG();
-            conveyorStartE2 = MemoryMap.Instance.GetBit("Belt Conveyor (2m) 0", MemoryType.Output);
+            conveyorStartE2 = MemoryMap.Instance.GetBit("Belt Conveyor (6m) 0", MemoryType.Output);
             conveyorFirstCornerE2 = MemoryMap.Instance.GetBit("Curved Belt Conveyor 0 CW", MemoryType.Output);
             conveyorMiddleE2 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 0", MemoryType.Output);
             conveyorSecondCornerE2 = MemoryMap.Instance.GetBit("Curved Belt Conveyor 1 CW", MemoryType.Output);
+            conveyorPreEndE2 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 4", MemoryType.Output);
             conveyorEndE2 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 1", MemoryType.Output);
             bufferE2 = BufferE2.ZERO;
             sensorEndE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 2", MemoryType.Input);
@@ -454,6 +456,7 @@ namespace Controllers
                 conveyorFirstCornerE2.Value = false;
                 conveyorMiddleE2.Value = false;
                 conveyorSecondCornerE2.Value = false;
+                conveyorPreEndE2.Value = false;
                 conveyorEndE2.Value = false;
                 if (rtSensorStartE2.Q == true)
                 {
@@ -462,6 +465,7 @@ namespace Controllers
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.ONE;
                 }
@@ -475,6 +479,7 @@ namespace Controllers
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.TWO;
                 }
@@ -489,6 +494,7 @@ namespace Controllers
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
                 }
             }
@@ -501,6 +507,7 @@ namespace Controllers
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.THREE;
                 }
@@ -516,6 +523,7 @@ namespace Controllers
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
                 }
             }
@@ -527,6 +535,7 @@ namespace Controllers
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.FOUR;
                 }
@@ -541,6 +550,7 @@ namespace Controllers
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
                 }
             }
@@ -557,6 +567,7 @@ namespace Controllers
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
                 }
             }
