@@ -452,50 +452,6 @@ namespace Controllers
             }
 
             //E2
-            if (sensorEndE2.Value && sensorSecondSpotE2.Value)
-            {
-                Console.WriteLine("one and two");
-            }
-            else if (sensorSecondSpotE2.Value && sensorThirdSpotE2.Value)
-            {
-                Console.WriteLine("two and three");
-            }
-            else if (sensorThirdSpotE2.Value && sensorFourthSpotE2.Value)
-            {
-                Console.WriteLine("three and four");
-            }
-            else if (sensorFifthSpotE2.Value && sensorFourthSpotE2.Value)
-            {
-                Console.WriteLine("five and four");
-            }
-            else if (sensorFifthSpotE2.Value && sensorSixthSpotE2.Value)
-            {
-                Console.WriteLine("five and six");
-            }
-            else if (sensorSeventhSpotE2.Value && sensorSixthSpotE2.Value)
-            {
-                Console.WriteLine("seven and six");
-            }
-            else if (sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value)
-            {
-                Console.WriteLine("seven and eight");
-            }
-            else if (sensorNinthSpotE2.Value && sensorEighthSpotE2.Value)
-            {
-                Console.WriteLine("nine and eight");
-            }
-            else if (sensorNinthSpotE2.Value && sensorTenthSpotE2.Value)
-            {
-                Console.WriteLine("nine and ten");
-            }
-            else if (sensorEleventhSpotE2.Value && sensorTenthSpotE2.Value)
-            {
-                Console.WriteLine("eleven and ten");
-            }
-            else if (sensorEleventhSpotE2.Value && sensorTwelvethSpotE2.Value)
-            {
-                Console.WriteLine("eleven and twelve");
-            }
 
             if (bufferE2 == BufferE2.ZERO)
             {
