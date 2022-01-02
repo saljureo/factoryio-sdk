@@ -48,7 +48,7 @@ namespace Controllers
         RTRIG rtSensorStartE2;
         readonly MemoryFloat conveyorStartE2;
         readonly MemoryBit conveyorFirstCornerE2;
-        readonly MemoryBit conveyorMiddleE2;
+        readonly MemoryFloat conveyorMiddleE2;
         readonly MemoryBit conveyorSecondCornerE2;
         readonly MemoryBit conveyorPreEndE2;
         readonly MemoryBit conveyorEndE2;
@@ -167,7 +167,7 @@ namespace Controllers
             conveyorStartE2 = MemoryMap.Instance.GetFloat("Belt Conveyor (6m) 0 (V)", MemoryType.Output);
             conveyorStartE2.Value = 0;
             conveyorFirstCornerE2 = MemoryMap.Instance.GetBit("Curved Belt Conveyor 0 CW", MemoryType.Output);
-            conveyorMiddleE2 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 0", MemoryType.Output);
+            conveyorMiddleE2 = MemoryMap.Instance.GetFloat("Belt Conveyor (4m) 0 (V)", MemoryType.Output);
             conveyorSecondCornerE2 = MemoryMap.Instance.GetBit("Curved Belt Conveyor 1 CW", MemoryType.Output);
             conveyorPreEndE2 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 4", MemoryType.Output);
             conveyorEndE2 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 1", MemoryType.Output);
@@ -512,7 +512,7 @@ namespace Controllers
             {
                 conveyorStartE2.Value = 0;
                 conveyorFirstCornerE2.Value = false;
-                conveyorMiddleE2.Value = false;
+                conveyorMiddleE2.Value = 0;
                 conveyorSecondCornerE2.Value = false;
                 conveyorPreEndE2.Value = false;
                 conveyorEndE2.Value = false;
@@ -521,7 +521,7 @@ namespace Controllers
                     Console.WriteLine("Buffer One");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -535,7 +535,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Two");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -550,7 +550,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -563,7 +563,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Three");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -579,7 +579,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -592,7 +592,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Four");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -608,7 +608,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -621,7 +621,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Five");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -637,7 +637,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -650,7 +650,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Six");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -666,7 +666,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -679,7 +679,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Seven");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -695,7 +695,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -708,7 +708,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Eight");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -724,7 +724,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -737,7 +737,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Nine");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -753,7 +753,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -766,7 +766,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Ten");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -782,7 +782,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -795,7 +795,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Eleven");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -811,7 +811,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -824,7 +824,7 @@ namespace Controllers
                     Console.WriteLine("Buffer Twelve");
                     conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = true;
+                    conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
                     conveyorPreEndE2.Value = true;
                     conveyorEndE2.Value = true;
@@ -840,7 +840,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
@@ -858,7 +858,7 @@ namespace Controllers
                 {
                     conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
-                    conveyorMiddleE2.Value = false;
+                    conveyorMiddleE2.Value = 0;
                     conveyorSecondCornerE2.Value = false;
                     conveyorPreEndE2.Value = false;
                     conveyorEndE2.Value = false;
