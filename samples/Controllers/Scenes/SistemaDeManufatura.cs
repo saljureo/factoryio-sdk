@@ -46,7 +46,7 @@ namespace Controllers
         //E2
         readonly MemoryBit sensorStartE2;
         RTRIG rtSensorStartE2;
-        readonly MemoryBit conveyorStartE2;
+        readonly MemoryFloat conveyorStartE2;
         readonly MemoryBit conveyorFirstCornerE2;
         readonly MemoryBit conveyorMiddleE2;
         readonly MemoryBit conveyorSecondCornerE2;
@@ -164,7 +164,8 @@ namespace Controllers
             //E2
             sensorStartE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 1", MemoryType.Input);
             rtSensorStartE2 = new RTRIG();
-            conveyorStartE2 = MemoryMap.Instance.GetBit("Belt Conveyor (6m) 0", MemoryType.Output);
+            conveyorStartE2 = MemoryMap.Instance.GetFloat("Belt Conveyor (6m) 0 (V)", MemoryType.Output);
+            conveyorStartE2.Value = 0;
             conveyorFirstCornerE2 = MemoryMap.Instance.GetBit("Curved Belt Conveyor 0 CW", MemoryType.Output);
             conveyorMiddleE2 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 0", MemoryType.Output);
             conveyorSecondCornerE2 = MemoryMap.Instance.GetBit("Curved Belt Conveyor 1 CW", MemoryType.Output);
@@ -509,7 +510,7 @@ namespace Controllers
 
             if (bufferE2 == BufferE2.ZERO)
             {
-                conveyorStartE2.Value = false;
+                conveyorStartE2.Value = 0;
                 conveyorFirstCornerE2.Value = false;
                 conveyorMiddleE2.Value = false;
                 conveyorSecondCornerE2.Value = false;
@@ -518,7 +519,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer One");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -532,7 +533,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Two");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -547,7 +548,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -560,7 +561,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Three");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -576,7 +577,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && !sensorThirdSpotE2.Value && !sensorFourthSpotE2.Value && !sensorFifthSpotE2.Value && !sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -589,7 +590,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Four");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -605,7 +606,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && !sensorFourthSpotE2.Value && !sensorFifthSpotE2.Value && !sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -618,7 +619,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Five");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -634,7 +635,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && !sensorFifthSpotE2.Value && !sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -647,7 +648,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Six");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -663,7 +664,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && !sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -676,7 +677,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Seven");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -692,7 +693,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -705,7 +706,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Eight");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -721,7 +722,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -734,7 +735,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Nine");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -750,7 +751,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -763,7 +764,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Ten");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -779,7 +780,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -792,7 +793,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Eleven");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -808,7 +809,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && sensorNinthSpotE2.Value && sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -821,7 +822,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Twelve");
-                    conveyorStartE2.Value = true;
+                    conveyorStartE2.Value = 1;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = true;
                     conveyorSecondCornerE2.Value = true;
@@ -837,7 +838,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && sensorNinthSpotE2.Value && sensorTenthSpotE2.Value && sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
@@ -855,7 +856,7 @@ namespace Controllers
                 }
                 if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && sensorNinthSpotE2.Value && sensorTenthSpotE2.Value && sensorEleventhSpotE2.Value && sensorTwelvethSpotE2.Value)
                 {
-                    conveyorStartE2.Value = false;
+                    conveyorStartE2.Value = 0;
                     conveyorFirstCornerE2.Value = false;
                     conveyorMiddleE2.Value = false;
                     conveyorSecondCornerE2.Value = false;
