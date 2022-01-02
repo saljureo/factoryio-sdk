@@ -519,7 +519,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer One");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -533,7 +533,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Two");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -561,7 +561,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Three");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -591,7 +591,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Four");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -621,7 +621,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Five");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -651,7 +651,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Six");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -681,7 +681,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Seven");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -711,7 +711,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Eight");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -741,7 +741,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Nine");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -771,7 +771,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Ten");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -801,7 +801,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Eleven");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
@@ -831,7 +831,7 @@ namespace Controllers
                 if (rtSensorStartE2.Q == true)
                 {
                     Console.WriteLine("Buffer Twelve");
-                    conveyorStartE2.Value = 1;
+                    conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
                     conveyorSecondCornerE2.Value = true;
