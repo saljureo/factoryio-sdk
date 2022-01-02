@@ -119,12 +119,16 @@ namespace Controllers
         MemoryBit startC2fromB1toM1;
         MemoryBit startC1fromB1toM1;
         MemoryBit startC3fromB3toM1;
+        bool finishedM1Assembly;
+        MemoryBit conveyorM1;
+        MemoryBit sensorM1end;
         private enum M1states
         {
             IDLE,
-            fromB1toM1,
-            fromB2toM1,
-            fromB3toM1
+            C1fromB1toM1,
+            C2fromB1toM1,
+            C2fromB2toM1,
+            C3fromB3toM1
         }
         M1states m1states;
         SistemaDeManufatura_M1 roboM1;
@@ -220,6 +224,8 @@ namespace Controllers
             startC1fromB1toM1 = MemoryMap.Instance.GetBit("C1fromB1toM1", MemoryType.Input);
             startC3fromB3toM1 = MemoryMap.Instance.GetBit("C3fromB3toM1", MemoryType.Input);
             m1states = M1states.IDLE;
+            //conveyorM1 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 3", MemoryType.Output);
+            //sensorM1end = MemoryMap.Instance.GetBit("Diffuse Sensor 22", MemoryType.Input);
             roboM1 = new SistemaDeManufatura_M1(
                 MemoryMap.Instance.GetFloat("Pick & Place 1 X Set Point (V)", MemoryType.Output),
                 MemoryMap.Instance.GetFloat("Pick & Place 1 X Position (V)", MemoryType.Input),
@@ -232,12 +238,14 @@ namespace Controllers
                 MemoryMap.Instance.GetBit("Belt Conveyor (2m) 5", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Belt Conveyor (2m) 4", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Belt Conveyor (2m) 3", MemoryType.Output),
+                MemoryMap.Instance.GetBit("Belt Conveyor (4m) 3", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 4", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input),
+                MemoryMap.Instance.GetBit("Diffuse Sensor 22", MemoryType.Input),
                 startC1fromB1toM1, startC2fromB1toM1, startC2fromB2toM1, startC3fromB3toM1);
 
             //Messages only once
@@ -938,34 +946,42 @@ namespace Controllers
             //%%%%%%%%%%%%%%%%%%%% M1 STARTS %%%%%%%%%%%%%%%%%%%%
 
             
-            if (startC1fromB1toM1.Value || startC2fromB1toM1.Value)
+            if (startC1fromB1toM1.Value)
             {
-                m1states = M1states.fromB1toM1;
+                m1states = M1states.C1fromB1toM1;
+            }
+            else if (startC2fromB1toM1.Value)
+            {
+                m1states = M1states.C2fromB1toM1;
             }
             else if (startC2fromB2toM1.Value)
             {
-                m1states = M1states.fromB2toM1;
+                m1states = M1states.C2fromB2toM1;
             }
             else if (startC3fromB3toM1.Value)
             {
-                m1states = M1states.fromB3toM1;
+                m1states = M1states.C3fromB3toM1;
             }
 
             if (m1states == M1states.IDLE)
             {
-
+                finishedM1Assembly = false;
             }
-            if (m1states == M1states.fromB1toM1)
+            else if (m1states == M1states.C1fromB1toM1)
             {
-                roboM1.B1toM1();
+                roboM1.C1fromB1toM1();
             }
-            else if (m1states == M1states.fromB2toM1)
+            else if (m1states == M1states.C2fromB1toM1)
             {
-                roboM1.B2toM1();
+                roboM1.C2fromB1toM1();
             }
-            else if (m1states == M1states.fromB3toM1)
+            else if (m1states == M1states.C2fromB2toM1)
             {
-                roboM1.B3toM1();
+                roboM1.C2fromB2toM1();
+            }
+            else if (m1states == M1states.C3fromB3toM1)
+            {
+                roboM1.C3fromB3toM1();
             }
 
             //%%%%%%%%%%%%%%%%%%%% M1 ENDS %%%%%%%%%%%%%%%%%%%%
