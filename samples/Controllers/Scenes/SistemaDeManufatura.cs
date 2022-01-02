@@ -57,6 +57,14 @@ namespace Controllers
         readonly MemoryBit sensorSecondSpotE2;
         readonly MemoryBit sensorThirdSpotE2;
         readonly MemoryBit sensorFourthSpotE2;
+        readonly MemoryBit sensorFifthSpotE2;
+        readonly MemoryBit sensorSixthSpotE2;
+        readonly MemoryBit sensorSeventhSpotE2;
+        readonly MemoryBit sensorEighthSpotE2;
+        readonly MemoryBit sensorNinthSpotE2;
+        readonly MemoryBit sensorTenthSpotE2;
+        readonly MemoryBit sensorEleventhSpotE2;
+        readonly MemoryBit sensorTwelvethSpotE2;
         private enum BufferE2
         {
             ZERO,
@@ -64,6 +72,14 @@ namespace Controllers
             TWO,
             THREE,
             FOUR,
+            FIVE,
+            SIX,
+            SEVEN,
+            EIGHT,
+            NINE,
+            TEN,
+            ELEVEN,
+            TWELVE
         }
         BufferE2 bufferE2;
         //GripperArm
@@ -160,6 +176,14 @@ namespace Controllers
             sensorSecondSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 12", MemoryType.Input);
             sensorThirdSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 13", MemoryType.Input);
             sensorFourthSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 14", MemoryType.Input);
+            sensorFifthSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 3", MemoryType.Input);
+            sensorSixthSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 16", MemoryType.Input);
+            sensorSeventhSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 15", MemoryType.Input);
+            sensorEighthSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 17", MemoryType.Input);
+            sensorNinthSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 19", MemoryType.Input);
+            sensorTenthSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 21", MemoryType.Input);
+            sensorEleventhSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 18", MemoryType.Input);
+            sensorTwelvethSpotE2 = MemoryMap.Instance.GetBit("Diffuse Sensor 20", MemoryType.Input);
 
             //GripperArm
             armX = MemoryMap.Instance.GetFloat("Two-Axis Pick & Place 0 X Set Point (V)", MemoryType.Output);
@@ -450,6 +474,39 @@ namespace Controllers
             {
                 Console.WriteLine("three and four");
             }
+            else if (sensorFifthSpotE2.Value && sensorFourthSpotE2.Value)
+            {
+                Console.WriteLine("five and four");
+            }
+            else if (sensorFifthSpotE2.Value && sensorSixthSpotE2.Value)
+            {
+                Console.WriteLine("five and six");
+            }
+            else if (sensorSeventhSpotE2.Value && sensorSixthSpotE2.Value)
+            {
+                Console.WriteLine("seven and six");
+            }
+            else if (sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value)
+            {
+                Console.WriteLine("seven and eight");
+            }
+            else if (sensorNinthSpotE2.Value && sensorEighthSpotE2.Value)
+            {
+                Console.WriteLine("nine and eight");
+            }
+            else if (sensorNinthSpotE2.Value && sensorTenthSpotE2.Value)
+            {
+                Console.WriteLine("nine and ten");
+            }
+            else if (sensorEleventhSpotE2.Value && sensorTenthSpotE2.Value)
+            {
+                Console.WriteLine("eleven and ten");
+            }
+            else if (sensorEleventhSpotE2.Value && sensorTwelvethSpotE2.Value)
+            {
+                Console.WriteLine("eleven and twelve");
+            }
+
             if (bufferE2 == BufferE2.ZERO)
             {
                 conveyorStartE2.Value = false;
@@ -517,7 +574,7 @@ namespace Controllers
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.ONE;
                 }
-                if (sensorEndE2.Value && sensorSecondSpotE2.Value && !sensorThirdSpotE2.Value && !sensorFourthSpotE2.Value)
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && !sensorThirdSpotE2.Value && !sensorFourthSpotE2.Value && !sensorFifthSpotE2.Value && !sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
                     conveyorStartE2.Value = false;
                     conveyorFirstCornerE2.Value = false;
@@ -544,7 +601,7 @@ namespace Controllers
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.TWO;
                 }
-                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && !sensorFourthSpotE2.Value)
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && !sensorFourthSpotE2.Value && !sensorFifthSpotE2.Value && !sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
                 {
                     conveyorStartE2.Value = false;
                     conveyorFirstCornerE2.Value = false;
@@ -556,12 +613,228 @@ namespace Controllers
             }
             else if (bufferE2 == BufferE2.FOUR)
             {
+                if (rtSensorStartE2.Q == true)
+                {
+                    conveyorStartE2.Value = true;
+                    conveyorFirstCornerE2.Value = true;
+                    conveyorMiddleE2.Value = true;
+                    conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.FIVE;
+                }
                 if (ftSensorEndE2.Q == true)
                 {
                     conveyorEndE2.Value = true;
                     bufferE2 = BufferE2.THREE;
                 }
-                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value)
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && !sensorFifthSpotE2.Value && !sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
+                {
+                    conveyorStartE2.Value = false;
+                    conveyorFirstCornerE2.Value = false;
+                    conveyorMiddleE2.Value = false;
+                    conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
+                    conveyorEndE2.Value = false;
+                }
+            }
+            else if (bufferE2 == BufferE2.FIVE)
+            {
+                if (rtSensorStartE2.Q == true)
+                {
+                    conveyorStartE2.Value = true;
+                    conveyorFirstCornerE2.Value = true;
+                    conveyorMiddleE2.Value = true;
+                    conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.SIX;
+                }
+                if (ftSensorEndE2.Q == true)
+                {
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.FOUR;
+                }
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && !sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
+                {
+                    conveyorStartE2.Value = false;
+                    conveyorFirstCornerE2.Value = false;
+                    conveyorMiddleE2.Value = false;
+                    conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
+                    conveyorEndE2.Value = false;
+                }
+            }
+            else if (bufferE2 == BufferE2.SIX)
+            {
+                if (rtSensorStartE2.Q == true)
+                {
+                    conveyorStartE2.Value = true;
+                    conveyorFirstCornerE2.Value = true;
+                    conveyorMiddleE2.Value = true;
+                    conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.SEVEN;
+                }
+                if (ftSensorEndE2.Q == true)
+                {
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.FIVE;
+                }
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && !sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
+                {
+                    conveyorStartE2.Value = false;
+                    conveyorFirstCornerE2.Value = false;
+                    conveyorMiddleE2.Value = false;
+                    conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
+                    conveyorEndE2.Value = false;
+                }
+            }
+            else if (bufferE2 == BufferE2.SEVEN)
+            {
+                if (rtSensorStartE2.Q == true)
+                {
+                    conveyorStartE2.Value = true;
+                    conveyorFirstCornerE2.Value = true;
+                    conveyorMiddleE2.Value = true;
+                    conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.EIGHT;
+                }
+                if (ftSensorEndE2.Q == true)
+                {
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.SIX;
+                }
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && !sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
+                {
+                    conveyorStartE2.Value = false;
+                    conveyorFirstCornerE2.Value = false;
+                    conveyorMiddleE2.Value = false;
+                    conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
+                    conveyorEndE2.Value = false;
+                }
+            }
+            else if (bufferE2 == BufferE2.EIGHT)
+            {
+                if (rtSensorStartE2.Q == true)
+                {
+                    conveyorStartE2.Value = true;
+                    conveyorFirstCornerE2.Value = true;
+                    conveyorMiddleE2.Value = true;
+                    conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.NINE;
+                }
+                if (ftSensorEndE2.Q == true)
+                {
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.SEVEN;
+                }
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && !sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
+                {
+                    conveyorStartE2.Value = false;
+                    conveyorFirstCornerE2.Value = false;
+                    conveyorMiddleE2.Value = false;
+                    conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
+                    conveyorEndE2.Value = false;
+                }
+            }
+            else if (bufferE2 == BufferE2.NINE)
+            {
+                if (rtSensorStartE2.Q == true)
+                {
+                    conveyorStartE2.Value = true;
+                    conveyorFirstCornerE2.Value = true;
+                    conveyorMiddleE2.Value = true;
+                    conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.TEN;
+                }
+                if (ftSensorEndE2.Q == true)
+                {
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.EIGHT;
+                }
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && sensorNinthSpotE2.Value && !sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
+                {
+                    conveyorStartE2.Value = false;
+                    conveyorFirstCornerE2.Value = false;
+                    conveyorMiddleE2.Value = false;
+                    conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
+                    conveyorEndE2.Value = false;
+                }
+            }
+            else if (bufferE2 == BufferE2.TEN)
+            {
+                if (rtSensorStartE2.Q == true)
+                {
+                    conveyorStartE2.Value = true;
+                    conveyorFirstCornerE2.Value = true;
+                    conveyorMiddleE2.Value = true;
+                    conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.ELEVEN;
+                }
+                if (ftSensorEndE2.Q == true)
+                {
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.NINE;
+                }
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && sensorNinthSpotE2.Value && sensorTenthSpotE2.Value && !sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
+                {
+                    conveyorStartE2.Value = false;
+                    conveyorFirstCornerE2.Value = false;
+                    conveyorMiddleE2.Value = false;
+                    conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
+                    conveyorEndE2.Value = false;
+                }
+            }
+            else if (bufferE2 == BufferE2.ELEVEN)
+            {
+                if (rtSensorStartE2.Q == true)
+                {
+                    conveyorStartE2.Value = true;
+                    conveyorFirstCornerE2.Value = true;
+                    conveyorMiddleE2.Value = true;
+                    conveyorSecondCornerE2.Value = true;
+                    conveyorPreEndE2.Value = true;
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.TWELVE;
+                }
+                if (ftSensorEndE2.Q == true)
+                {
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.TEN;
+                }
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && sensorNinthSpotE2.Value && sensorTenthSpotE2.Value && sensorEleventhSpotE2.Value && !sensorTwelvethSpotE2.Value)
+                {
+                    conveyorStartE2.Value = false;
+                    conveyorFirstCornerE2.Value = false;
+                    conveyorMiddleE2.Value = false;
+                    conveyorSecondCornerE2.Value = false;
+                    conveyorPreEndE2.Value = false;
+                    conveyorEndE2.Value = false;
+                }
+            }
+            else if (bufferE2 == BufferE2.TWELVE)
+            {
+                if (ftSensorEndE2.Q == true)
+                {
+                    conveyorEndE2.Value = true;
+                    bufferE2 = BufferE2.ELEVEN;
+                }
+                if (sensorEndE2.Value && sensorSecondSpotE2.Value && sensorThirdSpotE2.Value && sensorFourthSpotE2.Value && sensorFifthSpotE2.Value && sensorSixthSpotE2.Value && sensorSeventhSpotE2.Value && sensorEighthSpotE2.Value && sensorNinthSpotE2.Value && sensorTenthSpotE2.Value && sensorEleventhSpotE2.Value && sensorTwelvethSpotE2.Value)
                 {
                     conveyorStartE2.Value = false;
                     conveyorFirstCornerE2.Value = false;
