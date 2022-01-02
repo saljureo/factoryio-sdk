@@ -40,8 +40,9 @@ namespace Controllers
         }
         E2toE1Steps e2toE1Steps;
 
-        //Emitter
+        //Emitter Remover
         readonly MemoryBit emitter;
+        readonly MemoryBit remover;
         readonly MemoryBit sensorEmitter;
         //E2
         readonly MemoryBit sensorStartE2;
@@ -151,8 +152,9 @@ namespace Controllers
             e1ConveyorState = E1ConveyorState.EMITTING;
             e2toE1Steps = E2toE1Steps.GOING_TO_E2;
 
-            //Emitter
+            //Emitter Remover
             emitter = MemoryMap.Instance.GetBit("Emitter 0 (Emit)", MemoryType.Output);
+            remover = MemoryMap.Instance.GetBit("Remover 0 (Remove)", MemoryType.Output);
             sensorEmitter = MemoryMap.Instance.GetBit("Diffuse Sensor 11", MemoryType.Input);
 
             //E2
@@ -224,8 +226,7 @@ namespace Controllers
             startC1fromB1toM1 = MemoryMap.Instance.GetBit("C1fromB1toM1", MemoryType.Input);
             startC3fromB3toM1 = MemoryMap.Instance.GetBit("C3fromB3toM1", MemoryType.Input);
             m1states = M1states.IDLE;
-            //conveyorM1 = MemoryMap.Instance.GetBit("Belt Conveyor (4m) 3", MemoryType.Output);
-            //sensorM1end = MemoryMap.Instance.GetBit("Diffuse Sensor 22", MemoryType.Input);
+            sensorM1end = MemoryMap.Instance.GetBit("Diffuse Sensor 22", MemoryType.Input);
             roboM1 = new SistemaDeManufatura_M1(
                 MemoryMap.Instance.GetFloat("Pick & Place 1 X Set Point (V)", MemoryType.Output),
                 MemoryMap.Instance.GetFloat("Pick & Place 1 X Position (V)", MemoryType.Input),
@@ -245,7 +246,7 @@ namespace Controllers
                 MemoryMap.Instance.GetBit("Diffuse Sensor 9", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input),
-                MemoryMap.Instance.GetBit("Diffuse Sensor 22", MemoryType.Input),
+                sensorM1end,
                 startC1fromB1toM1, startC2fromB1toM1, startC2fromB2toM1, startC3fromB3toM1);
 
             //Messages only once
@@ -982,6 +983,15 @@ namespace Controllers
             else if (m1states == M1states.C3fromB3toM1)
             {
                 roboM1.C3fromB3toM1();
+            }
+
+            if (sensorM1end.Value)
+            {
+                remover.Value = true;
+            }
+            else
+            {
+                remover.Value = false;
             }
 
             //%%%%%%%%%%%%%%%%%%%% M1 ENDS %%%%%%%%%%%%%%%%%%%%
