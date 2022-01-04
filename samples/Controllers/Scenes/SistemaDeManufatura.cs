@@ -46,7 +46,7 @@ namespace Controllers
         readonly MemoryBit sensorEmitter;
         //E2
         readonly MemoryBit sensorStartE2;
-        RTRIG rtSensorStartE2;
+        readonly RTRIG rtSensorStartE2;
         readonly MemoryFloat conveyorStartE2;
         readonly MemoryBit conveyorFirstCornerE2;
         readonly MemoryFloat conveyorMiddleE2;
