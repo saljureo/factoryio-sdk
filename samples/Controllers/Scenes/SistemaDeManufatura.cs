@@ -322,7 +322,7 @@ namespace Controllers
                 if (e2toE1Steps == E2toE1Steps.GOING_TO_E2)
                 {
                     armX.Value = 2.3f;
-                    if (armXpos.Value > 2.1f)
+                    if (armXpos.Value == 2.1f)
                     {
                         e2toE1Steps = E2toE1Steps.DOWN_LOOKING_FOR_PIECE;
                     }
@@ -338,7 +338,6 @@ namespace Controllers
                 else if (e2toE1Steps == E2toE1Steps.GRABBING_PIECE)
                 {
                     armGrab.Value = true;
-                    conveyorEndE2.Value = 0;
                     if (armPieceDetected.Value && armZpos.Value > 8.8f)
                     {
                         e2toE1Steps = E2toE1Steps.UP_WITH_PIECE;
@@ -349,6 +348,7 @@ namespace Controllers
                     armZ.Value = 4.0f;
                     if (armZpos.Value < 4.4f)
                     {
+                        conveyorEndE2.Value = 1;
                         e2toE1Steps = E2toE1Steps.GOING_TO_E1_FIRST_HALF;
                         rotationBool = false;
                     }
@@ -368,7 +368,7 @@ namespace Controllers
                     {
                         rotationBool = true;
                     }
-                    if (!armRotating.Value && armXpos.Value > 3.9f)
+                    if (!armRotating.Value && armXpos.Value > 3.9f && rotationBool)
                     {
                         e2toE1Steps = E2toE1Steps.GOING_TO_E1_SECOND_HALF;
                         rotationBool = false;

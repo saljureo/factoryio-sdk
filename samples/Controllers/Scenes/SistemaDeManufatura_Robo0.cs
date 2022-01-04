@@ -339,7 +339,7 @@ namespace Controllers.Scenes
             }
             else if (robo0Steps == RoboSteps.UP_WITH_PIECE)
             {
-                robo0Z.Value = 4.0f;
+                robo0Z.Value = 2.0f;
                 if (robo0ZPos.Value < 6.0f)
                 {
                     robo0Steps = RoboSteps.TO_DESTINATION;
@@ -349,7 +349,7 @@ namespace Controllers.Scenes
             {
                 robo0X.Value = 9.2f;
                 robo0Y.Value = 9.5f;
-                if (robo0YPos.Value > 9.4f)
+                if (robo0YPos.Value > 9.4f && robo0X.Value > 9.1f)
                 {
                     robo0Steps = RoboSteps.DOWN_WITH_PIECE;
                 }

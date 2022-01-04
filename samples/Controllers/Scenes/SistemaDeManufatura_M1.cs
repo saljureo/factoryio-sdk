@@ -86,9 +86,10 @@ namespace Controllers.Scenes
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
-                roboM1X.Value = 1.2f;
+                roboM1X.Value = 5.2f;
                 roboM1Y.Value = 0.6f;
                 roboM1Z.Value = 5.0f;
+                roboM1Grab.Value = false;
                 if (startC1fromB1toM1.Value || startC2fromB1toM1.Value)
                 {
                     roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
@@ -96,12 +97,13 @@ namespace Controllers.Scenes
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
+                roboM1X.Value = 1.2f;
                 if (sensorB1start.Value)
                 {
                     conveyorB1.Value = true;
                     pieceFound = true;
                 }
-                else if (!pieceFound || sensorB1end.Value)
+                else if ((!pieceFound || sensorB1end.Value) && Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
                 {
                     conveyorB1.Value = false;
                     roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
@@ -121,7 +123,14 @@ namespace Controllers.Scenes
                 roboM1Grab.Value = true;
                 MemoryMap.Instance.Update();
                 Thread.Sleep(300);
-                roboM1Steps = RoboSteps.UP_WITH_PIECE;
+                if (roboM1Grabbed.Value)
+                {
+                    roboM1Steps = RoboSteps.UP_WITH_PIECE;
+                }
+                else
+                {
+                    roboM1Steps = RoboSteps.IDLE;
+                }
             }
             else if (roboM1Steps == RoboSteps.UP_WITH_PIECE)
             {
@@ -142,8 +151,8 @@ namespace Controllers.Scenes
             }
             else if (roboM1Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                roboM1Z.Value = 8.1f;
-                if (roboM1ZPos.Value > 8.0f)
+                roboM1Z.Value = 7.6f;
+                if (roboM1ZPos.Value > 7.5f)
                 {
                     roboM1Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -176,9 +185,10 @@ namespace Controllers.Scenes
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
-                roboM1X.Value = 1.2f;
+                roboM1X.Value = 5.2f;
                 roboM1Y.Value = 0.6f;
                 roboM1Z.Value = 5.0f;
+                roboM1Grab.Value = false;
                 if (startC1fromB1toM1.Value || startC2fromB1toM1.Value)
                 {
                     roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
@@ -186,12 +196,13 @@ namespace Controllers.Scenes
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
+                roboM1X.Value = 1.2f;
                 if (sensorB1start.Value)
                 {
                     conveyorB1.Value = true;
                     pieceFound = true;
                 }
-                else if (!pieceFound || sensorB1end.Value)
+                else if ((!pieceFound || sensorB1end.Value) && Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
                 {
                     conveyorB1.Value = false;
                     roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
@@ -211,7 +222,14 @@ namespace Controllers.Scenes
                 roboM1Grab.Value = true;
                 MemoryMap.Instance.Update();
                 Thread.Sleep(300);
-                roboM1Steps = RoboSteps.UP_WITH_PIECE;
+                if (roboM1Grabbed.Value)
+                {
+                    roboM1Steps = RoboSteps.UP_WITH_PIECE;
+                }
+                else
+                {
+                    roboM1Steps = RoboSteps.IDLE;
+                }
             }
             else if (roboM1Steps == RoboSteps.UP_WITH_PIECE)
             {
@@ -260,6 +278,7 @@ namespace Controllers.Scenes
                 roboM1X.Value = 5.2f;
                 roboM1Y.Value = 0.6f;
                 roboM1Z.Value = 5.0f;
+                roboM1Grab.Value = false;
                 if (startC2fromB2toM1.Value)
                 {
                     roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
@@ -292,7 +311,14 @@ namespace Controllers.Scenes
                 roboM1Grab.Value = true;
                 MemoryMap.Instance.Update();
                 Thread.Sleep(300);
-                roboM1Steps = RoboSteps.UP_WITH_PIECE;
+                if (roboM1Grabbed.Value)
+                {
+                    roboM1Steps = RoboSteps.UP_WITH_PIECE;
+                }
+                else
+                {
+                    roboM1Steps = RoboSteps.IDLE;
+                }
             }
             else if (roboM1Steps == RoboSteps.UP_WITH_PIECE)
             {
@@ -338,9 +364,10 @@ namespace Controllers.Scenes
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
-                roboM1X.Value = 9.2f;
+                roboM1X.Value = 5.2f;
                 roboM1Y.Value = 0.6f;
                 roboM1Z.Value = 5.0f;
+                roboM1Grab.Value = false;
                 if (startC3fromB3toM1.Value)
                 {
                     roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
@@ -348,12 +375,13 @@ namespace Controllers.Scenes
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
+                roboM1X.Value = 9.2f;
                 if (sensorB3start.Value)
                 {
                     conveyorB3.Value = true;
                     pieceFound = true;
                 }
-                else if (!pieceFound || sensorB3end.Value)
+                else if ((!pieceFound || sensorB3end.Value) && Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
                 {
                     conveyorB3.Value = false;
                     roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
@@ -373,7 +401,14 @@ namespace Controllers.Scenes
                 roboM1Grab.Value = true;
                 MemoryMap.Instance.Update();
                 Thread.Sleep(300);
-                roboM1Steps = RoboSteps.UP_WITH_PIECE;
+                if (roboM1Grabbed.Value)
+                {
+                    roboM1Steps = RoboSteps.UP_WITH_PIECE;
+                }
+                else
+                {
+                    roboM1Steps = RoboSteps.IDLE;
+                }
             }
             else if (roboM1Steps == RoboSteps.UP_WITH_PIECE)
             {
@@ -394,8 +429,8 @@ namespace Controllers.Scenes
             }
             else if (roboM1Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                roboM1Z.Value = 8.1f;
-                if (roboM1ZPos.Value > 8.0f)
+                roboM1Z.Value = 7.6f;
+                if (roboM1ZPos.Value > 7.5f)
                 {
                     roboM1Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -423,6 +458,5 @@ namespace Controllers.Scenes
                 }
             }
         }
-
     }
 }
