@@ -10,6 +10,7 @@ using System.Diagnostics;
 
 using EngineIO;
 using Controllers.Scenes.MachinesAndBuffer;
+using Controllers.Scenes.SistemaDeManufatura;
 
 namespace Controllers
 {
@@ -28,7 +29,7 @@ namespace Controllers
         static void Main(string[] args)
         {
             //Stopwatch used to measure elapsed time between cycles
-            Stopwatch stopwatch = new Stopwatch();
+            Stopwatch stopwatch = new();
 
             //MemoryBit used to switch FACTORY I/O between edit and run mode
             MemoryBit start = MemoryMap.Instance.GetBit(MemoryMap.BitCount - 16, MemoryType.Output);

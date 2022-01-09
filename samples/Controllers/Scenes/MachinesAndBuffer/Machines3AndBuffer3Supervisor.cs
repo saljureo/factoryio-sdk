@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Controllers.Scenes
+namespace Controllers.Scenes.MachinesAndBuffer
 {
     class Machines3AndBuffer3Supervisor
     {
@@ -1354,7 +1354,8 @@ namespace Controllers.Scenes
                 }
                 Console.WriteLine("Current state is: " + stateLabels[currentState] + "\n");
                 return true;
-            } else
+            }
+            else
             {
                 Console.WriteLine(eventoLabel + " event blocked");
                 Thread.Sleep(800);

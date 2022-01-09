@@ -4,13 +4,11 @@
 // Copyright (C) Real Games. All rights reserved.
 //-----------------------------------------------------------------------------
 
-using Controllers.Scenes;
-using Controllers.Scenes.MachinesAndBuffer;
 using EngineIO;
 using System;
 using System.Diagnostics;
 
-namespace Controllers
+namespace Controllers.Scenes.MachinesAndBuffer
 {
     public class Machines3AndBuffer : Controller
     {
@@ -144,7 +142,7 @@ namespace Controllers
         readonly MemoryFloat displayMc3;
         readonly Stopwatch stopWatch;
         float tiempo;
-        
+
         //Others
         bool initialStateMessagePrinted;
 
@@ -513,11 +511,11 @@ namespace Controllers
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            displayMc1.Value = float.Parse(String.Format("{0:0.0}", potentiometerMc1.Value));
-            displayMc2.Value = float.Parse(String.Format("{0:0.0}", potentiometerMc2.Value));
+            displayMc1.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc1.Value));
+            displayMc2.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc2.Value));
             stopWatch.Start();
             TimeSpan ts = stopWatch.Elapsed;
-            tiempo = float.Parse(String.Format("{0:0.0}", ts.Seconds + "." + ts.Milliseconds / 10));
+            tiempo = float.Parse(string.Format("{0:0.0}", ts.Seconds + "." + ts.Milliseconds / 10));
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -635,17 +633,17 @@ namespace Controllers
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc1.Value * 100))) == 0.0f)//false is button pressed
+            if (mc1FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc1.Value * 100))) == 0.0f)//false is button pressed
             {
                 mc1Failed = true;
             }
 
-            if (mc2FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc2.Value * 100))) == 0.0f)//false is button pressed)
+            if (mc2FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc2.Value * 100))) == 0.0f)//false is button pressed)
             {
                 mc2Failed = true;
             }
-            
-            if (mc3FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc3.Value * 100))) == 0.0f)//false is button pressed)
+
+            if (mc3FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc3.Value * 100))) == 0.0f)//false is button pressed)
             {
                 mc3Failed = true;
             }
@@ -1098,7 +1096,7 @@ namespace Controllers
                 {
                     mc2Start.Value = false;
                 }
-                
+
                 if (mc2Progress.Value > 80)
                 {
                     mc2Reset.Value = true;

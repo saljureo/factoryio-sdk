@@ -1,10 +1,4 @@
-﻿//-----------------------------------------------------------------------------
-// FACTORY I/O (SDK)
-//
-// Copyright (C) Real Games. All rights reserved.
-//-----------------------------------------------------------------------------
-
-using EngineIO;
+﻿using EngineIO;
 using System;
 using System.Diagnostics;
 
