@@ -109,6 +109,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
         readonly MemoryBit startC1toE2;
         readonly MemoryBit startC2toE2;
         readonly MemoryBit startC3toE2;
+        int roboCounter;
         private enum Robo0State
         {
             IDLE,
@@ -215,6 +216,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             startC2toE2 = MemoryMap.Instance.GetBit("Robô C2 to E2", MemoryType.Input);
             startC3toE2 = MemoryMap.Instance.GetBit("Robô C3 to E2", MemoryType.Input);
             robo0State = Robo0State.IDLE;
+            roboCounter = 0;
 
             robo0 = new SistemaDeManufatura_Robo0(
                 MemoryMap.Instance.GetFloat("Pick & Place 0 X Set Point (V)", MemoryType.Output),
@@ -853,21 +855,93 @@ namespace Controllers.Scenes.SistemaDeManufatura
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA ENDS %%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%% ROBÔ STARTS %%%%%%%%%%%%%%%%%%%%
-            if (startC1toE2.Value || startC2toE2.Value || startC3toE2.Value)
+            if (startC1toE2.Value)
             {
-                robo0State = Robo0State.E1toE2;
+                if (roboCounter == 0)
+                {
+                    supervisoryApproval = sistemaDeManufaturaSupervisor.On("r_c1e2");
+                    if (supervisoryApproval)
+                    {
+                        robo0State = Robo0State.E1toE2;
+                        roboCounter++;
+                    }
+                }
             }
-            else if (startC1toB1.Value || startC2toB1.Value)
+            else if (startC2toE2.Value)
             {
-                robo0State = Robo0State.E1toB1;
+                if (roboCounter == 0)
+                {
+                    supervisoryApproval = sistemaDeManufaturaSupervisor.On("r_c2e2");
+                    if (supervisoryApproval)
+                    {
+                        robo0State = Robo0State.E1toE2;
+                        roboCounter++;
+                    }
+                }
+            }
+            else if (startC3toE2.Value)
+            {
+                if (roboCounter == 0)
+                {
+                    supervisoryApproval = sistemaDeManufaturaSupervisor.On("r_c3e2");
+                    if (supervisoryApproval)
+                    {
+                        robo0State = Robo0State.E1toE2;
+                        roboCounter++;
+                    }
+                }
+            }
+            else if (startC1toB1.Value)
+            {
+                if (roboCounter == 0)
+                {
+                    supervisoryApproval = sistemaDeManufaturaSupervisor.On("r_c1b1");
+                    if (supervisoryApproval)
+                    {
+                        robo0State = Robo0State.E1toB1;
+                        roboCounter++;
+                    }
+                }
+            }
+            else if (startC2toB1.Value)
+            {
+                if (roboCounter == 0)
+                {
+                    supervisoryApproval = sistemaDeManufaturaSupervisor.On("r_c2b1");
+                    if (supervisoryApproval)
+                    {
+                        robo0State = Robo0State.E1toB1;
+                        roboCounter++;
+                    }
+                }
             }
             else if (startC2toB2.Value)
             {
-                robo0State = Robo0State.E1toB2;
+                if (roboCounter == 0)
+                {
+                    supervisoryApproval = sistemaDeManufaturaSupervisor.On("r_c2b2");
+                    if (supervisoryApproval)
+                    {
+                        robo0State = Robo0State.E1toB2;
+                        roboCounter++;
+                    }
+                }
             }
             else if (startC3toB3.Value)
             {
-                robo0State = Robo0State.E1toB3;
+                if (roboCounter == 0)
+                {
+                    supervisoryApproval = sistemaDeManufaturaSupervisor.On("r_c3b3");
+                    if (supervisoryApproval)
+                    {
+                        robo0State = Robo0State.E1toB3;
+                        roboCounter++;
+                    }
+                }
+            }
+            else
+            {
+                roboCounter = 0;
             }
 
             if (robo0State == Robo0State.E1toE2)
@@ -979,6 +1053,10 @@ namespace Controllers.Scenes.SistemaDeManufatura
                         m1Counter++;
                     }
                 }
+            }
+            else
+            {
+                m1Counter = 0;
             }
 
             if (m1states == M1states.IDLE)
