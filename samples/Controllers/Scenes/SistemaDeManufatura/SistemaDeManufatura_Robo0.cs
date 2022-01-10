@@ -42,7 +42,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
         float highestYinSearch;
         float searchingForPieceYvalue;
         float pieceFoundYcoordinates;
-        public SistemaDeManufatura_Robo0(MemoryFloat robo0X, MemoryFloat robo0XPos, MemoryFloat robo0Y, MemoryFloat robo0YPos, MemoryFloat robo0Z, MemoryFloat robo0ZPos, MemoryBit robo0Grab, MemoryBit robo0Grabbed, MemoryBit robo0RotatePiece, MemoryBit startC1toB1, MemoryBit startC2toB1, MemoryBit startC2toB2, MemoryBit startC3toB3, MemoryBit startC1toE2, MemoryBit startC2toE2, MemoryBit startC3toE2)
+        readonly SistemaDeManufaturaSupervisor sistemaDeManufaturaSupervisor;
+        public SistemaDeManufatura_Robo0(MemoryFloat robo0X, MemoryFloat robo0XPos, MemoryFloat robo0Y, MemoryFloat robo0YPos, MemoryFloat robo0Z, MemoryFloat robo0ZPos, MemoryBit robo0Grab, MemoryBit robo0Grabbed, MemoryBit robo0RotatePiece, MemoryBit startC1toB1, MemoryBit startC2toB1, MemoryBit startC2toB2, MemoryBit startC3toB3, MemoryBit startC1toE2, MemoryBit startC2toE2, MemoryBit startC3toE2, SistemaDeManufaturaSupervisor sistemaDeManufaturaSupervisor)
         {
             this.robo0X = robo0X;
             this.robo0XPos = robo0XPos;
@@ -60,10 +61,17 @@ namespace Controllers.Scenes.SistemaDeManufatura
             this.startC1toE2 = startC1toE2;
             this.startC2toE2 = startC2toE2;
             this.startC3toE2 = startC3toE2;
+            this.sistemaDeManufaturaSupervisor = sistemaDeManufaturaSupervisor;
             robo0Steps = RoboSteps.IDLE;
         }
 
-        public void E1toB1()
+        public void Idle()
+        {
+            robo0X.Value = 1.2f;
+            robo0Y.Value = 0.0f;
+            robo0Z.Value = 5.0f;
+        }
+        public bool E1toB1(string color)
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
@@ -95,7 +103,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     {
                         highestYinSearch = searchingForPieceYvalue;
                     }
-                    searchingForPieceYvalue += 0.8f;
+                    searchingForPieceYvalue += 0.5f;
                 }
                 if (searchingForPieceYvalue > 5.5f)
                 {
@@ -156,6 +164,14 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 robo0Grab.Value = false;
                 robo0Steps = RoboSteps.UP_WITHOUT_PIECE;
+                if (color == "c1")
+                {
+                    sistemaDeManufaturaSupervisor.On("r_okc1b1");
+                }
+                else if (color == "c2")
+                {
+                    sistemaDeManufaturaSupervisor.On("r_okc2b1");
+                }
             }
             else if (robo0Steps == RoboSteps.UP_WITHOUT_PIECE)
             {
@@ -164,11 +180,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (robo0ZPos.Value < 6.0f)
                 {
                     robo0Steps = RoboSteps.IDLE;
+                    return (true);
                 }
             }
+            return (false);
         }
 
-        public void E1toB2()
+        public bool E1toB2()
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
@@ -200,7 +218,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     {
                         highestYinSearch = searchingForPieceYvalue;
                     }
-                    searchingForPieceYvalue += 0.8f;
+                    searchingForPieceYvalue += 0.5f;
                 }
                 if (searchingForPieceYvalue > 5.5f)
                 {
@@ -261,6 +279,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 robo0Grab.Value = false;
                 robo0Steps = RoboSteps.UP_WITHOUT_PIECE;
+                sistemaDeManufaturaSupervisor.On("r_okc2b2");
             }
             else if (robo0Steps == RoboSteps.UP_WITHOUT_PIECE)
             {
@@ -269,11 +288,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (robo0ZPos.Value < 6.0f)
                 {
                     robo0Steps = RoboSteps.IDLE;
+                    return (true);
                 }
             }
+            return (false);
         }
 
-        public void E1toB3()
+        public bool E1toB3()
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
@@ -305,7 +326,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     {
                         highestYinSearch = searchingForPieceYvalue;
                     }
-                    searchingForPieceYvalue += 0.8f;
+                    searchingForPieceYvalue += 0.5f;
                 }
                 if (searchingForPieceYvalue > 5.5f)
                 {
@@ -366,6 +387,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 robo0Grab.Value = false;
                 robo0Steps = RoboSteps.UP_WITHOUT_PIECE;
+                sistemaDeManufaturaSupervisor.On("r_okc3b3");
             }
             else if (robo0Steps == RoboSteps.UP_WITHOUT_PIECE)
             {
@@ -374,11 +396,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (robo0ZPos.Value < 6.0f)
                 {
                     robo0Steps = RoboSteps.IDLE;
+                    return (true);
                 }
             }
+            return (false);
         }
 
-        public void E1toE2()
+        public bool E1toE2()
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
@@ -410,7 +434,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     {
                         highestYinSearch = searchingForPieceYvalue;
                     }
-                    searchingForPieceYvalue += 0.8f;
+                    searchingForPieceYvalue += 0.5f;
                 }
                 if (searchingForPieceYvalue > 5.5f)
                 {
@@ -472,6 +496,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 robo0Grab.Value = false;
                 robo0Steps = RoboSteps.UP_WITHOUT_PIECE;
+                sistemaDeManufaturaSupervisor.On("r_oke2");
             }
             else if (robo0Steps == RoboSteps.UP_WITHOUT_PIECE)
             {
@@ -480,8 +505,10 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (robo0ZPos.Value < 6.0f)
                 {
                     robo0Steps = RoboSteps.IDLE;
+                    return (true);
                 }
             }
+            return (false);
         }
 
     }

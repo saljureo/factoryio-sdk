@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Controllers.Scenes.SistemaDeManufatura
 {
-    class SistemaDeManufaturaSupervisor
+    public class SistemaDeManufaturaSupervisor
     {
 
         // #### VARIABLE CREATION TO ALLOCATE IN MEMORY ####
