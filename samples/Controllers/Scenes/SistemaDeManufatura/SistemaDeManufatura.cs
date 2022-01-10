@@ -129,6 +129,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
         readonly MemoryBit startC3fromB3toM1;
         readonly MemoryBit sensorM1end;
         int m1Counter;
+        bool roboM1Finished;
         private enum M1states
         {
             IDLE,
@@ -263,6 +264,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 sensorM1end,
                 startC1fromB1toM1, startC2fromB1toM1, startC2fromB2toM1, startC3fromB3toM1);
             m1Counter = 0;
+            roboM1Finished = false;
 
             //Messages only once
             initialMessage = true;
@@ -501,7 +503,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 conveyorEndE2.Value = 0;
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer One");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
                     conveyorMiddleE2.Value = 1;
@@ -515,18 +516,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Zero");
                     bufferE2 = BufferE2.ZERO;
                 }
                 else if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Two");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.TWO;
                 }
                 else if (sensorEndE2.Value)
@@ -543,18 +542,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Three");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.THREE;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer One");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.ONE;
@@ -573,18 +570,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Four");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.FOUR;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Two");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.TWO;
@@ -603,18 +598,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Five");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.FIVE;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Three");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.THREE;
@@ -633,18 +626,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Six");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.SIX;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Four");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.FOUR;
@@ -663,18 +654,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Seven");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.SEVEN;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Five");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.FIVE;
@@ -693,18 +682,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Eight");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.EIGHT;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Six");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.SIX;
@@ -723,18 +710,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Nine");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.NINE;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Seven");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.SEVEN;
@@ -753,18 +738,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Ten");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.TEN;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Eight");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.EIGHT;
@@ -783,18 +766,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Eleven");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.ELEVEN;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Nine");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.NINE;
@@ -813,18 +794,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (rtSensorStartE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Twelve");
                     conveyorStartE2.Value = 0.5f;
                     conveyorFirstCornerE2.Value = true;
-                    conveyorMiddleE2.Value = 1;
+                    conveyorMiddleE2.Value = 0.5f;
                     conveyorSecondCornerE2.Value = true;
-                    conveyorPreEndE2.Value = 1;
-                    conveyorEndE2.Value = 1;
+                    conveyorPreEndE2.Value = 0.5f;
+                    conveyorEndE2.Value = 0.5f;
                     bufferE2 = BufferE2.TWELVE;
                 }
                 else if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Ten");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.TEN;
@@ -843,7 +822,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 if (ftSensorEndE2.Q == true)
                 {
-                    Console.WriteLine("Buffer Eleven");
                     conveyorEndE2.Value = 1;
                     conveyorPreEndE2.Value = 1;
                     bufferE2 = BufferE2.ELEVEN;
@@ -1090,22 +1068,41 @@ namespace Controllers.Scenes.SistemaDeManufatura
 
             if (m1states == M1states.IDLE)
             {
+                roboM1.Idle();
             }
             else if (m1states == M1states.C1fromB1toM1)
             {
-                roboM1.C1fromB1toM1();
+                roboM1Finished = roboM1.C1fromB1toM1();
+                if (roboM1Finished)
+                {
+                    m1states = M1states.IDLE;
+                    sistemaDeManufaturaSupervisor.On("m1_fim");
+                }
             }
             else if (m1states == M1states.C2fromB1toM1)
             {
-                roboM1.C2fromB1toM1();
+                roboM1Finished = roboM1.C2fromB1toM1();
+                if (roboM1Finished)
+                {
+                    m1states = M1states.IDLE;
+                }
             }
             else if (m1states == M1states.C2fromB2toM1)
             {
-                roboM1.C2fromB2toM1();
+                roboM1Finished = roboM1.C2fromB2toM1();
+                if (roboM1Finished)
+                {
+                    m1states = M1states.IDLE;
+                }
             }
             else if (m1states == M1states.C3fromB3toM1)
             {
-                roboM1.C3fromB3toM1();
+                roboM1Finished = roboM1.C3fromB3toM1();
+                if (roboM1Finished)
+                {
+                    m1states = M1states.IDLE;
+                    sistemaDeManufaturaSupervisor.On("m1_fim");
+                }
             }
 
             if (sensorM1end.Value)

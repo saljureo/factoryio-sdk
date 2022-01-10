@@ -82,7 +82,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             pieceFound = false;
         }
 
-        public void C1fromB1toM1()
+        public bool C1fromB1toM1()
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
@@ -168,20 +168,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (roboM1ZPos.Value < 6.0f)
                 {
                     roboM1Steps = RoboSteps.TAKE_PIECE_AWAY;
+                    return (true);
                 }
             }
-            else if (roboM1Steps == RoboSteps.TAKE_PIECE_AWAY)
-            {
-                conveyorM1.Value = true;
-                if (sensorM1end.Value)
-                {
-                    conveyorM1.Value = false;
-                    roboM1Steps = RoboSteps.IDLE;
-                }
-            }
+            return (false);
         }
 
-        public void C2fromB1toM1()
+        public bool C2fromB1toM1()
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
@@ -267,11 +260,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (roboM1ZPos.Value < 6.0f)
                 {
                     roboM1Steps = RoboSteps.IDLE;
+                    return (true);
                 }
             }
+            return (false);
         }
 
-        public void C2fromB2toM1()
+        public bool C2fromB2toM1()
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
@@ -356,11 +351,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (roboM1ZPos.Value < 6.0f)
                 {
                     roboM1Steps = RoboSteps.IDLE;
+                    return (true);
                 }
             }
+            return (false);
         }
 
-        public void C3fromB3toM1()
+        public bool C3fromB3toM1()
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
@@ -446,9 +443,15 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (roboM1ZPos.Value < 6.0f)
                 {
                     roboM1Steps = RoboSteps.TAKE_PIECE_AWAY;
+                    return (true);
                 }
             }
-            else if (roboM1Steps == RoboSteps.TAKE_PIECE_AWAY)
+            return (false);
+        }
+
+        public void Idle()
+        {
+            if (roboM1Steps == RoboSteps.TAKE_PIECE_AWAY)
             {
                 conveyorM1.Value = true;
                 if (sensorM1end.Value)
@@ -456,6 +459,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     conveyorM1.Value = false;
                     roboM1Steps = RoboSteps.IDLE;
                 }
+            }
+            else
+            {
+                roboM1X.Value = 5.2f;
+                roboM1Y.Value = 0.7f;
+                roboM1Z.Value = 5.0f;
+                roboM1Grab.Value = false;
             }
         }
     }
