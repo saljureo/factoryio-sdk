@@ -1,6 +1,7 @@
 ﻿using EngineIO;
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Controllers.Scenes.MachinesAndBuffer
 {
@@ -74,8 +75,8 @@ namespace Controllers.Scenes.MachinesAndBuffer
         readonly McLightsControl mc2Lights;
 
         //SUPERVISORY CONTROL
-        //readonly Machines2AndBufferSupervisor supervisoryControl;
-        readonly Machines2AndBuffer3Supervisor supervisoryControl;
+        readonly Machines2AndBufferSupervisor supervisoryControl;
+        //readonly Machines2AndBuffer3Supervisor supervisoryControl;
         bool supervisoryApproval;
 
         //conveyor belts
@@ -99,6 +100,10 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
         //Others
         bool initialStateMessagePrinted;
+        Reader reader;
+        bool changeStateMessagePrinted;
+        string newState;
+        string newStateName;
 
         //Enums
         McStatus mc1Status;
@@ -369,12 +374,18 @@ namespace Controllers.Scenes.MachinesAndBuffer
             r2Counter = 0;
 
             //SUPERVISORY CONTROL
-            //supervisoryControl = new Machines2AndBufferSupervisor();
-            supervisoryControl = new Machines2AndBuffer3Supervisor();
+            supervisoryControl = new Machines2AndBufferSupervisor();
+            //supervisoryControl = new Machines2AndBuffer3Supervisor();
             supervisoryApproval = true;
 
             //Trick for printing initial state in console after start up messages
             initialStateMessagePrinted = false;
+
+            //Others
+            reader = new Reader();
+            changeStateMessagePrinted = false;
+            newState = "";
+            newStateName = "";
 
         } // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -403,8 +414,36 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            // Keyboard input:
+            try
+            {
+                if (!changeStateMessagePrinted)
+                {
+                    changeStateMessagePrinted = true;
+                }
+                newState = Reader.ReadLine(5);
+                try
+                {
+                    newStateName = supervisoryControl.StateName(int.Parse(newState));
+                    if (newStateName != "Event number pressed does not exist")
+                    {
+                        Console.WriteLine("----------------------");
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("\nSorry, please insert a number.\n");
+                    supervisoryControl.ListOfActiveEvents();
+                }
+                changeStateMessagePrinted = false;
+            }
+            catch (TimeoutException)
+            {
+            }
+            
             //s1
-            if (mc1StartButton.Value == true)
+            if (mc1StartButton.Value == true || newStateName == "s1")
             {
                 if (s1Counter == 0)
                 {
@@ -422,7 +461,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
             
             //r1
-            if (mc1RepairButton.Value == true)
+            if (mc1RepairButton.Value == true || newStateName == "r1")
             {
                 if (r1Counter == 0)
                 {
@@ -440,7 +479,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //s2
-            if (mc2StartButton.Value == true)
+            if (mc2StartButton.Value == true || newStateName == "s2")
             {
                 if (s2Counter == 0)
                 {
@@ -458,7 +497,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //r2
-            if (mc2RepairButton.Value == true)
+            if (mc2RepairButton.Value == true || newStateName == "r2")
             {
                 if (r2Counter == 0)
                 {
@@ -479,14 +518,16 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc1.Value * 100) )) == 0.0f)//false is button pressed
+            if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo) % (displayMc1.Value * 100) )) < 0.05f)//false is button pressed
             {
                 mc1Failed = true;
+                Console.WriteLine("Failed mc1");
             }
 
-            if (mc2FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc2.Value * 100) )) == 0.0f)//false is button pressed)
+            if (mc2FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo) % (displayMc2.Value * 100) )) < 0.05f)//false is button pressed)
             {
                 mc2Failed = true;
+                Console.WriteLine("Failed mc2");
             }
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

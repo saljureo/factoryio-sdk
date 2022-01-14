@@ -12,14 +12,18 @@ namespace Controllers.Scenes.MachinesAndBuffer
         private int evento;
         private Dictionary<(int, int), int> transiciones;
         private Dictionary<string, int> eventLabels;
-
+        private Dictionary<int, (string, string)> eventLabelsInverse;
         private Dictionary<int, string> stateLabels;
+
+        private bool activeEventsAvailable;
 
         public void CreateController()
         {
             transiciones = new Dictionary<(int, int), int>();
             eventLabels = new Dictionary<string, int>();
+            eventLabelsInverse = new Dictionary<int, (string, string)>();
             stateLabels = new Dictionary<int, string>();
+            activeEventsAvailable = false;
 
             currentState = 5;
             //#########  TRANSICIONES START ############
@@ -62,6 +66,15 @@ namespace Controllers.Scenes.MachinesAndBuffer
             eventLabels.Add("s1", 6);
             eventLabels.Add("s2", 7);
 
+            eventLabelsInverse.Add(0, ("b1","nc"));
+            eventLabelsInverse.Add(1, ("b2","nc"));
+            eventLabelsInverse.Add(2, ("f1","nc"));
+            eventLabelsInverse.Add(3, ("f2","nc"));
+            eventLabelsInverse.Add(4, ("r1","c"));
+            eventLabelsInverse.Add(5, ("r2","c"));
+            eventLabelsInverse.Add(6, ("s1","c"));
+            eventLabelsInverse.Add(7, ("s2","c"));
+
             //#########  EVENTLABEL END ############
 
 
@@ -83,8 +96,42 @@ namespace Controllers.Scenes.MachinesAndBuffer
             //#########  STATELABEL END ############
 
             Console.WriteLine("\nCurrent state is: " + stateLabels[currentState] + "\n");
+            Console.WriteLine("List of active events. Choose one and press enter: \n");
+            for (int i = 0; i < eventLabels.Count; i++)
+            {
+                if (transiciones.ContainsKey((currentState, i)) && eventLabelsInverse[i].Item2 == "c")
+                {
+                    Console.WriteLine(i + ": " + eventLabelsInverse[i].Item1 + "\n");
+                }
+            }
+            Console.WriteLine("Type event number and press enter to execute or press button on Factory I/O interface:\n");
         }
 
+        public void ListOfActiveEvents()
+        {
+            Console.WriteLine("\nList of active events. Choose one and press enter or wait:\n");
+
+            for (int i = 0; i < eventLabels.Count; i++)
+            {
+                if (transiciones.ContainsKey((currentState, i)) && eventLabelsInverse[i].Item2 == "c")
+                {
+                    Console.WriteLine(i + ": " + eventLabelsInverse[i].Item1);
+                }
+            }
+        }
+        public string StateName(int eventNumber)
+        {
+            if (eventLabelsInverse.ContainsKey(eventNumber))
+            {
+                return (eventLabelsInverse[eventNumber].Item1);
+            }
+            else
+            {
+                Console.WriteLine("\nEvent number pressed does not exist. Try again.\n");
+                ListOfActiveEvents();
+                return ("Event number pressed does not exist");
+            }
+        }
         public bool On(string eventoLabel)
         {
             evento = eventLabels[eventoLabel];
@@ -99,7 +146,18 @@ namespace Controllers.Scenes.MachinesAndBuffer
                 {
                     Console.WriteLine(eventoLabel + " event is uncontrollable and must be enabled");
                 }
-                Console.WriteLine("Current state is: " + stateLabels[currentState] + "\n");
+                Console.WriteLine("Current state is: " + stateLabels[currentState]);
+
+                //Console.WriteLine("\nList of active events. Choose one and press enter or wait:\n");
+
+                //for (int i = 0; i < eventLabels.Count; i++)
+                //{
+                //    if (transiciones.ContainsKey((currentState, i)) && eventLabelsInverse[i].Item2 == "c")
+                //    {
+                //        Console.WriteLine(i + ": " + eventLabelsInverse[i].Item1);
+                //    }
+                //}
+                ListOfActiveEvents();
                 return true;
             } else
             {
