@@ -55,27 +55,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
             //#########  TRANSICIONES END ############
 
-            //#########  EVENTLABEL START ############
-
-            eventLabels.Add("b1", 0);
-            eventLabels.Add("b2", 1);
-            eventLabels.Add("f1", 2);
-            eventLabels.Add("f2", 3);
-            eventLabels.Add("r1", 4);
-            eventLabels.Add("r2", 5);
-            eventLabels.Add("s1", 6);
-            eventLabels.Add("s2", 7);
-
-            eventLabelsInverse.Add(0, ("b1","nc"));
-            eventLabelsInverse.Add(1, ("b2","nc"));
-            eventLabelsInverse.Add(2, ("f1","nc"));
-            eventLabelsInverse.Add(3, ("f2","nc"));
-            eventLabelsInverse.Add(4, ("r1","c"));
-            eventLabelsInverse.Add(5, ("r2","c"));
-            eventLabelsInverse.Add(6, ("s1","c"));
-            eventLabelsInverse.Add(7, ("s2","c"));
-
-            //#########  EVENTLABEL END ############
+            
 
 
             //#########  STATELABEL START ############
@@ -94,6 +74,28 @@ namespace Controllers.Scenes.MachinesAndBuffer
             stateLabels.Add(11, "w1.w2.EmptyB1.OK2");
 
             //#########  STATELABEL END ############
+
+            //#########  EVENTLABEL START ############
+
+            eventLabels.Add("b1", 0);
+            eventLabels.Add("b2", 1);
+            eventLabels.Add("f1", 2);
+            eventLabels.Add("f2", 3);
+            eventLabels.Add("r1", 4);
+            eventLabels.Add("r2", 5);
+            eventLabels.Add("s1", 6);
+            eventLabels.Add("s2", 7);
+
+            eventLabelsInverse.Add(0, ("b1", "nc"));
+            eventLabelsInverse.Add(1, ("b2", "nc"));
+            eventLabelsInverse.Add(2, ("f1", "nc"));
+            eventLabelsInverse.Add(3, ("f2", "nc"));
+            eventLabelsInverse.Add(4, ("r1", "c"));
+            eventLabelsInverse.Add(5, ("r2", "c"));
+            eventLabelsInverse.Add(6, ("s1", "c"));
+            eventLabelsInverse.Add(7, ("s2", "c"));
+
+            //#########  EVENTLABEL END ############
 
             Console.WriteLine("\nCurrent state is: " + stateLabels[currentState] + "\n");
             Console.WriteLine("List of active events. Choose one and press enter: \n");
@@ -120,6 +122,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
         }
         public void ListOfActiveEvents()
         {
+            Console.WriteLine("----------------------------------------\n");
             Console.WriteLine("\nList of active events. Choose one and press enter or wait:\n");
 
             for (int i = 0; i < eventLabels.Count; i++)
@@ -129,6 +132,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
                     Console.WriteLine(i + ": " + eventLabelsInverse[i].Item1);
                 }
             }
+            Console.WriteLine("\n----------------------------------------");
         }
         public string StateName(int eventNumber)
         {
