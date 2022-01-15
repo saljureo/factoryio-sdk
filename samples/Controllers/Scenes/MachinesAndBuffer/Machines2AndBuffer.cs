@@ -93,7 +93,6 @@ namespace Controllers.Scenes.MachinesAndBuffer
         readonly MemoryFloat potentiometerMc2;
         readonly MemoryFloat displayMc1;
         readonly MemoryFloat displayMc2;
-        readonly Stopwatch stopWatch;
         readonly Stopwatch failTimeMc1;
         float failTimeFloatMc1;
         readonly Stopwatch failTimeMc2;
@@ -340,8 +339,14 @@ namespace Controllers.Scenes.MachinesAndBuffer
             potentiometerMc2 = MemoryMap.Instance.GetFloat("Mc2 Failure Time Control", MemoryType.Input);
             displayMc1 = MemoryMap.Instance.GetFloat("Mc1 Failure time (in seconds x 100)", MemoryType.Output);
             displayMc2 = MemoryMap.Instance.GetFloat("Mc2 Failure time (in seconds x 100)", MemoryType.Output);
-            stopWatch = new Stopwatch();
             timeStartBool = false;
+            failTimeMc1 = new Stopwatch();
+            failTimeFloatMc1 = 0.0f;
+            failTimeMc2 = new Stopwatch();
+            failTimeFloatMc2 = 0.0f;
+
+            failTimeMc1.Start();
+            failTimeMc2.Start();
 
             //Enums
             mc1Status = McStatus.IDLE;
@@ -392,13 +397,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             changeStateMessagePrinted = false;
             newState = "";
             newStateName = "";
-            failTimeMc1 = new Stopwatch();
-            failTimeFloatMc1 = 0.0f;
-            failTimeMc2 = new Stopwatch();
-            failTimeFloatMc2 = 0.0f;
-
-            failTimeMc1.Start();
-            failTimeMc2.Start();
+            
         } // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -550,7 +549,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
                 failTimeFloatMc1 = Convert.ToSingle(failTimeMc1.ElapsedMilliseconds / 100);
                 failTimeFloatMc1 = failTimeFloatMc1 / 10;
 
-                failTimeFloatMc2 = Convert.ToSingle(failTimeMc1.ElapsedMilliseconds / 100);
+                failTimeFloatMc2 = Convert.ToSingle(failTimeMc2.ElapsedMilliseconds / 100);
                 failTimeFloatMc2 = failTimeFloatMc2 / 10;
             }
             

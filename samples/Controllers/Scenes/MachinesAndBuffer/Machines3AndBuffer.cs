@@ -12,6 +12,12 @@ namespace Controllers.Scenes.MachinesAndBuffer
 {
     public class Machines3AndBuffer : Controller
     {
+        //Reader
+        Reader reader;
+        string newState;
+        string newStateName;
+        bool changeStateMessagePrinted;
+
         //Mc1 inputs
         readonly MemoryBit mc1StartButton;
         readonly MemoryBit mc1FailButton;
@@ -85,6 +91,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
         readonly MemoryBit sensorMc2loadingConveyorStart;//Diffuse Sensor 3_2 - Buffer1 start
         readonly MemoryBit sensorMc3loadingConveyorStart;//Diffuse Sensor 20 - Buffer2 start
         readonly MemoryBit sensorEntranceMc2;//Diffuse Sensor 5 - MC2 entrance
+        readonly MemoryBit sensorEntranceMc3;//Diffuse Sensor 19 - MC3 entrance
         readonly MemoryBit sensorBadPieceFilterConveyorStartMc1;//Diffuse Sensor 6 - MC0 bad piece filter conveyor entrance
         readonly MemoryBit sensorBadPieceFilterConveyorEndMc1;//Diffuse Sensor 7 - MC0 bad piece filter conveyor exit
         readonly MemoryBit sensorExitMc2;//Diffuse Sensor 8 - MC2 exit/MC2 bad piece filter
@@ -137,11 +144,17 @@ namespace Controllers.Scenes.MachinesAndBuffer
         //Failing time (potenciometer and display)
         readonly MemoryFloat potentiometerMc1;
         readonly MemoryFloat potentiometerMc2;
+        readonly MemoryFloat potentiometerMc3;
         readonly MemoryFloat displayMc1;
         readonly MemoryFloat displayMc2;
         readonly MemoryFloat displayMc3;
-        readonly Stopwatch stopWatch;
-        float tiempo;
+        readonly Stopwatch failTimeMc1;
+        float failTimeFloatMc1;
+        readonly Stopwatch failTimeMc2;
+        float failTimeFloatMc2;
+        readonly Stopwatch failTimeMc3;
+        float failTimeFloatMc3;
+        bool timeStartBool;
 
         //Others
         bool initialStateMessagePrinted;
@@ -272,6 +285,12 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
         public Machines3AndBuffer()// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRUCTOR STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         {
+            //Reader
+            reader = new Reader();
+            newState = "";
+            newStateName = "";
+            changeStateMessagePrinted = false;
+
             //Mc1 inputs
             mc1StartButton = MemoryMap.Instance.GetBit("Start Mc1", MemoryType.Input);
             mc1FailButton = MemoryMap.Instance.GetBit("Force Failure Mc1", MemoryType.Input);
@@ -361,7 +380,8 @@ namespace Controllers.Scenes.MachinesAndBuffer
             sensorBuffer2End = MemoryMap.Instance.GetBit("Diffuse Sensor 21", MemoryType.Input);//Diffuse Sensor 21 - Buffer2 end
             sensorMc2loadingConveyorStart = MemoryMap.Instance.GetBit("Diffuse Sensor 3_2", MemoryType.Input);//Diffuse Sensor 3_2
             sensorMc3loadingConveyorStart = MemoryMap.Instance.GetBit("Diffuse Sensor 20", MemoryType.Input);//Diffuse Sensor 20
-            sensorEntranceMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);//Diffuse Sensor 5 - MC1 entrance
+            sensorEntranceMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 5", MemoryType.Input);//Diffuse Sensor 5 - MC2 entrance
+            sensorEntranceMc3 = MemoryMap.Instance.GetBit("Diffuse Sensor 19", MemoryType.Input);//Diffuse Sensor 19 - MC3 entrance
             sensorBadPieceFilterConveyorStartMc1 = MemoryMap.Instance.GetBit("Diffuse Sensor 6", MemoryType.Input);//Diffuse Sensor 6 - MC1 bad piece filter conveyor entrance
             sensorBadPieceFilterConveyorEndMc1 = MemoryMap.Instance.GetBit("Diffuse Sensor 7", MemoryType.Input);//Diffuse Sensor 7 - MC1 bad piece filter conveyor exit
             sensorExitMc2 = MemoryMap.Instance.GetBit("Diffuse Sensor 8", MemoryType.Input);//Diffuse Sensor 8 - MC2 exit/MC2 bad piece filter
@@ -434,10 +454,22 @@ namespace Controllers.Scenes.MachinesAndBuffer
             //Failing time (potenciometer and display)
             potentiometerMc1 = MemoryMap.Instance.GetFloat("Mc1 Failure Time Control", MemoryType.Input);
             potentiometerMc2 = MemoryMap.Instance.GetFloat("Mc2 Failure Time Control", MemoryType.Input);
+            potentiometerMc3 = MemoryMap.Instance.GetFloat("Mc3 Failure Time Control", MemoryType.Input);
             displayMc1 = MemoryMap.Instance.GetFloat("Mc1 Failure time (in seconds x 100)", MemoryType.Output);
             displayMc2 = MemoryMap.Instance.GetFloat("Mc2 Failure time (in seconds x 100)", MemoryType.Output);
             displayMc3 = MemoryMap.Instance.GetFloat("Mc3 Failure time (in seconds x 100)", MemoryType.Output);
-            stopWatch = new Stopwatch();
+            failTimeMc1 = new Stopwatch();
+            failTimeFloatMc1 = 0.0f;
+            failTimeMc2 = new Stopwatch();
+            failTimeFloatMc2 = 0.0f;
+            failTimeMc3 = new Stopwatch();
+            failTimeFloatMc3 = 0.0f;
+            timeStartBool = false;
+
+            failTimeMc1.Start();
+            failTimeMc2.Start();
+            failTimeMc3.Start();
+
 
             //Enums
             mc1Status = McStatus.IDLE;
@@ -511,18 +543,66 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            if (timeStartBool)
+            {
+                failTimeFloatMc1 = Convert.ToSingle(failTimeMc1.ElapsedMilliseconds / 100);
+                failTimeFloatMc1 = failTimeFloatMc1 / 10;
+
+                failTimeFloatMc2 = Convert.ToSingle(failTimeMc2.ElapsedMilliseconds / 100);
+                failTimeFloatMc2 = failTimeFloatMc2 / 10;
+
+                failTimeFloatMc3 = Convert.ToSingle(failTimeMc3.ElapsedMilliseconds / 100);
+                failTimeFloatMc3 = failTimeFloatMc3 / 10;
+            }
+
+
             displayMc1.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc1.Value));
             displayMc2.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc2.Value));
-            stopWatch.Start();
-            TimeSpan ts = stopWatch.Elapsed;
-            tiempo = float.Parse(string.Format("{0:0.0}", ts.Seconds + "." + ts.Milliseconds / 10));
+            displayMc3.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc3.Value));
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+            // Keyboard input:
+            try
+            {
+                if (!changeStateMessagePrinted)
+                {
+                    changeStateMessagePrinted = true;
+                }
+                newStateName = "";
+                newState = Reader.ReadLine(5);
+                try
+                {
+                    newStateName = supervisoryControl.StateName(int.Parse(newState));
+                    if (newStateName != "Event number pressed does not exist")
+                    {
+                        if (!supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+                        {
+                            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                            Console.WriteLine("\nEvent " + newState + " is not in active events. Try again.\n");
+                            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                            supervisoryControl.ListOfActiveEvents();
+                        }
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                    Console.WriteLine("\nSorry, please insert a number.\n");
+                    Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                    supervisoryControl.ListOfActiveEvents();
+                }
+                changeStateMessagePrinted = false;
+            }
+            catch (TimeoutException)
+            {
+            }
+
             //s1
-            if (mc1StartButton.Value == true)
+            if ((mc1StartButton.Value == true || newStateName == "s1") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
             {
                 if (s1Counter == 0)
                 {
@@ -540,7 +620,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //r1
-            if (mc1RepairButton.Value == true)
+            if ((mc1RepairButton.Value == true || newStateName == "r1") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
             {
                 if (r1Counter == 0)
                 {
@@ -558,7 +638,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //s2
-            if (mc2StartButton.Value == true)
+            if ((mc2StartButton.Value == true || newStateName == "s2") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
             {
                 if (s2Counter == 0)
                 {
@@ -576,7 +656,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //r2
-            if (mc2RepairButton.Value == true)
+            if ((mc2RepairButton.Value == true || newStateName == "r2") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
             {
                 if (r2Counter == 0)
                 {
@@ -594,7 +674,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //s3
-            if (mc3StartButton.Value == true)
+            if ((mc3StartButton.Value == true || newStateName == "s3") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
             {
                 if (s3Counter == 0)
                 {
@@ -612,7 +692,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //r3
-            if (mc3RepairButton.Value == true)
+            if ((mc3RepairButton.Value == true || newStateName == "r3") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
             {
                 if (r3Counter == 0)
                 {
@@ -633,17 +713,17 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if (mc1FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc1.Value * 100))) == 0.0f)//false is button pressed
+            if (mc1FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (failTimeFloatMc1) % (displayMc1.Value * 100))) == 1.0f)//false is button pressed
             {
                 mc1Failed = true;
             }
 
-            if (mc2FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc2.Value * 100))) == 0.0f)//false is button pressed)
+            if (mc2FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (failTimeFloatMc2) % (displayMc2.Value * 100))) == 1.0f)//false is button pressed)
             {
                 mc2Failed = true;
             }
 
-            if (mc3FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (tiempo + 0.01f) % (displayMc3.Value * 100))) == 0.0f)//false is button pressed)
+            if (mc3FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (failTimeFloatMc3) % (displayMc3.Value * 100))) == 1.0f)//false is button pressed)
             {
                 mc3Failed = true;
             }
@@ -654,7 +734,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FALLING AND RISING TRIGGERS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             ftAtEntranceMc1.CLK(sensorEntranceMc1.Value);
             ftAtEntranceMc2.CLK(sensorEntranceMc2.Value);
-            ftAtEntranceMc3.CLK(sensorEntranceMc2.Value);
+            ftAtEntranceMc3.CLK(sensorEntranceMc3.Value);
 
             ftAtExitMc1.CLK(sensorExitMc1.Value);
             ftAtExitMc2.CLK(sensorExitMc2.Value);
