@@ -69,7 +69,7 @@ namespace Controllers
             //Controller controller = new SistemaDeManufatura();
 
             Console.WriteLine(string.Format("Running controller: {0}", controller.GetType().Name));
-            Console.WriteLine("Press Escape to shutdown...");
+            Console.WriteLine("Press Ctrl+C to shutdown...");
 
             stopwatch.Start();
 

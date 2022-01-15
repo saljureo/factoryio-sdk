@@ -94,9 +94,13 @@ namespace Controllers.Scenes.MachinesAndBuffer
         readonly MemoryFloat displayMc1;
         readonly MemoryFloat displayMc2;
         readonly Stopwatch stopWatch;
-        float tiempo;
+        readonly Stopwatch failTimeMc1;
+        float failTimeFloatMc1;
+        readonly Stopwatch failTimeMc2;
+        float failTimeFloatMc2;
         bool mc1Failed;
         bool mc2Failed;
+        bool timeStartBool;
 
         //Others
         bool initialStateMessagePrinted;
@@ -104,6 +108,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
         bool changeStateMessagePrinted;
         string newState;
         string newStateName;
+        
 
         //Enums
         McStatus mc1Status;
@@ -336,6 +341,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             displayMc1 = MemoryMap.Instance.GetFloat("Mc1 Failure time (in seconds x 100)", MemoryType.Output);
             displayMc2 = MemoryMap.Instance.GetFloat("Mc2 Failure time (in seconds x 100)", MemoryType.Output);
             stopWatch = new Stopwatch();
+            timeStartBool = false;
 
             //Enums
             mc1Status = McStatus.IDLE;
@@ -386,7 +392,13 @@ namespace Controllers.Scenes.MachinesAndBuffer
             changeStateMessagePrinted = false;
             newState = "";
             newStateName = "";
+            failTimeMc1 = new Stopwatch();
+            failTimeFloatMc1 = 0.0f;
+            failTimeMc2 = new Stopwatch();
+            failTimeFloatMc2 = 0.0f;
 
+            failTimeMc1.Start();
+            failTimeMc2.Start();
         } // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRUCTOR ENDS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         public override void Execute(int elapsedMilliseconds) // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXECUTE STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -396,6 +408,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TRICK FOR PRINTING INITIAL STATE AFTER START UP MESSAGES START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if (initialStateMessagePrinted == false)
             {
+                Console.WriteLine("\nTip: Set the failure time using the potentiometers in the control panels before starting.\n");
                 supervisoryControl.CreateController();
                 initialStateMessagePrinted = true;
             }
@@ -406,9 +419,8 @@ namespace Controllers.Scenes.MachinesAndBuffer
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             displayMc1.Value = float.Parse(String.Format("{0:0.0}", potentiometerMc1.Value));
             displayMc2.Value = float.Parse(String.Format("{0:0.0}", potentiometerMc2.Value));
-            stopWatch.Start();
-            TimeSpan ts = stopWatch.Elapsed;
-            tiempo = float.Parse(String.Format("{0:0.0}", ts.Seconds + "." + ts.Milliseconds / 10));
+            
+            
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -428,12 +440,20 @@ namespace Controllers.Scenes.MachinesAndBuffer
                     newStateName = supervisoryControl.StateName(int.Parse(newState));
                     if (newStateName != "Event number pressed does not exist")
                     {
-                        Console.WriteLine("----------------------");
+                        if (!supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+                        {
+                            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                            Console.WriteLine("\nEvent " + newState + " is not in active events. Try again.\n");
+                            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                            supervisoryControl.ListOfActiveEvents();
+                        }
                     }
                 }
                 catch
                 {
+                    Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
                     Console.WriteLine("\nSorry, please insert a number.\n");
+                    Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
                     supervisoryControl.ListOfActiveEvents();
                 }
                 changeStateMessagePrinted = false;
@@ -441,10 +461,15 @@ namespace Controllers.Scenes.MachinesAndBuffer
             catch (TimeoutException)
             {
             }
-            
+
             //s1
             if (mc1StartButton.Value == true || newStateName == "s1")
             {
+                if (!timeStartBool)
+                {
+                    timeStartBool = true;
+                }
+                
                 if (s1Counter == 0)
                 {
                     supervisoryApproval = supervisoryControl.On("s1");
@@ -518,16 +543,25 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo) % (displayMc1.Value * 100) )) < 0.05f)//false is button pressed
+
+            if (timeStartBool)
+            {
+                failTimeFloatMc1 = Convert.ToSingle(failTimeMc1.ElapsedMilliseconds / 100);
+                failTimeFloatMc1 = failTimeFloatMc1 / 10;
+
+                failTimeFloatMc2 = Convert.ToSingle(failTimeMc1.ElapsedMilliseconds / 100);
+                failTimeFloatMc2 = failTimeFloatMc2 / 10;
+            }
+            
+
+            if (mc1FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (failTimeFloatMc1) % (displayMc1.Value * 100) )) == 1.0f)//false is button pressed
             {
                 mc1Failed = true;
-                Console.WriteLine("Failed mc1");
             }
 
-            if (mc2FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (tiempo) % (displayMc2.Value * 100) )) < 0.05f)//false is button pressed)
+            if (mc2FailButton.Value == false || float.Parse(String.Format("{0:0.0}", (failTimeFloatMc2) % (displayMc2.Value * 100) )) == 1.0f)//false is button pressed)
             {
                 mc2Failed = true;
-                Console.WriteLine("Failed mc2");
             }
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
