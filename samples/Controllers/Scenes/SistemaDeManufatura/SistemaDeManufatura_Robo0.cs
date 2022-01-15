@@ -32,18 +32,12 @@ namespace Controllers.Scenes.SistemaDeManufatura
         readonly MemoryBit robo0Grab;
         readonly MemoryBit robo0Grabbed;
         readonly MemoryBit robo0RotatePiece;
-        readonly MemoryBit startC1toB1;
-        readonly MemoryBit startC2toB1;
-        readonly MemoryBit startC2toB2;
-        readonly MemoryBit startC3toB3;
-        readonly MemoryBit startC1toE2;
-        readonly MemoryBit startC2toE2;
-        readonly MemoryBit startC3toE2;
         float highestYinSearch;
         float searchingForPieceYvalue;
         float pieceFoundYcoordinates;
+        readonly MemoryBit stopbladeEndE1;
         readonly SistemaDeManufaturaSupervisor sistemaDeManufaturaSupervisor;
-        public SistemaDeManufatura_Robo0(MemoryFloat robo0X, MemoryFloat robo0XPos, MemoryFloat robo0Y, MemoryFloat robo0YPos, MemoryFloat robo0Z, MemoryFloat robo0ZPos, MemoryBit robo0Grab, MemoryBit robo0Grabbed, MemoryBit robo0RotatePiece, MemoryBit startC1toB1, MemoryBit startC2toB1, MemoryBit startC2toB2, MemoryBit startC3toB3, MemoryBit startC1toE2, MemoryBit startC2toE2, MemoryBit startC3toE2, SistemaDeManufaturaSupervisor sistemaDeManufaturaSupervisor)
+        public SistemaDeManufatura_Robo0(MemoryFloat robo0X, MemoryFloat robo0XPos, MemoryFloat robo0Y, MemoryFloat robo0YPos, MemoryFloat robo0Z, MemoryFloat robo0ZPos, MemoryBit robo0Grab, MemoryBit robo0Grabbed, MemoryBit robo0RotatePiece, MemoryBit stopbladeEndE1, SistemaDeManufaturaSupervisor sistemaDeManufaturaSupervisor)
         {
             this.robo0X = robo0X;
             this.robo0XPos = robo0XPos;
@@ -54,13 +48,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             this.robo0Grab = robo0Grab;
             this.robo0Grabbed = robo0Grabbed;
             this.robo0RotatePiece = robo0RotatePiece;
-            this.startC1toB1 = startC1toB1;
-            this.startC2toB1 = startC2toB1;
-            this.startC2toB2 = startC2toB2;
-            this.startC3toB3 = startC3toB3;
-            this.startC1toE2 = startC1toE2;
-            this.startC2toE2 = startC2toE2;
-            this.startC3toE2 = startC3toE2;
+            this.stopbladeEndE1 = stopbladeEndE1;
             this.sistemaDeManufaturaSupervisor = sistemaDeManufaturaSupervisor;
             robo0Steps = RoboSteps.IDLE;
         }
@@ -124,6 +112,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                         robo0Grab.Value = true;
                         MemoryMap.Instance.Update();
                         Thread.Sleep(300);
+                        stopbladeEndE1.Value = false;
                         robo0Steps = RoboSteps.UP_WITH_PIECE;
                     }
                 }
@@ -138,7 +127,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
-                robo0X.Value = 1.7f;
+                stopbladeEndE1.Value = true;
+                robo0X.Value = 1.2f;
                 robo0Y.Value = 9.5f;
                 if (robo0YPos.Value > 9.4f)
                 {
@@ -148,7 +138,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (robo0Steps == RoboSteps.DOWN_WITH_PIECE)
             {
                 robo0Z.Value = 8.4f;
-                if (robo0ZPos.Value > 8.25f)
+                if (robo0ZPos.Value > 8.3f)
                 {
                     robo0Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -156,6 +146,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (robo0Steps == RoboSteps.RELEASE_PIECE)
             {
                 robo0Grab.Value = false;
+                MemoryMap.Instance.Update();
+                Thread.Sleep(100);
                 robo0Steps = RoboSteps.UP_WITHOUT_PIECE;
                 if (color == "c1")
                 {
@@ -165,6 +157,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 {
                     sistemaDeManufaturaSupervisor.On("r_okc2b1");
                 }
+                Thread.Sleep(50);
             }
             else if (robo0Steps == RoboSteps.UP_WITHOUT_PIECE)
             {
@@ -232,6 +225,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                         robo0Grab.Value = true;
                         MemoryMap.Instance.Update();
                         Thread.Sleep(300);
+                        stopbladeEndE1.Value = false;
                         robo0Steps = RoboSteps.UP_WITH_PIECE;
                     }
                 }
@@ -246,7 +240,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
-                robo0X.Value = 5.7f;
+                stopbladeEndE1.Value = true;
+                robo0X.Value = 5.2f;
                 robo0Y.Value = 9.5f;
                 if (robo0YPos.Value > 9.4f)
                 {
@@ -264,6 +259,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (robo0Steps == RoboSteps.RELEASE_PIECE)
             {
                 robo0Grab.Value = false;
+                MemoryMap.Instance.Update();
+                Thread.Sleep(100);
                 robo0Steps = RoboSteps.UP_WITHOUT_PIECE;
                 sistemaDeManufaturaSupervisor.On("r_okc2b2");
             }
@@ -333,6 +330,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                         robo0Grab.Value = true;
                         MemoryMap.Instance.Update();
                         Thread.Sleep(300);
+                        stopbladeEndE1.Value = false;
                         robo0Steps = RoboSteps.UP_WITH_PIECE;
                     }
                 }
@@ -347,8 +345,9 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
+                stopbladeEndE1.Value = true;
                 robo0X.Value = 9.2f;
-                robo0Y.Value = 10.0f;
+                robo0Y.Value = 9.5f;
                 if (robo0YPos.Value > 9.4f && robo0X.Value > 9.1f)
                 {
                     robo0Steps = RoboSteps.DOWN_WITH_PIECE;
@@ -365,6 +364,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (robo0Steps == RoboSteps.RELEASE_PIECE)
             {
                 robo0Grab.Value = false;
+                MemoryMap.Instance.Update();
+                Thread.Sleep(100);
                 robo0Steps = RoboSteps.UP_WITHOUT_PIECE;
                 sistemaDeManufaturaSupervisor.On("r_okc3b3");
             }
@@ -434,6 +435,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                         robo0Grab.Value = true;
                         MemoryMap.Instance.Update();
                         Thread.Sleep(300);
+                        stopbladeEndE1.Value = false;
                         robo0Steps = RoboSteps.UP_WITH_PIECE;
                     }
                 }
@@ -448,10 +450,11 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
+                stopbladeEndE1.Value = true;
                 robo0X.Value = 9.25f;
                 robo0Y.Value = 1.4f;
                 robo0RotatePiece.Value = true;
-                if (robo0XPos.Value > 8.0f && robo0YPos.Value > 2.0f)
+                if (robo0XPos.Value > 9.0f && robo0YPos.Value > 1.3f)
                 {
                     robo0Steps = RoboSteps.DOWN_WITH_PIECE;
                 }

@@ -249,7 +249,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 MemoryMap.Instance.GetBit("Pick & Place 0 (Grab)", MemoryType.Output),
                 MemoryMap.Instance.GetBit("Pick & Place 0 (Box Detected)", MemoryType.Input),
                 MemoryMap.Instance.GetBit("Pick & Place 0 C(+)", MemoryType.Output),
-                startC1toB1, startC2toB1, startC2toB2, startC3toB3, startC1toE2, startC2toE2, startC3toE2,sistemaDeManufaturaSupervisor);
+                stopbladeEndE1,sistemaDeManufaturaSupervisor);
 
             //M1
             startC2fromB2toM1 = MemoryMap.Instance.GetBit("C2fromB2toM1", MemoryType.Input);
@@ -289,7 +289,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             //Messages only once
             initialMessage = true;
             colorMessage = true;
-            colorMessage2 = true;
+            colorMessage2 = false;
         }
 
         public override void Execute(int elapsedMilliseconds)
@@ -1128,7 +1128,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (m1states == M1states.C1fromB1toM1)
             {
-                Console.WriteLine("newStateName = " + newStateName);
                 if (newStateName == "m1_ini_b")
                 {
                     bool_m1_ini_b = true;
@@ -1160,7 +1159,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (m1states == M1states.C2fromB1toM1)
             {
-                Console.WriteLine("newStateName = " + newStateName);
                 roboM1Finished = roboM1.C2fromB1toM1();
                 if (newStateName == "m1_ini_a")
                 {
@@ -1189,7 +1187,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (m1states == M1states.C2fromB2toM1)
             {
-                Console.WriteLine("newStateName = " + newStateName);
                 roboM1Finished = roboM1.C2fromB2toM1();
                 if (newStateName == "m1_ini_c_c1")
                 {
@@ -1238,9 +1235,9 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (m1states == M1states.C3fromB3toM1)
             {
                 roboM1Finished = roboM1.C3fromB3toM1();
-                Console.WriteLine("newStateName = " + newStateName);
                 if (newStateName == "m1_ini_b")
                 {
+                    Console.WriteLine("bool_m1_ini_b = true");
                     bool_m1_ini_b = true;
                 }
                 else if (newStateName == "m1_ini_c_c2")
