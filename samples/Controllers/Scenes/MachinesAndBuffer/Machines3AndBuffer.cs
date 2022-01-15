@@ -541,13 +541,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TRICK FOR PRINTING INITIAL STATE AFTER START UP MESSAGES END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-            
-
-
             displayMc1.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc1.Value));
             displayMc2.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc2.Value));
             displayMc3.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc3.Value));

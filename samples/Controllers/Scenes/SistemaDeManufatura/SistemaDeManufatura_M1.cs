@@ -86,14 +86,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
-                roboM1X.Value = 5.2f;
-                roboM1Y.Value = 0.7f;
-                roboM1Z.Value = 5.0f;
                 roboM1Grab.Value = false;
-                if (startC1fromB1toM1.Value || startC2fromB1toM1.Value)
-                {
-                    roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
-                }
+                roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
@@ -178,14 +172,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
-                roboM1X.Value = 5.2f;
-                roboM1Y.Value = 0.7f;
-                roboM1Z.Value = 5.0f;
                 roboM1Grab.Value = false;
-                if (startC1fromB1toM1.Value || startC2fromB1toM1.Value)
-                {
-                    roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
-                }
+                roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
@@ -270,14 +258,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
-                roboM1X.Value = 5.2f;
-                roboM1Y.Value = 0.7f;
-                roboM1Z.Value = 5.0f;
                 roboM1Grab.Value = false;
-                if (startC2fromB2toM1.Value)
-                {
-                    roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
-                }
+                roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
@@ -361,14 +343,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
         {
             if (roboM1Steps == RoboSteps.IDLE)
             {
-                roboM1X.Value = 5.2f;
-                roboM1Y.Value = 0.7f;
-                roboM1Z.Value = 5.0f;
                 roboM1Grab.Value = false;
-                if (startC3fromB3toM1.Value)
-                {
-                    roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
-                }
+                roboM1Steps = RoboSteps.WAITING_FOR_PIECE;
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {

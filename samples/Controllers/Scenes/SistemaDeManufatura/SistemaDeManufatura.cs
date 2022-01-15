@@ -6,6 +6,12 @@ namespace Controllers.Scenes.SistemaDeManufatura
 {
     public class SistemaDeManufatura : Controller
     {
+        //READER
+        Reader reader;
+        string newState;
+        string newStateName;
+        bool changeStateMessagePrinted;
+
         //SUPERVISOR
         bool supervisoryApproval;
         readonly SistemaDeManufaturaSupervisor sistemaDeManufaturaSupervisor;
@@ -147,6 +153,12 @@ namespace Controllers.Scenes.SistemaDeManufatura
         bool colorMessage2;
         public SistemaDeManufatura()
         {
+            //READER
+            reader = new Reader();
+            newState = "";
+            newStateName = "";
+            changeStateMessagePrinted = false;
+
             //SUPERVISOR
             supervisoryApproval = false;
             sistemaDeManufaturaSupervisor = new SistemaDeManufaturaSupervisor();
@@ -284,14 +296,50 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 sistemaDeManufaturaSupervisor.CreateController();
                 initialMessage = false;
             }
-            
+
+            // Keyboard input:
+            try
+            {
+                if (!changeStateMessagePrinted)
+                {
+                    changeStateMessagePrinted = true;
+                }
+                newStateName = "";
+                newState = Reader.ReadLine(5);
+                try
+                {
+                    newStateName = sistemaDeManufaturaSupervisor.StateName(int.Parse(newState));
+                    if (newStateName != "Event number pressed does not exist")
+                    {
+                        if (!sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState)))
+                        {
+                            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                            Console.WriteLine("\nEvent " + newState + " is not in active events. Try again.\n");
+                            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                            sistemaDeManufaturaSupervisor.ListOfActiveEvents();
+                        }
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                    Console.WriteLine("\nSorry, please insert a number.\n");
+                    Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                    sistemaDeManufaturaSupervisor.ListOfActiveEvents();
+                }
+                changeStateMessagePrinted = false;
+            }
+            catch (TimeoutException)
+            {
+            }
+
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA START %%%%%%%%%%%%%%%%%%%%
 
             rtSensorStartE2.CLK(sensorStartE2.Value);
             ftSensorEndE2.CLK(sensorEndE2.Value);
 
             //E1
-            if (conveyorE1Start.Value)
+            if (conveyorE1Start.Value || (newStateName == "e1_lig" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (e1Counter == 0)
                 {
@@ -303,7 +351,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (!conveyorE1Stop.Value)
+            else if (!conveyorE1Stop.Value || (newStateName == "e1_des" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {   if (e1Counter == 0)
                 {
                     supervisoryApproval = sistemaDeManufaturaSupervisor.On("e1_des");
@@ -840,7 +888,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             //%%%%%%%%%%%%%%%%%%%% ESTEIRA ENDS %%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%% ROBÔ STARTS %%%%%%%%%%%%%%%%%%%%
-            if (startC1toE2.Value)
+            if (startC1toE2.Value || (newStateName == "r_c1e2" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (roboCounter == 0)
                 {
@@ -852,7 +900,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC2toE2.Value)
+            else if (startC2toE2.Value || (newStateName == "r_c2e2" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (roboCounter == 0)
                 {
@@ -864,7 +912,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC3toE2.Value)
+            else if (startC3toE2.Value || (newStateName == "r_c3e2" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (roboCounter == 0)
                 {
@@ -876,7 +924,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC1toB1.Value)
+            else if (startC1toB1.Value || (newStateName == "r_c1b1" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (roboCounter == 0)
                 {
@@ -889,7 +937,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC2toB1.Value)
+            else if (startC2toB1.Value || (newStateName == "r_c2b1" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (roboCounter == 0)
                 {
@@ -902,7 +950,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC2toB2.Value)
+            else if (startC2toB2.Value || (newStateName == "r_c2b2" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (roboCounter == 0)
                 {
@@ -914,7 +962,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC3toB3.Value)
+            else if (startC3toB3.Value || (newStateName == "r_c3b3" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (roboCounter == 0)
                 {
@@ -1013,7 +1061,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             //%%%%%%%%%%%%%%%%%%%% M1 STARTS %%%%%%%%%%%%%%%%%%%%
 
             
-            if (startC1fromB1toM1.Value)
+            if (startC1fromB1toM1.Value || (newStateName == "m1_ini_c_c1" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (m1Counter == 0)
                 {
@@ -1025,7 +1073,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC2fromB1toM1.Value)
+            else if (startC2fromB1toM1.Value || (newStateName == "m1_ini_c_c2" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (m1Counter == 0)
                 {
@@ -1037,7 +1085,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC2fromB2toM1.Value)
+            else if (startC2fromB2toM1.Value || (newStateName == "m1_ini_b" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (m1Counter == 0)
                 {
@@ -1049,7 +1097,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     }
                 }
             }
-            else if (startC3fromB3toM1.Value)
+            else if (startC3fromB3toM1.Value || (newStateName == "m1_ini_a" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState))))
             {
                 if (m1Counter == 0)
                 {

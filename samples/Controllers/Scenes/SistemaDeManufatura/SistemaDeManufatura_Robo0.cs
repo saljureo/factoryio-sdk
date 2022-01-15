@@ -75,15 +75,9 @@ namespace Controllers.Scenes.SistemaDeManufatura
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
-                robo0X.Value = 1.2f;
-                robo0Y.Value = 0.0f;
-                robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
                 searchingForPieceYvalue = 0.0f;
-                if (startC1toB1.Value || startC2toB1.Value)
-                {
-                    robo0Steps = RoboSteps.DOWN_FOR_PIECE;
-                }
+                robo0Steps = RoboSteps.DOWN_FOR_PIECE;
             }
             else if (robo0Steps == RoboSteps.DOWN_FOR_PIECE)
             {
@@ -190,15 +184,9 @@ namespace Controllers.Scenes.SistemaDeManufatura
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
-                robo0X.Value = 1.2f;
-                robo0Y.Value = 0.0f;
-                robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
                 searchingForPieceYvalue = 0.0f;
-                if (startC2toB2.Value)
-                {
-                    robo0Steps = RoboSteps.DOWN_FOR_PIECE;
-                }
+                robo0Steps = RoboSteps.DOWN_FOR_PIECE;
             }
             else if (robo0Steps == RoboSteps.DOWN_FOR_PIECE)
             {
@@ -298,15 +286,9 @@ namespace Controllers.Scenes.SistemaDeManufatura
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
-                robo0X.Value = 1.2f;
-                robo0Y.Value = 0.0f;
-                robo0Z.Value = 5.0f;
                 highestYinSearch = 13.0f;
                 searchingForPieceYvalue = 0.0f;
-                if (startC3toB3.Value)
-                {
-                    robo0Steps = RoboSteps.DOWN_FOR_PIECE;
-                }
+                robo0Steps = RoboSteps.DOWN_FOR_PIECE;
             }
             else if (robo0Steps == RoboSteps.DOWN_FOR_PIECE)
             {
@@ -406,15 +388,9 @@ namespace Controllers.Scenes.SistemaDeManufatura
         {
             if (robo0Steps == RoboSteps.IDLE)
             {
-                robo0X.Value = 1.2f;
-                robo0Y.Value = 0.0f;
-                robo0Z.Value = 5.0f;                
                 highestYinSearch = 13.0f;
                 searchingForPieceYvalue = 0.0f;
-                if (startC1toE2.Value || startC2toE2.Value || startC3toE2.Value)
-                {
-                    robo0Steps = RoboSteps.DOWN_FOR_PIECE;
-                }
+                robo0Steps = RoboSteps.DOWN_FOR_PIECE;
             }
             else if (robo0Steps == RoboSteps.DOWN_FOR_PIECE)
             {
