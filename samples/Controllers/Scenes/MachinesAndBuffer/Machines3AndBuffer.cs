@@ -535,6 +535,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TRICK FOR PRINTING INITIAL STATE AFTER START UP MESSAGES START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if (initialStateMessagePrinted == false)
             {
+                Console.WriteLine("\nTip: Set the failure time using the potentiometers in the control panels before starting. Recomended number ranges from 1.50 to 2.50. Also recommended to place same failure time to the three machines.\n");
                 supervisoryControl.CreateController();
                 initialStateMessagePrinted = true;
             }
@@ -544,17 +545,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAILING TIME AND DISPLAY START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            if (timeStartBool)
-            {
-                failTimeFloatMc1 = Convert.ToSingle(failTimeMc1.ElapsedMilliseconds / 100);
-                failTimeFloatMc1 = failTimeFloatMc1 / 10;
-
-                failTimeFloatMc2 = Convert.ToSingle(failTimeMc2.ElapsedMilliseconds / 100);
-                failTimeFloatMc2 = failTimeFloatMc2 / 10;
-
-                failTimeFloatMc3 = Convert.ToSingle(failTimeMc3.ElapsedMilliseconds / 100);
-                failTimeFloatMc3 = failTimeFloatMc3 / 10;
-            }
+            
 
 
             displayMc1.Value = float.Parse(string.Format("{0:0.0}", potentiometerMc1.Value));
@@ -602,8 +593,11 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //s1
-            if ((mc1StartButton.Value == true || newStateName == "s1") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc1StartButton.Value == true || (newStateName == "s1" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
+                if (!timeStartBool)
+                    timeStartBool = true;
+
                 if (s1Counter == 0)
                 {
                     supervisoryApproval = supervisoryControl.On("s1");
@@ -620,7 +614,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //r1
-            if ((mc1RepairButton.Value == true || newStateName == "r1") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc1RepairButton.Value == true || (newStateName == "r1" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (r1Counter == 0)
                 {
@@ -638,7 +632,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //s2
-            if ((mc2StartButton.Value == true || newStateName == "s2") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc2StartButton.Value == true || (newStateName == "s2" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (s2Counter == 0)
                 {
@@ -656,7 +650,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //r2
-            if ((mc2RepairButton.Value == true || newStateName == "r2") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc2RepairButton.Value == true || (newStateName == "r2" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (r2Counter == 0)
                 {
@@ -674,7 +668,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //s3
-            if ((mc3StartButton.Value == true || newStateName == "s3") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc3StartButton.Value == true || (newStateName == "s3" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (s3Counter == 0)
                 {
@@ -692,7 +686,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //r3
-            if ((mc3RepairButton.Value == true || newStateName == "r3") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc3RepairButton.Value == true || (newStateName == "r3" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (r3Counter == 0)
                 {
@@ -713,6 +707,19 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
 
             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNCONTROLLABLE EVENTS START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            if (timeStartBool)
+            {
+                failTimeFloatMc1 = Convert.ToSingle(failTimeMc1.ElapsedMilliseconds / 100);
+                failTimeFloatMc1 = failTimeFloatMc1 / 10;
+
+                failTimeFloatMc2 = Convert.ToSingle(failTimeMc2.ElapsedMilliseconds / 100);
+                failTimeFloatMc2 = failTimeFloatMc2 / 10;
+
+                failTimeFloatMc3 = Convert.ToSingle(failTimeMc3.ElapsedMilliseconds / 100);
+                failTimeFloatMc3 = failTimeFloatMc3 / 10;
+            }
+
             if (mc1FailButton.Value == false || float.Parse(string.Format("{0:0.0}", (failTimeFloatMc1) % (displayMc1.Value * 100))) == 1.0f)//false is button pressed
             {
                 mc1Failed = true;
