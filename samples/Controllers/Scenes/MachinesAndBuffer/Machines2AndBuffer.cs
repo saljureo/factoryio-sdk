@@ -463,7 +463,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //s1
-            if ((mc1StartButton.Value == true || newStateName == "s1") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc1StartButton.Value == true || (newStateName == "s1" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (!timeStartBool)
                 {
@@ -486,7 +486,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
             
             //r1
-            if ((mc1RepairButton.Value == true || newStateName == "r1") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc1RepairButton.Value == true || (newStateName == "r1" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (r1Counter == 0)
                 {
@@ -504,7 +504,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //s2
-            if ((mc2StartButton.Value == true || newStateName == "s2") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc2StartButton.Value == true || (newStateName == "s2" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (s2Counter == 0)
                 {
@@ -522,7 +522,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
 
             //r2
-            if ((mc2RepairButton.Value == true || newStateName == "r2") && supervisoryControl.IsInActiveEvents(int.Parse(newState)))
+            if (mc2RepairButton.Value == true || (newStateName == "r2" && supervisoryControl.IsInActiveEvents(int.Parse(newState))))
             {
                 if (r2Counter == 0)
                 {
