@@ -109,7 +109,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
-                        robo0X.Value = 0.9f;
                         pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
@@ -139,7 +138,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
-                robo0X.Value = 1.2f;
+                robo0X.Value = 1.7f;
                 robo0Y.Value = 9.5f;
                 if (robo0YPos.Value > 9.4f)
                 {
@@ -218,7 +217,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
-                        robo0X.Value = 0.9f;
                         pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
@@ -248,7 +246,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
-                robo0X.Value = 5.2f;
+                robo0X.Value = 5.7f;
                 robo0Y.Value = 9.5f;
                 if (robo0YPos.Value > 9.4f)
                 {
@@ -320,7 +318,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
-                        robo0X.Value = 0.9f;
                         pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
@@ -351,7 +348,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
                 robo0X.Value = 9.2f;
-                robo0Y.Value = 9.5f;
+                robo0Y.Value = 10.0f;
                 if (robo0YPos.Value > 9.4f && robo0X.Value > 9.1f)
                 {
                     robo0Steps = RoboSteps.DOWN_WITH_PIECE;
@@ -422,7 +419,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     {
                         robo0Steps = RoboSteps.GRAB_PIECE;
                         robo0Z.Value = 6.9f;
-                        robo0X.Value = 0.9f;
                         pieceFoundYcoordinates = Math.Abs(highestYinSearch - 1.3f);
                     }
                 }
@@ -453,7 +449,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (robo0Steps == RoboSteps.TO_DESTINATION)
             {
                 robo0X.Value = 9.25f;
-                robo0Y.Value = 2.3f;
+                robo0Y.Value = 1.4f;
                 robo0RotatePiece.Value = true;
                 if (robo0XPos.Value > 8.0f && robo0YPos.Value > 2.0f)
                 {
