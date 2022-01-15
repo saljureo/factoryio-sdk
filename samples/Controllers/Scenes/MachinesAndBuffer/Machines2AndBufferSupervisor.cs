@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Controllers.Scenes.MachinesAndBuffer
+namespace Controllers.Scenes
 {
     class Machines2AndBufferSupervisor
     {
@@ -12,10 +12,10 @@ namespace Controllers.Scenes.MachinesAndBuffer
         private int evento;
         private Dictionary<(int, int), int> transiciones;
         private Dictionary<string, int> eventLabels;
-        private Dictionary<int, (string, string)> eventLabelsInverse;
-        private Dictionary<int, string> stateLabels;
 
-        private bool activeEventsAvailable;
+        private Dictionary<int, (string, string)> eventLabelsInverse;
+
+        private Dictionary<int, string> stateLabels;
 
         public void CreateController()
         {
@@ -23,7 +23,6 @@ namespace Controllers.Scenes.MachinesAndBuffer
             eventLabels = new Dictionary<string, int>();
             eventLabelsInverse = new Dictionary<int, (string, string)>();
             stateLabels = new Dictionary<int, string>();
-            activeEventsAvailable = false;
 
             currentState = 5;
             //#########  TRANSICIONES START ############
@@ -54,8 +53,6 @@ namespace Controllers.Scenes.MachinesAndBuffer
             transiciones.Add((11, 3), 10);
 
             //#########  TRANSICIONES END ############
-
-            
 
 
             //#########  STATELABEL START ############
@@ -106,8 +103,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
                     Console.WriteLine(i + ": " + eventLabelsInverse[i].Item1 + "\n");
                 }
             }
-            Console.WriteLine("Type event number and press enter to execute or press button on Factory I/O interface:\n");
-        }
+            Console.WriteLine("Type event number and press enter to execute or press button on Factory I/O interface:\n");        }
 
         public bool IsInActiveEvents(int newState)
         {
@@ -120,6 +116,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
                 return (false);
             }
         }
+
         public void ListOfActiveEvents()
         {
             Console.WriteLine("----------------------------------------\n");
@@ -134,6 +131,7 @@ namespace Controllers.Scenes.MachinesAndBuffer
             }
             Console.WriteLine("\n----------------------------------------");
         }
+
         public string StateName(int eventNumber)
         {
             if (eventLabelsInverse.ContainsKey(eventNumber))
@@ -149,13 +147,14 @@ namespace Controllers.Scenes.MachinesAndBuffer
                 return ("Event number pressed does not exist");
             }
         }
+
         public bool On(string eventoLabel)
         {
             evento = eventLabels[eventoLabel];
             if (transiciones.ContainsKey((currentState, evento)))
             {
                 currentState = transiciones[(currentState, evento)];
-                if (evento != 0 && evento != 1 && evento != 2 && evento != 3)
+                if (evento != 2 && evento != 14 && evento != 15 && evento != 16 && evento != 17 && evento != 18 && evento != 19 && evento != 20 && evento != 21 && evento != 22 && evento != 0 && evento != 1 && evento != 2 && evento != 3 && evento != 4 && evento != 5 && evento != 0 && evento != 1 && evento != 2 && evento != 3 && evento != 4 && evento != 5 && evento != 0 && evento != 1 && evento != 2 && evento != 3 && evento != 0 && evento != 1 && evento != 2 && evento != 3)
                 {
                     Console.WriteLine("oooooooooooooooooooooooooooooooooooooooo\n");
                     Console.WriteLine(eventoLabel + " event approved");
@@ -165,8 +164,10 @@ namespace Controllers.Scenes.MachinesAndBuffer
                 }
                 else
                 {
+                    Console.WriteLine("oooooooooooooooooooooooooooooooooooooooo\n");
                     Console.WriteLine(eventoLabel + " event is uncontrollable and must be enabled");
                     Console.WriteLine("Current state is: " + stateLabels[currentState]);
+                    Console.WriteLine("\noooooooooooooooooooooooooooooooooooooooo");
                     ListOfActiveEvents();
                 }
                 return true;

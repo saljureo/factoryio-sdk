@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Controllers.Scenes.MachinesAndBuffer
+namespace Controllers.Scenes
 {
     class Machines3AndBufferSupervisor
     {
@@ -13,12 +13,15 @@ namespace Controllers.Scenes.MachinesAndBuffer
         private Dictionary<(int, int), int> transiciones;
         private Dictionary<string, int> eventLabels;
 
+        private Dictionary<int, (string, string)> eventLabelsInverse;
+
         private Dictionary<int, string> stateLabels;
 
         public void CreateController()
         {
             transiciones = new Dictionary<(int, int), int>();
             eventLabels = new Dictionary<string, int>();
+            eventLabelsInverse = new Dictionary<int, (string, string)>();
             stateLabels = new Dictionary<int, string>();
 
             currentState = 22;
@@ -156,23 +159,6 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
             //#########  TRANSICIONES END ############
 
-            //#########  EVENTLABEL START ############
-
-            eventLabels.Add("b1", 0);
-            eventLabels.Add("b2", 1);
-            eventLabels.Add("b3", 2);
-            eventLabels.Add("f1", 3);
-            eventLabels.Add("f2", 4);
-            eventLabels.Add("f3", 5);
-            eventLabels.Add("r1", 6);
-            eventLabels.Add("r2", 7);
-            eventLabels.Add("r3", 8);
-            eventLabels.Add("s1", 9);
-            eventLabels.Add("s2", 10);
-            eventLabels.Add("s3", 11);
-
-            //#########  EVENTLABEL END ############
-
 
             //#########  STATELABEL START ############
 
@@ -227,7 +213,88 @@ namespace Controllers.Scenes.MachinesAndBuffer
 
             //#########  STATELABEL END ############
 
+            //#########  EVENTLABEL START ############
+
+            eventLabels.Add("b1", 0);
+            eventLabels.Add("b2", 1);
+            eventLabels.Add("b3", 2);
+            eventLabels.Add("f1", 3);
+            eventLabels.Add("f2", 4);
+            eventLabels.Add("f3", 5);
+            eventLabels.Add("r1", 6);
+            eventLabels.Add("r2", 7);
+            eventLabels.Add("r3", 8);
+            eventLabels.Add("s1", 9);
+            eventLabels.Add("s2", 10);
+            eventLabels.Add("s3", 11);
+
+            eventLabelsInverse.Add(0, ("b1", "nc"));
+            eventLabelsInverse.Add(1, ("b2", "nc"));
+            eventLabelsInverse.Add(2, ("b3", "nc"));
+            eventLabelsInverse.Add(3, ("f1", "nc"));
+            eventLabelsInverse.Add(4, ("f2", "nc"));
+            eventLabelsInverse.Add(5, ("f3", "nc"));
+            eventLabelsInverse.Add(6, ("r1", "c"));
+            eventLabelsInverse.Add(7, ("r2", "c"));
+            eventLabelsInverse.Add(8, ("r3", "c"));
+            eventLabelsInverse.Add(9, ("s1", "c"));
+            eventLabelsInverse.Add(10, ("s2", "c"));
+            eventLabelsInverse.Add(11, ("s3", "c"));
+
+            //#########  EVENTLABEL END ############
+
             Console.WriteLine("\nCurrent state is: " + stateLabels[currentState] + "\n");
+            Console.WriteLine("List of active events. Choose one and press enter: \n");
+            for (int i = 0; i < eventLabels.Count; i++)
+            {
+                if (transiciones.ContainsKey((currentState, i)) && eventLabelsInverse[i].Item2 == "c")
+                {
+                    Console.WriteLine(i + ": " + eventLabelsInverse[i].Item1 + "\n");
+                }
+            }
+            Console.WriteLine("Type event number and press enter to execute or press button on Factory I/O interface:\n");        }
+
+        public bool IsInActiveEvents(int newState)
+        {
+            if (transiciones.ContainsKey((currentState, newState)) && eventLabelsInverse[newState].Item2 == "c")
+            {
+                return (true);
+            }
+            else
+            {
+                return (false);
+            }
+        }
+
+        public void ListOfActiveEvents()
+        {
+            Console.WriteLine("----------------------------------------\n");
+            Console.WriteLine("\nList of active events. Choose one and press enter or wait:\n");
+
+            for (int i = 0; i < eventLabels.Count; i++)
+            {
+                if (transiciones.ContainsKey((currentState, i)) && eventLabelsInverse[i].Item2 == "c")
+                {
+                    Console.WriteLine(i + ": " + eventLabelsInverse[i].Item1);
+                }
+            }
+            Console.WriteLine("\n----------------------------------------");
+        }
+
+        public string StateName(int eventNumber)
+        {
+            if (eventLabelsInverse.ContainsKey(eventNumber))
+            {
+                return (eventLabelsInverse[eventNumber].Item1);
+            }
+            else
+            {
+                Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                Console.WriteLine("\nEvent number pressed does not exist. Try again.\n");
+                Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                ListOfActiveEvents();
+                return ("Event number pressed does not exist");
+            }
         }
 
         public bool On(string eventoLabel)
@@ -236,18 +303,24 @@ namespace Controllers.Scenes.MachinesAndBuffer
             if (transiciones.ContainsKey((currentState, evento)))
             {
                 currentState = transiciones[(currentState, evento)];
-                if (evento != 0 && evento != 1 && evento != 2 && evento != 3 && evento != 4 && evento != 5)
+                if (evento != 2 && evento != 14 && evento != 15 && evento != 16 && evento != 17 && evento != 18 && evento != 19 && evento != 20 && evento != 21 && evento != 22 && evento != 0 && evento != 1 && evento != 2 && evento != 3 && evento != 4 && evento != 5 && evento != 0 && evento != 1 && evento != 2 && evento != 3 && evento != 4 && evento != 5)
                 {
+                    Console.WriteLine("oooooooooooooooooooooooooooooooooooooooo\n");
                     Console.WriteLine(eventoLabel + " event approved");
+                    Console.WriteLine("Current state is: " + stateLabels[currentState]);
+                    Console.WriteLine("\noooooooooooooooooooooooooooooooooooooooo");
+                    ListOfActiveEvents();
                 }
                 else
                 {
+                    Console.WriteLine("oooooooooooooooooooooooooooooooooooooooo\n");
                     Console.WriteLine(eventoLabel + " event is uncontrollable and must be enabled");
+                    Console.WriteLine("Current state is: " + stateLabels[currentState]);
+                    Console.WriteLine("\noooooooooooooooooooooooooooooooooooooooo");
+                    ListOfActiveEvents();
                 }
-                Console.WriteLine("Current state is: " + stateLabels[currentState] + "\n");
                 return true;
-            }
-            else
+            } else
             {
                 Console.WriteLine(eventoLabel + " event blocked");
                 Thread.Sleep(800);
