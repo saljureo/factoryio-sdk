@@ -106,7 +106,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     robo0Y.Value = pieceFoundYcoordinates;
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
-                        robo0Z.Value = 9.0f;
+                        robo0Z.Value = 8.7f;
                         robo0X.Value = 0.9f;
                         if (robo0X.Value < 0.92)
                         {
@@ -139,8 +139,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                robo0Z.Value = 8.8f;
-                if (robo0ZPos.Value > 8.7f)
+                robo0Z.Value = 8.7f;
+                if (robo0ZPos.Value > 8.6f)
                 {
                     robo0Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -221,7 +221,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     robo0Y.Value = pieceFoundYcoordinates;
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
-                        robo0Z.Value = 9.0f;
+                        robo0Z.Value = 8.7f;
                         robo0X.Value = 0.9f;
                         if (robo0X.Value < 0.92)
                         {
@@ -254,8 +254,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                robo0Z.Value = 8.8f;
-                if (robo0ZPos.Value > 8.7f)
+                robo0Z.Value = 8.7f;
+                if (robo0ZPos.Value > 8.6f)
                 {
                     robo0Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -328,7 +328,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     robo0Y.Value = pieceFoundYcoordinates;
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
-                        robo0Z.Value = 9.0f;
+                        robo0Z.Value = 8.7f;
                         robo0X.Value = 0.9f;
                         if (robo0X.Value < 0.92)
                         {
@@ -361,8 +361,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                robo0Z.Value = 8.8f;
-                if (robo0ZPos.Value > 8.7f)
+                robo0Z.Value = 8.7f;
+                if (robo0ZPos.Value > 8.6f)
                 {
                     robo0Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -435,7 +435,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     robo0Y.Value = pieceFoundYcoordinates;
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
-                        robo0Z.Value = 9.0f;
+                        robo0Z.Value = 8.7f;
                         robo0X.Value = 0.9f;
                         if (robo0X.Value < 0.92)
                         {
@@ -469,8 +469,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                robo0Z.Value = 8.4f;
-                if (robo0ZPos.Value > 8.3f)
+                robo0Z.Value = 8.7f;
+                if (robo0ZPos.Value > 8.6f)
                 {
                     robo0Steps = RoboSteps.RELEASE_PIECE;
                 }
