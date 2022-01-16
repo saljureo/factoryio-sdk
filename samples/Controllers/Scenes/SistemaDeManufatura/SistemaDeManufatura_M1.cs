@@ -99,7 +99,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
-                roboM1X.Value = 0.97f;
+                roboM1X.Value = 0.85f;
                 if (sensorB1start.Value)
                 {
                     conveyorB1.Value = true;
@@ -117,8 +117,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.DOWN_FOR_PIECE)
             {
-                roboM1Z.Value = 9.0f;
-                if (roboM1ZPos.Value > 8.7f)
+                roboM1Z.Value = 8.7f;
+                if (roboM1ZPos.Value > 8.6f)
                 {
                     roboM1Steps = RoboSteps.GRAB_PIECE;
                 }
@@ -191,7 +191,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
-                roboM1X.Value = 0.97f;
+                roboM1X.Value = 0.85f;
                 if (sensorB1start.Value)
                 {
                     conveyorB1.Value = true;
@@ -209,8 +209,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.DOWN_FOR_PIECE)
             {
-                roboM1Z.Value = 9.0f;
-                if (roboM1ZPos.Value > 8.7f)
+                roboM1Z.Value = 8.7f;
+                if (roboM1ZPos.Value > 8.6f)
                 {
                     roboM1Steps = RoboSteps.GRAB_PIECE;
                 }
@@ -248,8 +248,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.DOWN_WITH_PIECE)
             {
-                roboM1Z.Value = 8.1f;
-                if (roboM1ZPos.Value > 8.05f)
+                roboM1Z.Value = 8.6f;
+                if (roboM1ZPos.Value > 8.5f)
                 {
                     roboM1Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -472,7 +472,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
         public void Idle()
         {
             roboM1X.Value = 5.0f;
-            roboM1Y.Value = 0.7f;
+            roboM1Y.Value = 1.5f;
             roboM1Z.Value = 5.0f;
             roboM1Grab.Value = false;
         }

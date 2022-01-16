@@ -107,8 +107,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
                         robo0Z.Value = 8.7f;
-                        robo0X.Value = 0.9f;
-                        if (robo0X.Value < 0.92)
+                        robo0X.Value = 0.84f;
+                        if (robo0X.Value < 0.841)
                         {
                             robo0Grab.Value = true;
                             stopbladeEndE1.Value = false;
@@ -222,8 +222,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
                         robo0Z.Value = 8.7f;
-                        robo0X.Value = 0.9f;
-                        if (robo0X.Value < 0.92)
+                        robo0X.Value = 0.84f;
+                        if (robo0X.Value < 0.841f)
                         {
                             robo0Grab.Value = true;
                             stopbladeEndE1.Value = false;
@@ -329,8 +329,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
                         robo0Z.Value = 8.7f;
-                        robo0X.Value = 0.9f;
-                        if (robo0X.Value < 0.92)
+                        robo0X.Value = 0.84f;
+                        if (robo0X.Value < 0.841f)
                         {
                             robo0Grab.Value = true;
                             stopbladeEndE1.Value = false;
@@ -436,8 +436,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
                     if (Math.Abs(robo0Y.Value - robo0YPos.Value) < 0.01)
                     {
                         robo0Z.Value = 8.7f;
-                        robo0X.Value = 0.9f;
-                        if (robo0X.Value < 0.92)
+                        robo0X.Value = 0.84f;
+                        if (robo0X.Value < 0.841f)
                         {
                             robo0Grab.Value = true;
                             stopbladeEndE1.Value = false;
