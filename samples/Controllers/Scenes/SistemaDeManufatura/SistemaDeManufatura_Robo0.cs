@@ -190,16 +190,14 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.SEARCHING_FOR_PIECE)
             {
-                robo0Y.Value = searchingForPieceYvalue;
-                if (Math.Abs(robo0YPos.Value - robo0Y.Value) < 0.1)
+                robo0Y.Value = 5.8f;
+                while (robo0YPos.Value < 5.5f)
                 {
+                    MemoryMap.Instance.Update();
                     if (robo0Grabbed.Value)
-                    {
-                        highestYinSearch = searchingForPieceYvalue;
-                    }
-                    searchingForPieceYvalue += 0.5f;
+                        highestYinSearch = robo0YPos.Value;
                 }
-                if (searchingForPieceYvalue > 5.5f)
+                if (robo0YPos.Value > 5.5f)
                 {
                     if (highestYinSearch == 13.0f)
                     {
@@ -295,16 +293,14 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.SEARCHING_FOR_PIECE)
             {
-                robo0Y.Value = searchingForPieceYvalue;
-                if (Math.Abs(robo0YPos.Value - robo0Y.Value) < 0.1)
+                robo0Y.Value = 5.8f;
+                while (robo0YPos.Value < 5.5f)
                 {
+                    MemoryMap.Instance.Update();
                     if (robo0Grabbed.Value)
-                    {
-                        highestYinSearch = searchingForPieceYvalue;
-                    }
-                    searchingForPieceYvalue += 0.5f;
+                        highestYinSearch = robo0YPos.Value;
                 }
-                if (searchingForPieceYvalue > 5.5f)
+                if (robo0YPos.Value > 5.5f)
                 {
                     if (highestYinSearch == 13.0f)
                     {
@@ -400,16 +396,14 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (robo0Steps == RoboSteps.SEARCHING_FOR_PIECE)
             {
-                robo0Y.Value = searchingForPieceYvalue;
-                if (Math.Abs(robo0YPos.Value - robo0Y.Value) < 0.1)
+                robo0Y.Value = 5.8f;
+                while (robo0YPos.Value < 5.5f)
                 {
+                    MemoryMap.Instance.Update();
                     if (robo0Grabbed.Value)
-                    {
-                        highestYinSearch = searchingForPieceYvalue;
-                    }
-                    searchingForPieceYvalue += 0.5f;
+                        highestYinSearch = robo0YPos.Value;
                 }
-                if (searchingForPieceYvalue > 5.5f)
+                if (robo0YPos.Value > 5.5f)
                 {
                     if (highestYinSearch == 13.0f)
                     {
