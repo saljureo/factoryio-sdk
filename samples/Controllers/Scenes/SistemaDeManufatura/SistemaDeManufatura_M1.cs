@@ -99,7 +99,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
-                roboM1X.Value = 0.865f;
+                roboM1X.Value = 0.885f;
                 if (sensorB1start.Value)
                 {
                     conveyorB1.Value = true;
