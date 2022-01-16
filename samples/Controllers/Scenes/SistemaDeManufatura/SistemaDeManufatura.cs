@@ -115,6 +115,9 @@ namespace Controllers.Scenes.SistemaDeManufatura
         readonly MemoryBit startC1toE2;
         readonly MemoryBit startC2toE2;
         readonly MemoryBit startC3toE2;
+        readonly MemoryBit stopbladeB1;
+        readonly MemoryBit stopbladeB2;
+        readonly MemoryBit stopbladeB3;
         int roboCounter;
         string color;
         bool roboFinished;
@@ -134,13 +137,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
         readonly MemoryBit startC1fromB1toM1;
         readonly MemoryBit startC3fromB3toM1;
         readonly MemoryBit sensorM1end;
+        
         int m1Counter;
         bool roboM1Finished;
         bool bool_m1_ini_a;
         bool bool_m1_ini_b;
         bool bool_m1_ini_c_c1;
         bool bool_m1_ini_c_c2;
-        bool whatever;
         private enum M1states
         {
             IDLE,
@@ -235,6 +238,12 @@ namespace Controllers.Scenes.SistemaDeManufatura
             startC1toE2 = MemoryMap.Instance.GetBit("Robô C1 to E2", MemoryType.Input);
             startC2toE2 = MemoryMap.Instance.GetBit("Robô C2 to E2", MemoryType.Input);
             startC3toE2 = MemoryMap.Instance.GetBit("Robô C3 to E2", MemoryType.Input);
+            stopbladeB1 = MemoryMap.Instance.GetBit("Stop Blade 4", MemoryType.Output);
+            stopbladeB1.Value = true;
+            stopbladeB2 = MemoryMap.Instance.GetBit("Stop Blade 3", MemoryType.Output);
+            stopbladeB2.Value = true;
+            stopbladeB3 = MemoryMap.Instance.GetBit("Stop Blade 2", MemoryType.Output);
+            stopbladeB3.Value = true;
             robo0State = Robo0State.IDLE;
             roboCounter = 0;
             color = "";
@@ -286,7 +295,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
             bool_m1_ini_b = false;
             bool_m1_ini_c_c1 = false;
             bool_m1_ini_c_c2 = false;
-            whatever = false;
 
             //Messages only once
             initialMessage = true;
@@ -1164,21 +1172,17 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (m1states == M1states.C2fromB1toM1)
             {
                 roboM1Finished = roboM1.C2fromB1toM1();
-                if (!whatever)
-                {
-                    Console.WriteLine("Here");
-                    whatever = true;
-                }
-
                 if (newStateName == "m1_ini_a")
                 {
+                    Console.WriteLine("////////////////////////////////////////\n");
+                    Console.WriteLine("Please wait...");
+                    Console.WriteLine("////////////////////////////////////////");
                     bool_m1_ini_a = true;
                 }
                 if (roboM1Finished && bool_m1_ini_a)
                 {
                     roboM1.Idle();
                     bool_m1_ini_a = false;
-                    Console.WriteLine("RoboM1Finished && newStateName = m1_ini_a");
                     supervisoryApproval = sistemaDeManufaturaSupervisor.On("m1_ini_a");
                     if (supervisoryApproval)
                     {
@@ -1192,7 +1196,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 }
                 else if (roboM1Finished)
                 {
-                    Console.WriteLine("Here2");
                     m1states = M1states.IDLE;
                 }
             }
@@ -1232,7 +1235,6 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 {
                     roboM1.Idle();
                     bool_m1_ini_a = false;
-                    Console.WriteLine("RoboM1Finished && newStateName = m1_ini_a");
                     supervisoryApproval = sistemaDeManufaturaSupervisor.On("m1_ini_a");
                     if (supervisoryApproval)
                     {

@@ -99,17 +99,20 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
-                roboM1X.Value = 1.2f;
+                roboM1X.Value = 0.97f;
                 if (sensorB1start.Value)
                 {
                     conveyorB1.Value = true;
                     pieceFound = true;
                 }
-                else if ((!pieceFound || sensorB1end.Value) && Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
+                else if (!pieceFound || sensorB1end.Value)
                 {
                     conveyorB1.Value = false;
-                    roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
-                    pieceFound = false;
+                    if (Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
+                    {
+                        roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
+                        pieceFound = false;
+                    }
                 }
             }
             else if (roboM1Steps == RoboSteps.DOWN_FOR_PIECE)
@@ -146,7 +149,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 roboM1X.Value = 5.0f;
                 roboM1Y.Value = 9.5f;
-                if (roboM1YPos.Value > 9.45f)
+                if (roboM1YPos.Value > 9.49f)
                 {
                     roboM1Steps = RoboSteps.DOWN_WITH_PIECE;
                 }
@@ -188,17 +191,20 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
-                roboM1X.Value = 1.2f;
+                roboM1X.Value = 0.97f;
                 if (sensorB1start.Value)
                 {
                     conveyorB1.Value = true;
                     pieceFound = true;
                 }
-                else if ((!pieceFound || sensorB1end.Value) && Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
+                else if (!pieceFound || sensorB1end.Value)
                 {
                     conveyorB1.Value = false;
-                    roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
-                    pieceFound = false;
+                    if(Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
+                    {
+                        roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
+                        pieceFound = false;
+                    }
                 }
             }
             else if (roboM1Steps == RoboSteps.DOWN_FOR_PIECE)
@@ -235,7 +241,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 roboM1X.Value = 5.0f;
                 roboM1Y.Value = 9.5f;
-                if (roboM1YPos.Value > 9.45f)
+                if (roboM1YPos.Value > 9.49f)
                 {
                     roboM1Steps = RoboSteps.DOWN_WITH_PIECE;
                 }
@@ -243,7 +249,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (roboM1Steps == RoboSteps.DOWN_WITH_PIECE)
             {
                 roboM1Z.Value = 8.1f;
-                if (roboM1ZPos.Value > 8.0f)
+                if (roboM1ZPos.Value > 8.05f)
                 {
                     roboM1Steps = RoboSteps.RELEASE_PIECE;
                 }
@@ -283,8 +289,12 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 else if (!pieceFound || sensorB2end.Value)
                 {
                     conveyorB2.Value = false;
-                    roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
-                    pieceFound = false;
+                    if (Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
+                    {
+                        roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
+                        pieceFound = false;
+                    }
+                        
                 }
             }
             else if (roboM1Steps == RoboSteps.DOWN_FOR_PIECE)
@@ -321,7 +331,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 roboM1X.Value = 5.0f;
                 roboM1Y.Value = 9.5f;
-                if (roboM1YPos.Value > 9.45f)
+                if (roboM1YPos.Value > 9.49f)
                 {
                     roboM1Steps = RoboSteps.DOWN_WITH_PIECE;
                 }
@@ -361,22 +371,25 @@ namespace Controllers.Scenes.SistemaDeManufatura
             }
             else if (roboM1Steps == RoboSteps.WAITING_FOR_PIECE)
             {
-                roboM1X.Value = 9.2f;
+                roboM1X.Value = 9.0f;
                 if (sensorB3start.Value)
                 {
                     conveyorB3.Value = true;
                     pieceFound = true;
                 }
-                else if ((!pieceFound || sensorB3end.Value) && Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
+                else if (!pieceFound || sensorB3end.Value)
                 {
                     conveyorB3.Value = false;
-                    roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
-                    pieceFound = false;
+                    if (Math.Abs(roboM1XPos.Value - roboM1X.Value) < 0.1f)
+                    {
+                        roboM1Steps = RoboSteps.DOWN_FOR_PIECE;
+                        pieceFound = false;
+                    }
                 }
             }
             else if (roboM1Steps == RoboSteps.DOWN_FOR_PIECE)
             {
-                roboM1Z.Value = 9.0f;
+                roboM1Z.Value = 8.8f;
                 if (roboM1ZPos.Value > 8.7f)
                 {
                     roboM1Steps = RoboSteps.GRAB_PIECE;
@@ -408,7 +421,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             {
                 roboM1X.Value = 5.0f;
                 roboM1Y.Value = 9.5f;
-                if (roboM1YPos.Value > 9.45f)
+                if (roboM1YPos.Value > 9.49f)
                 {
                     roboM1Steps = RoboSteps.DOWN_WITH_PIECE;
                 }
@@ -458,7 +471,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
         }
         public void Idle()
         {
-            roboM1X.Value = 5.2f;
+            roboM1X.Value = 5.0f;
             roboM1Y.Value = 0.7f;
             roboM1Z.Value = 5.0f;
             roboM1Grab.Value = false;
