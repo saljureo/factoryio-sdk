@@ -140,6 +140,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
         bool bool_m1_ini_b;
         bool bool_m1_ini_c_c1;
         bool bool_m1_ini_c_c2;
+        bool whatever;
         private enum M1states
         {
             IDLE,
@@ -285,6 +286,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             bool_m1_ini_b = false;
             bool_m1_ini_c_c1 = false;
             bool_m1_ini_c_c2 = false;
+            whatever = false;
 
             //Messages only once
             initialMessage = true;
@@ -1067,8 +1069,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
             //%%%%%%%%%%%%%%%%%%%% COLOR SENSOR ENDS %%%%%%%%%%%%%%%%%%%%
 
             //%%%%%%%%%%%%%%%%%%%% M1 STARTS %%%%%%%%%%%%%%%%%%%%
+            roboM1.Takeaway();
 
-            
             if (startC1fromB1toM1.Value || (newStateName == "m1_ini_c_c1" && sistemaDeManufaturaSupervisor.IsInActiveEvents(int.Parse(newState)) && m1states == M1states.IDLE))
             {
                 if (m1Counter == 0)
@@ -1122,6 +1124,8 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 m1Counter = 0;
             }
 
+            
+
             if (m1states == M1states.IDLE)
             {
                 roboM1.Idle();
@@ -1160,6 +1164,12 @@ namespace Controllers.Scenes.SistemaDeManufatura
             else if (m1states == M1states.C2fromB1toM1)
             {
                 roboM1Finished = roboM1.C2fromB1toM1();
+                if (!whatever)
+                {
+                    Console.WriteLine("Here");
+                    whatever = true;
+                }
+
                 if (newStateName == "m1_ini_a")
                 {
                     bool_m1_ini_a = true;
@@ -1182,6 +1192,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 }
                 else if (roboM1Finished)
                 {
+                    Console.WriteLine("Here2");
                     m1states = M1states.IDLE;
                 }
             }
@@ -1191,10 +1202,16 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (newStateName == "m1_ini_c_c1")
                 {
                     bool_m1_ini_c_c1 = true;
+                    Console.WriteLine("////////////////////////////////////////\n");
+                    Console.WriteLine("Please wait...");
+                    Console.WriteLine("////////////////////////////////////////");
                 }
                 else if (newStateName == "m1_ini_a")
                 {
                     bool_m1_ini_a = true;
+                    Console.WriteLine("////////////////////////////////////////\n");
+                    Console.WriteLine("Please wait...");
+                    Console.WriteLine("////////////////////////////////////////");
                 }
                 if (roboM1Finished && bool_m1_ini_c_c1)
                 {
@@ -1242,6 +1259,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 }
                 else if (newStateName == "m1_ini_c_c2")
                 {
+                    Console.WriteLine("bool_m1_ini_c_c2 = true");
                     bool_m1_ini_c_c2 = true;
                 }
                 if (roboM1Finished && bool_m1_ini_b)

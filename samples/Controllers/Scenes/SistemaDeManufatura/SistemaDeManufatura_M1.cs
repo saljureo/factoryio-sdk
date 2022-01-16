@@ -25,6 +25,13 @@ namespace Controllers.Scenes.SistemaDeManufatura
             TAKE_PIECE_AWAY
         }
         RoboSteps roboM1Steps;
+        private enum TakeawaySteps
+        {
+            IDLE,
+            TAKING_AWAY
+        }
+        TakeawaySteps takeawaySteps;
+
         readonly MemoryFloat roboM1X;
         readonly MemoryFloat roboM1XPos;
         readonly MemoryFloat roboM1Y;
@@ -79,6 +86,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
             this.startC2fromB2toM1 = startC2fromB2toM1;
             this.startC3fromB3toM1 = startC3fromB3toM1;
             roboM1Steps = RoboSteps.IDLE;
+            takeawaySteps = TakeawaySteps.IDLE;
             pieceFound = false;
         }
 
@@ -161,7 +169,10 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 roboM1Z.Value = 4.0f;
                 if (roboM1ZPos.Value < 6.0f)
                 {
-                    roboM1Steps = RoboSteps.TAKE_PIECE_AWAY;
+                    takeawaySteps = TakeawaySteps.TAKING_AWAY;
+                    Takeaway();
+                    roboM1Steps = RoboSteps.IDLE;
+                    Idle();
                     return (true);
                 }
             }
@@ -248,6 +259,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (roboM1ZPos.Value < 6.0f)
                 {
                     roboM1Steps = RoboSteps.IDLE;
+                    Idle();
                     return (true);
                 }
             }
@@ -333,6 +345,7 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 if (roboM1ZPos.Value < 6.0f)
                 {
                     roboM1Steps = RoboSteps.IDLE;
+                    Idle();
                     return (true);
                 }
             }
@@ -418,31 +431,37 @@ namespace Controllers.Scenes.SistemaDeManufatura
                 roboM1Z.Value = 4.0f;
                 if (roboM1ZPos.Value < 6.0f)
                 {
-                    roboM1Steps = RoboSteps.TAKE_PIECE_AWAY;
+                    takeawaySteps = TakeawaySteps.TAKING_AWAY;
+                    Takeaway();
+                    roboM1Steps = RoboSteps.IDLE;
+                    Idle();
                     return (true);
                 }
             }
             return (false);
         }
 
-        public void Idle()
+        public void Takeaway()
         {
-            if (roboM1Steps == RoboSteps.TAKE_PIECE_AWAY)
+            if (takeawaySteps == TakeawaySteps.TAKING_AWAY)
             {
                 conveyorM1.Value = true;
                 if (sensorM1end.Value)
                 {
-                    conveyorM1.Value = false;
-                    roboM1Steps = RoboSteps.IDLE;
+                    takeawaySteps = TakeawaySteps.IDLE;
                 }
             }
-            else
+            else if (takeawaySteps == TakeawaySteps.IDLE)
             {
-                roboM1X.Value = 5.2f;
-                roboM1Y.Value = 0.7f;
-                roboM1Z.Value = 5.0f;
-                roboM1Grab.Value = false;
+                conveyorM1.Value = false;
             }
+        }
+        public void Idle()
+        {
+            roboM1X.Value = 5.2f;
+            roboM1Y.Value = 0.7f;
+            roboM1Z.Value = 5.0f;
+            roboM1Grab.Value = false;
         }
     }
 }

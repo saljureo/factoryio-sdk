@@ -15342,7 +15342,7 @@ namespace Controllers.Scenes
         public void ListOfActiveEvents()
         {
             Console.WriteLine("----------------------------------------\n");
-            Console.WriteLine("\nList of active events. Choose one and press enter or wait:\n");
+            Console.WriteLine("List of active events. Choose one and press enter or wait:\n");
 
             for (int i = 0; i < eventLabels.Count; i++)
             {
